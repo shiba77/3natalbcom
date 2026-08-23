@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CastingMe Admin</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#111;color:#eee;font-family:system-ui,sans-serif;padding:20px;max-width:640px;margin:0 auto}
+.card{background:#1b1b1b;border:1px solid #333;border-radius:10px;padding:20px;margin:20px 0}
+label{display:block;font-size:14px;color:#aaa;margin:12px 0 6px}
+input,select{width:100%;padding:12px;border-radius:8px;border:1px solid #444;background:#222;color:#eee;font-size:15px}
+.btn{display:block;width:100%;padding:14px;border:none;border-radius:10px;font-size:16px;font-weight:700;margin-top:16px;cursor:pointer}
+.primary{background:#ffc94d;color:#111}
+.danger{background:#8b0000;color:#fff}
+.msg{margin-top:12px;padding:10px;border-radius:8px;font-size:14px}
+.success{background:#1d4d2b;color:#7dffa8}
+.error{background:#4d1d1d;color:#ffa8a8}
+.row{display:flex;justify-content:space-between;align-items:center;padding:10px;border-bottom:1px solid #2a2a2a}
+.row:last-child{border-bottom:none}
+.tag{font-size:11px;padding:2px 8px;border-radius:20px;background:#2a2000;color:#ffc94d}
+.delete-btn{background:#8b0000;color:#fff;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px}
+h1{text-align:center;margin-bottom:20px}
+h2{margin:24px 0 12px;color:#ffc94d}
+</style>
+</head>
+<body>
+<h1>🔐 لوحة تحكم CastingMe</h1>
+
+<div id="loginSection" class="card">
+<h2>تسجيل الدخول</h2>
+<label>اسم المستخدم</label>
+<input type="text" id="username" value="admin">
+<label>كلمة المرور</label>
+<input type="password" id="password" placeholder="admin1234">
+<button class="btn primary" onclick="login()">دخول</button>
+<div id="loginMsg" class="msg"></div>
+</div>
+
+<div id="adminSection" style="display:none">
+<div class="card">
+<h2>🔧 تغيير كلمة المرور</h2>
+<label>كلمة المرور الحالية</label>
+<input type="password" id="currentPass">
+<label>كلمة المرور الجديدة</label>
+<input type="password" id="newPass">
+<label>تأكيد كلمة المرور الجديدة</label>
+<input type="password" id="confirmPass">
+<button class="btn primary" onclick="changePassword()">تحديث كلمة المرور</button>
+<div id="passMsg" class="msg"></div>
+</div>
+
+<div class="card">
+<h2>🟢 الأسعار المنشورة</h2>
+<div id="pricesList"></div>
+</div>
+
+<div class="card">
+<h2>🔥 الطلبات المفتوحة</h2>
+<div id="huntsList"></div>
+</div>
+
+<button class="btn danger" onclick="logout()">تسجيل الخروج</button>
+</div>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+const supabase = createClient('https://ktngduotvfaxnohvcasf.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt0bmdkdW90dmZheG5vaHZjYXNmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc0NzY5MTgsImV4cCI6MjEwMzA1MjkxOH0.w1f88i4Cux1FqReObhaZaEYwvLbLh6dPUQY0lrKrLRA');
+
+// SHA256 hash function
+async function sha256(message) {
+const msgBuffer = new TextEncoder().encode(message);
+const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+const hashArray = Array.from(new Uint8Array(hashBuffer));
+return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// Check if already logged in
+async function checkSession() {
+const token = localStorage.getItem('adminToken');
+if (!token) return false;
+
+const {data: session} = await supabase
+.from('admin_sessions')
+.select('*')
+.eq('session_token', token)
+.gt('expires_at', new Date().toISOString())
+.single();
+
+return !!session;
+}
+
+// Login
+window.login = async function() {
+const username = document.getElementById('username').value;
+const password = document.getElementById('password').value;
+const hash = await sha256(password);
+
+const {data: admin, error} = await supabase
+.from('admin_users')
+.select('*')
+.eq('username', username)
+.eq('password_hash', hash)
+.single();
+
+const msgEl = document.getElementById('loginMsg');
+
+if (error || !admin) {
+msgEl.className = 'msg error';
+msgEl.textContent = '❌ اسم المستخدم أو كلمة المرور غير صحيحة';
+return;
+}
+
+// Create session
+const token = crypto.randomUUID();
+const expires = new Date();
+expires.setHours(expires.getHours() + 24);
+
+await supabase.from('admin_sessions').insert({
+admin_id: admin.id,
+session_token: token,
+expires_at: expires.toISOString()
+});
+
+await supabase.from('admin_users')
+.update({last_login: new Date().toISOString()})
+.eq('id', admin.id);
+
+localStorage.setItem('adminToken', token);
+msgEl.className = 'msg success';
+msgEl.textContent = '✅ تم تسجيل الدخول بنجاح';
+
+setTimeout(() => {
+document.getElementById('loginSection').style.display = 'none';
+document.getElementById('adminSection').style.display = 'block';
+loadAdminData();
+}, 1000);
+};
+
+// Logout
+window.logout = async function() {
+const token = localStorage.getItem('adminToken');
+if (token) {
+await supabase.from('admin_sessions').delete().eq('session_token', token);
+}
+localStorage.removeItem('adminToken');
+location.reload();
+};
+
+// Change password
+window.changePassword = async function() {
+const current = document.getElementById('currentPass').value;
+const newPass = document.getElementById('newPass').value;
+const confirm = document.getElementById('confirmPass').value;
+const msgEl = document.getElementById('passMsg');
+
+if (newPass !== confirm) {
+msgEl.className = 'msg error';
+msgEl.textContent = '❌ كلمة المرور الجديدة غير متطابقة';
+return;
+}
+
+if (newPass.length < 6) {
+msgEl.className = 'msg error';
+msgEl.textContent = '❌ كلمة المرور يجب أن تكون 6 أحرف على الأقل';
+return;
+}
+
+const currentHash = await sha256(current);
+const token = localStorage.getItem('adminToken');
+
+const {data: session} = await supabase
+.from('admin_sessions')
+.select('admin_id')
+.eq('session_token', token)
+.single();
+
+const {data: admin} = await supabase
+.from('admin_users')
+.select('*')
+.eq('id', session.admin_id)
+.eq('password_hash', currentHash)
+.single();
+
+if (!admin) {
+msgEl.className = 'msg error';
+msgEl.textContent = '❌ كلمة المرور الحالية غير صحيحة';
+return;
+}
+
+const newHash = await sha256(newPass);
+await supabase.from('admin_users')
+.update({password_hash: newHash})
+.eq('id', admin.id);
+
+msgEl.className = 'msg success';
+msgEl.textContent = '✅ تم تحديث كلمة المرور بنجاح';
+document.getElementById('currentPass').value = '';
+document.getElementById('newPass').value = '';
+document.getElementById('confirmPass').value = '';
+};
+
+// Load admin data
+async function loadAdminData() {
+const {data: prices} = await supabase
+.from('prices')
+.select(', gpu_models()')
+.order('created_at', {ascending: false});
+
+const {data: hunts} = await supabase
+.from('hunts')
+.select(', gpu_models()')
+.order('created_at', {ascending: false});
+
+const condLabel = {new:'جديد', used:'مستعمل', any:'أي شي'};
+
+document.getElementById('pricesList').innerHTML = prices.map(p => {
+const gpu = p.gpu_models ? ${p.gpu_models.brand} ${p.gpu_models.model} ${p.gpu_models.variant||''}: 'كرت'; return<div class="row">
+<span>${gpu} &lt;span class="tag"&gt;${condLabel[p.condition]||p.condition}</span> ${p.cash_price} دينار&lt;/span&gt; &lt;button class="delete-btn" onclick="deletePrice(${p.id})">حذف</button>
+</div>`;
+}).join('') || '<div class="row">لا توجد أسعار</div>';
+
+document.getElementById('huntsList').innerHTML = hunts.map(h => {
+const gpu = h.gpu_models ? ``${h.gpu_models.brand} 
+
+{h.gpu_models.variant||''}: 'كرت'; return<div class="row">
+<span>
+
+{h.target_price} دينار</span></span>
+<button class="delete-btn" onclick="deleteHunt(${h.id})">حذف</button>
+</div>`;
+}).join('') || '<div class="row">لا توجد طلبات</div>';
+}
+
+// Delete functions
+window.deletePrice = async function(id) {
+if (!confirm('هل أنت متأكد من حذف هذا السعر؟')) return;
+await supabase.from('prices').delete().eq('id', id);
+loadAdminData();
+};
+
+window.deleteHunt = async function(id) {
+if (!confirm('هل أنت متأكد من حذف هذا الطلب؟')) return;
+await supabase.from('hunts').delete().eq('id', id);
+loadAdminData();
+};
+
+// Check session on load
+checkSession().then(isLoggedIn => {
+if (isLoggedIn) {
+document.getElementById('loginSection').style.display = 'none';
+document.getElementById('adminSection').style.display = 'block';
+loadAdminData();
+}
+});
+</script>
+</body>
+</html>
