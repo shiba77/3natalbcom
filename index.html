@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<htmllang="ar"dir="rtl">
+<head>
+<metacharset="UTF-8">
+<metaname="viewport"content="width=device-width, initial-scale=1">
+<title>CastingMe — ذاكرة أسعار. طلبات حية. لأي شي.</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#111;color:#eee;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;padding:20px;max-width:640px;margin:0auto}
+.brand{text-align:center;margin:16px0}
+.brandh1{font-size:30px;color:#ffc94d}
+.tagline{font-size:15px;color:#ddd;margin-top:6px;font-weight:700}
+.hero-sub{font-size:13px;color:#888;margin-top:10px;line-height:1.9}
+#statusLine{display:none;margin:10px0;padding:10px;border-radius:8px;font-size:13px;text-align:center}
+#statusLine.err{display:block;background:#4d1d1d;color:#ffa8a8}
+#statusLine.ok{display:block;background:#1d4d2b;color:#7dffa8}
+.market-strip{display:flex;flex-wrap:wrap;gap:8px;margin:16px0}
+.market-pill{padding:9px14px;border-radius:25px;font-size:13px;font-weight:600;cursor:pointer;border:1pxsolid #444;background:#1b1b1b;color:#ccc}
+.market-pill.active{background:#ffc94d;color:#111;border-color:#ffc94d}
+.market-pill.vote{border-color:#2a6a3a;color:#7dffa8}
+.market-pill.new-market{background:#1d4d2b;color:#7dffa8;border-color:#2a6a3a}
+.freeform{display:flex;gap:8px;width:100%}
+.freeforminput{flex:1;padding:10px;border-radius:8px;border:1pxsolid #444;background:#222;color:#eee;font-size:14px}
+.card{background:#1b1b1b;border:1pxsolid #333;border-radius:10px;padding:14px;margin-bottom:10px}
+.cardh2{font-size:16px;margin-bottom:10px;color:#ffc94d}
+label{display:block;font-size:13px;color:#aaa;margin:8px04px}
+select,input{width:100%;padding:10px;border-radius:8px;border:1pxsolid #444;background:#222;color:#eee;font-size:15px}
+.mini-link{background:none;border:none;color:#7dffa8;font-size:12px;margin-top:8px;cursor:pointer;padding:0}
+.btn{display:block;width:100%;padding:14px;border:none;border-radius:10px;font-size:16px;font-weight:700;margin-top:12px;cursor:pointer;text-decoration:none;text-align:center}
+.primary{background:#ffc94d;color:#111}
+.green{background:#1d4d2b;color:#7dffa8}
+.share{background:#222;color:#eee;border:1pxsolid #444}
+.msg{margin-top:10px;font-size:14px;color:#7dffa8;line-height:1.9}
+.msga{display:inline-block;width:auto;padding:8px12px;margin-top:6px}
+.feed-section{margin-top:22px}
+.feed-sectionh2{font-size:17px;color:#ffc94d;margin-bottom:10px}
+.row{display:flex;justify-content:space-between;align-items:center;font-size:14px;padding:8px0;border-bottom:1pxsolid #2a2a2a;flex-wrap:wrap;gap:8px}
+.tag{font-size:11px;padding:2px8px;border-radius:20px;background:#2a2000;color:#ffc94d;margin-inline-start:6px}
+.boost-btn{background:#2a2000;color:#ffc94d;border:1pxsolid #ffc94d;border-radius:20px;padding:4px12px;font-size:12px;cursor:pointer}
+.dead-btn{background:#2a0000;color:#ff6b6b;border:1pxsolid #6b2a2a;border-radius:20px;padding:4px8px;font-size:11px;cursor:pointer}
+footer{margin:30px010px;text-align:center;color:#666;font-size:12px;line-height:1.9}
+</style>
+</head>
+<body>
+
+<divclass="brand">
+<h1>CastingMe</h1>
+<divclass="tagline">ذاكرة أسعار. طلبات حية. لأي شي.</div>
+<divclass="hero-sub">فيسبوك بنسى. CastingMe بيذكر.<br>بلشنا بكروت الشاشة — والآلية نفسها بتشتغل لأي سوق.</div>
+</div>
+
+<divid="statusLine"></div>
+<divclass="market-strip"id="marketStrip"></div>
+
+<divclass="card">
+<h2>🔥 بدي شي</h2>
+<label>الماركة</label><selectid="huntBrand"></select>
+<label>الموديل (اختياري)</label><selectid="huntModel"></select>
+<label>الذاكرة</label><selectid="huntSize"></select>
+<label>نوع الذاكرة</label><selectid="huntMem"></select>
+<buttontype="button"class="mini-link"onclick="toggleCustom('hunt')">＋ مش ملاقي اختيارك؟ اكتبه يدوي</button>
+<inputid="huntCustom"style="display:none;margin-top:6px"placeholder="اكتب الموديل الكامل — مثال: RTX 2060">
+<label>أقصى ميزانية (دينار)</label>
+<inputid="huntPrice"type="number"placeholder="210">
+<label>الحالة</label>
+<selectid="huntCond"><optionvalue="any">أي شي</option><optionvalue="used">مستعمل</option><optionvalue="new">جديد</option></select>
+<label>واتساب (اختياري)</label>
+<inputid="huntWa"type="tel"placeholder="079xxxxxxx">
+<buttonclass="btn primary"onclick="castHunt()">🔥 انشر الطلب</button>
+<divclass="msg"id="huntMsg"></div>
+</div>
+
+<divclass="card">
+<h2>📸 عندي شي للبيع</h2>
+<label>الماركة</label><selectid="priceBrand"></select>
+<label>الموديل (بالظبط — إنت بتعرف كرتك)</label><selectid="priceModel"></select>
+<label>الذاكرة</label><selectid="priceSize"></select>
+<label>نوع الذاكرة</label><selectid="priceMem"></select>
+<buttontype="button"class="mini-link"onclick="toggleCustom('price')">＋ مش ملاقي اختيارك؟ اكتبه يدوي</button>
+<inputid="priceCustom"style="display:none;margin-top:6px"placeholder="اكتب الموديل الكامل — مثال: RX 580">
+<label>الحالة</label>
+<selectid="priceCond"><optionvalue="used">مستعمل</option><optionvalue="new">جديد</option></select>
+<label>سعر الكاش (دينار)</label>
+<inputid="cashPrice"type="number"placeholder="210">
+<label>سعر البدل (اختياري)</label>
+<inputid="tradePrice"type="number"placeholder="220">
+<label>واتساب (اختياري)</label>
+<inputid="priceWa"type="tel"placeholder="079xxxxxxx">
+<buttonclass="btn primary"onclick="savePrice()">📸 نزّل السعر</button>
+<divclass="msg"id="priceMsg"></div>
+</div>
+
+<divclass="feed-section"><h2>🟢 أسعار حية هلأ</h2><divid="priceFeed"></div></div>
+<divclass="feed-section"><h2>🔥 طلبات مفتوحة</h2><divid="huntFeed"></div></div>
+
+<footer>CastingMe — آلية سوق: ذاكرة أسعار + طلب حي.<br>أول سوق: كروت الشاشة · الأردن. السوق الجاي: إنتو بتقرروا.</footer>
+
+<scriptsrc="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+window.addEventListener('error',function(e){
+var el = document.getElementById('statusLine');
+ el.className ='err';
+ el.textContent ='⚠️ خطأ: '+(e.message ||'غير معروف');
+});
+
+var db =null;
+try{
+ db = window.supabase.createClient('https://ktngduotvfaxnohvcasf.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt0bmdkdW90dmZheG5vaHZjYXNmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc0NzY5MTgsImV4cCI6MjEwMzA1MjkxOH0.w1f88i4Cux1FqReObhaZaEYwvLbLh6dPUQY0lrKrLRA');
+}catch(e){ db =null;}
+
+varTHRESHOLD=25;
+var condLabel ={new:'جديد', used:'مستعمل', any:'أي شي'};
+var allCategories =[], currentCategoryId =null, lastCounts ={};
+varFALLBACK_CATS=[{id:1,name:'كروت الشاشة',is_active:true},{id:2,name:'رامات',is_active:false},{id:3,name:'SSD',is_active:false}];
+varFALLBACK_MODELS=[
+{id:1,brand:'NVIDIA',model:'RTX 3060',variant:'12GB',mem_type:'GDDR6'},
+{id:2,brand:'NVIDIA',model:'RTX 4060',variant:'8GB',mem_type:'GDDR6'},
+{id:3,brand:'NVIDIA',model:'RTX 4070 Super',variant:'12GB',mem_type:'GDDR6X'},
+{id:4,brand:'NVIDIA',model:'RTX 4070 Ti Super',variant:'16GB',mem_type:'GDDR6X'},
+{id:5,brand:'NVIDIA',model:'RTX 5070',variant:'12GB',mem_type:'GDDR7'},
+{id:6,brand:'NVIDIA',model:'GTX 1070 Ti',variant:'8GB',mem_type:'GDDR5'},
+{id:7,brand:'AMD',model:'RX 7800 XT',variant:'16GB',mem_type:'GDDR6'},
+{id:8,brand:'XFX',model:'RX 6700 XT',variant:'12GB',mem_type:'GDDR6'}
+];
+
+function myToken(){
+var t = localStorage.getItem('cm_token');
+if(!t){ t ='u_'+Date.now()+'_'+Math.random().toString(36).slice(2,10); localStorage.setItem('cm_token', t);}
+return t;
+}
+function toast(msg, kind){
+var el = document.getElementById('statusLine');
+ el.className = kind ||'ok';
+ el.textContent = msg;
+ setTimeout(function(){ el.style.display='none'; el.className='';},4000);
+}
+function noDb(){return!db;}
+function uniq(list){var out=[];(list||[]).forEach(function(v){if(v && out.indexOf(v)<0) out.push(v);});return out;}
+function dispBrand(x){return(x && x.brand)? x.brand :'أخرى';}
+function val(id){return document.getElementById(id).value;}
+function isAny(v){return!v || v==='أي';}
+function labelOf(m){return m ?((m.brand? m.brand+' ':'')+m.model+(m.variant?' '+m.variant:'')):'عنصر';}
+
+/* ===== Facets: empty or «أي» = no filter, order-free ===== */
+function constrained(rows, p, skip){
+var b=val(p+'Brand'), m=val(p+'Model'), s=val(p+'Size'), t=val(p+'Mem');
+return(rows||[]).filter(function(x){
+if(skip!=='brand'&&!isAny(b)&& dispBrand(x)!==b)returnfalse;
+if(skip!=='model'&&!isAny(m)&& x.model!==m)returnfalse;
+if(skip!=='size'&&!isAny(s)&&(x.variant||'')!==s)returnfalse;
+if(skip!=='mem'&&!isAny(t)&&(x.mem_type||'')!==t)returnfalse;
+returntrue;
+});
+}
+function setOptions(id, values, allowAny){
+var el = document.getElementById(id), cur = el.value;
+var list =(allowAny?['أي']:[]).concat(values);
+if(!list.length) list = allowAny?['أي']:[''];
+ el.innerHTML = list.map(function(v){return'<option>'+v+'</option>';}).join('');
+ el.value =(list.indexOf(cur)>=0)? cur : list[0];
+}
+function refreshFacets(p, skip){
+var rows = window.models||[];
+ setOptions(p+'Brand', uniq(constrained(rows,p,'brand').map(dispBrand)),true);
+ setOptions(p+'Model', uniq(constrained(rows,p,'model').map(function(x){return x.model;})), p!=='price');
+ setOptions(p+'Size', uniq(constrained(rows,p,'size').map(function(x){return x.variant;})),true);
+ setOptions(p+'Mem', uniq(constrained(rows,p,'mem').map(function(x){return x.mem_type;})),true);
+}
+function bindFacets(p){
+[['Brand','brand'],['Model','model'],['Size','size'],['Mem','mem']].forEach(function(pr){
+ document.getElementById(p+pr[0]).onchange =function(){ refreshFacets(p, pr[1]);};
+});
+}
+function toggleCustom(p){
+var c = document.getElementById(p+'Custom');
+ c.style.display =(c.style.display==='none')?'block':'none';
+if(c.style.display==='block') c.focus();
+}
+
+asyncfunction resolveSelection(p){
+var cEl = document.getElementById(p+'Custom');
+if(cEl.style.display!=='none'&& cEl.value.trim()){
+var name = cEl.value.trim().replace(/\s+/g,' ');
+if(noDb()){ toast('⚠️ لا يوجد اتصال','err');returnnull;}
+var f =await db.from('models').select('*').eq('category_id', currentCategoryId).ilike('model', name).limit(1);
+var row =(f.data && f.data.length)? f.data[0]:null;
+if(!row){
+var ins =await db.from('models').insert({category_id: currentCategoryId, brand:'', model:name}).select().single();
+if(ins.error){ toast('⚠️ '+ins.error.message,'err');returnnull;}
+ row = ins.data;
+}
+if(!(window.models||[]).find(function(x){return x.id==row.id;})) window.models.push(row);
+return{modelId: row.id, row: row};
+}
+var b=val(p+'Brand'), m=val(p+'Model'), s=val(p+'Size'), t=val(p+'Mem');
+if(!isAny(m)){
+var row2 =(window.models||[]).find(function(x){
+return x.model===m &&(isAny(b)||dispBrand(x)===b)&&(isAny(s)||(x.variant||'')===s)&&(isAny(t)||(x.mem_type||'')===t);
+});
+if(!row2){
+if(noDb()){ toast('⚠️ لا يوجد اتصال','err');returnnull;}
+var ins2 =await db.from('models').insert({
+ category_id: currentCategoryId,
+ brand: isAny(b)?'':b, model: m,
+ variant: isAny(s)?null:s, mem_type: isAny(t)?null:t
+}).select().single();
+if(ins2.error){ toast('⚠️ '+ins2.error.message,'err');returnnull;}
+ row2 = ins2.data; window.models.push(row2);
+}
+return{modelId: row2.id, row: row2};
+}
+if(isAny(b)&& isAny(s)&& isAny(t)){ toast('حدّد شي: ماركة أو ذاكرة أو نوعها — أو اكتب الموديل يدوي','err');returnnull;}
+return{modelId:null, want:{want_brand: isAny(b)?null:b, want_vram: isAny(s)?null:s, want_mem: isAny(t)?null:t}};
+}
+
+function huntMatches(h, pm){
+if(!pm)returnfalse;
+if(h.model_id)return h.model_id === pm.id;
+if(!isAny(h.want_brand)&& dispBrand(pm)!==h.want_brand)returnfalse;
+if(!isAny(h.want_vram)&&(pm.variant||'')!==h.want_vram)returnfalse;
+if(!isAny(h.want_mem)&&(pm.mem_type||'')!==h.want_mem)returnfalse;
+returntrue;
+}
+function huntLabel(h){
+if(h.model_id)return modelName(h.model_id);
+var parts =[h.want_brand, h.want_mem, h.want_vram].filter(function(v){return v && v!=='أي';});
+return parts.length?('كرت '+parts.join(' ')):'كرت';
+}
+function modelName(id){
+var m =(window.models||[]).find(function(x){return x.id==id;});
+return labelOf(m);
+}
+
+asyncfunction getVoteCounts(){
+var counts ={};
+if(noDb())return counts;
+try{
+var r =await db.from('category_votes').select('category_id');
+(r.data||[]).forEach(function(v){ counts[v.category_id]=(counts[v.category_id]||0)+1;});
+}catch(e){}
+return counts;
+}
+asyncfunction loadCategories(){
+if(noDb()){ allCategories =FALLBACK_CATS;}
+else{
+try{
+var r =await db.from('categories').select('id,name,slug,is_active,sort_order').order('sort_order');
+ allCategories =(!r.error && r.data && r.data.length)? r.data :FALLBACK_CATS;
+}catch(e){ allCategories =FALLBACK_CATS;}
+}
+var first = allCategories.find(function(c){return c.is_active;})|| allCategories[0];
+ currentCategoryId = first.id;
+ lastCounts =await getVoteCounts();
+ renderMarketStrip();
+ loadModelsForCategory(currentCategoryId);
+}
+function renderMarketStrip(){
+var html ='';
+ allCategories.filter(function(c){return c.is_active;}).forEach(function(c){
+ html +='<button class="market-pill'+(c.id===currentCategoryId?' active':'')+'" onclick="switchCategory('+c.id+')">'+c.name+' · مفتوح</button>';
+});
+ allCategories.filter(function(c){return!c.is_active;})
+.sort(function(a,b){return(lastCounts[b.id]||0)-(lastCounts[a.id]||0);}).slice(0,4)
+.forEach(function(c){
+ html +='<button class="market-pill vote" onclick="voteForCategory('+c.id+')">'+c.name+' · '+(lastCounts[c.id]||0)+'/'+THRESHOLD+' صوت</button>';
+});
+ html +='<div class="freeform"><input id="newMarketName" placeholder="سوق جديد؟ اكتب اسمه…"><button class="market-pill new-market" onclick="submitFreeformVote()">+ صوّت</button></div>';
+ document.getElementById('marketStrip').innerHTML = html;
+}
+function switchCategory(id){ currentCategoryId = id; renderMarketStrip(); loadModelsForCategory(id);}
+asyncfunction voteForCategory(id){
+if(noDb()){ toast('⚠️ لا يوجد اتصال بقاعدة البيانات','err');return;}
+var token = myToken();
+try{
+var ex =await db.from('category_votes').select('id').eq('category_id', id).eq('user_token', token).limit(1);
+if(ex.data && ex.data.length){ toast('⚡ صوتك موجود هلأ!');return;}
+var r =await db.from('category_votes').insert({category_id: id, user_token: token});
+if(r.error){ toast('⚠️ '+r.error.message,'err');return;}
+ toast('✅ صوتك انضاف!');
+ lastCounts =await getVoteCounts();
+ renderMarketStrip();
+}catch(e){ toast('⚠️ في مشكلة بالتصويت','err');}
+}
+function normalizeMarket(name){
+var n = name.toLowerCase();
+if(/ram|ddr|ذاكرة|رام/.test(n))return'رامات';
+if(/ssd|nvme|هارد|تخزين/.test(n))return'SSD';
+if(/monitor|شاش/.test(n))return'شاشات';
+if(/cpu|معالج|بروسيسور/.test(n))return'معالجات';
+return name.trim();
+}
+asyncfunction submitFreeformVote(){
+var raw =(document.getElementById('newMarketName').value||'').trim();
+if(!raw){ toast('اكتب اسم السوق أولاً','err');return;}
+if(noDb()){ toast('⚠️ لا يوجد اتصال بقاعدة البيانات','err');return;}
+var name = normalizeMarket(raw);
+try{
+var f =await db.from('categories').select('id,name').ilike('name', name).limit(1);
+var found =(f.data && f.data.length)? f.data[0]:null;
+if(!found){
+var f2 =await db.from('categories').select('id,name').ilike('name','%'+name+'%').limit(1);
+ found =(f2.data && f2.data.length)? f2.data[0]:null;
+}
+if(!found){
+var ins =await db.from('categories').insert({name:name, slug:name.replace(/\s+/g,'-'), is_active:false, sort_order:999}).select().single();
+if(ins.error){ toast('⚠️ '+ins.error.message,'err');return;}
+ found = ins.data;
+}
+ document.getElementById('newMarketName').value='';
+await voteForCategory(found.id);
+ toast('✅ اقتراحك وصل! إذا وصل '+THRESHOLD+' صوت، بنجهّز السوق وبنفتحه.');
+}catch(e){ toast('⚠️ في مشكلة بالاقتراح','err');}
+}
+
+asyncfunction loadModelsForCategory(catId){
+ window.models =[];
+if(!noDb()){
+try{
+var r =await db.from('models').select('id,brand,model,variant,mem_type').eq('category_id', catId).order('brand').order('model');
+if(!r.error && r.data && r.data.length) window.models = r.data;
+}catch(e){}
+}
+if(!window.models.length) window.models =FALLBACK_MODELS;
+ refreshFacets('hunt');
+ refreshFacets('price');
+ loadFeeds();
+}
+
+asyncfunction loadFeeds(){
+var pRows =[], hRows =[];
+if(!noDb()){
+try{
+var p =await db.from('prices')
+.select('id, model_id, condition, cash_price, trade_price, status, created_at, models(*)')
+.eq('status','ACTIVE').eq('category_id', currentCategoryId)
+.order('created_at',{ascending:false}).limit(10);
+ pRows = p.data||[];
+}catch(e){}
+try{
+var h =await db.from('hunts')
+.select('id, model_id, condition, target_price, boost_count, want_brand, want_vram, want_mem, status, created_at, models(*)')
+.eq('status','OPEN').eq('category_id', currentCategoryId)
+.order('boost_count',{ascending:false}).order('created_at',{ascending:false}).limit(10);
+ hRows = h.data||[];
+}catch(e){}
+}
+ document.getElementById('priceFeed').innerHTML = pRows.map(function(r){
+var extra = r.trade_price?'<span class="tag">بدل '+r.trade_price+'</span>':'';
+return'<div class="row"><span>'+labelOf(r.models)+' <span class="tag">'+(condLabel[r.condition]||r.condition)+'</span>'+extra+'</span>'+
+'<div style="display:flex;gap:6px;align-items:center;"><b>'+r.cash_price+' دينار</b>'+
+'<button class="dead-btn" onclick="reportDead('+r.id+')">⚰️</button></div></div>';
+}).join('')||'<div class="row">لسا في أسعار بهالسوق. كن أول واحد.</div>';
+
+ document.getElementById('huntFeed').innerHTML = hRows.map(function(r){
+return'<div class="row"><span>'+huntLabel(r)+' <span class="tag">'+(condLabel[r.condition]||r.condition)+'</span></span>'+
+'<div style="display:flex;gap:8px;align-items:center;"><b>لحد '+r.target_price+' دينار</b>'+
+'<button class="boost-btn" onclick="boostHunt('+r.id+')">🔥 '+(r.boost_count||0)+'</button></div></div>';
+}).join('')||'<div class="row">لسا في طلبات بهالسوق. انشر أول طلب.</div>';
+}
+
+asyncfunction reportDead(id){
+if(noDb())return;
+if(!confirm('متأكد إنو هاد العرض ميت/مباع؟'))return;
+try{
+var r =await db.from('prices').update({status:'DEAD'}).eq('id', id);
+if(!r.error){ toast('✅ شكراً! هيك بيضل السوق نظيف وما ننسى السعر.'); loadFeeds();}
+}catch(e){}
+}
+asyncfunction boostHunt(id){
+if(noDb()){ toast('⚠️ لا يوجد اتصال','err');return;}
+var token = myToken();
+try{
+var ex =await db.from('boosts').select('id').eq('hunt_id', id).eq('user_token', token).limit(1);
+if(ex.data && ex.data.length){ toast('⚡ أنت معزّز هلأ هالطلب!');return;}
+var b =await db.from('boosts').insert({hunt_id: id, user_token: token});
+if(b.error){ toast('⚠️ '+b.error.message,'err');return;}
+var h =await db.from('hunts').select('boost_count').eq('id', id).single();
+await db.from('hunts').update({boost_count:((h.data&&h.data.boost_count)||0)+1}).eq('id', id);
+ loadFeeds();
+}catch(e){ toast('⚠️ في مشكلة بالتعزيز','err');}
+}
+
+function waLink(num, text){
+var d =(num||'').replace(/\D/g,'');
+if(d.startsWith('0')) d ='962'+d.slice(1);
+return'https://wa.me/'+d+'?text='+encodeURIComponent(text);
+}
+function shareLink(){
+return'https://wa.me/?text='+encodeURIComponent('ذاكرة أسعار. طلبات حية. لأي شي. شوف السوق الحي: '+location.href);
+}
+
+asyncfunction savePrice(){
+if(noDb()){ toast('⚠️ لا يوجد اتصال بقاعدة البيانات','err');return;}
+var sel =await resolveSelection('price');
+if(!sel)return;
+var cash =+document.getElementById('cashPrice').value;
+if(!cash){ toast('ضيف سعر الكاش','err');return;}
+try{
+var r =await db.from('prices').insert({
+ model_id: sel.modelId, category_id: currentCategoryId,
+ condition: document.getElementById('priceCond').value,
+ cash_price: cash, trade_price:+document.getElementById('tradePrice').value ||null,
+ whatsapp: document.getElementById('priceWa').value ||null, status:'ACTIVE'
+});
+if(r.error){ toast('⚠️ '+r.error.message,'err');return;}
+var h =await db.from('hunts').select('*').eq('status','OPEN').eq('category_id', currentCategoryId).gte('target_price', cash);
+var matches =(h.data||[]).filter(function(x){
+return x.model_id ?(x.model_id===sel.modelId): huntMatches(x, sel.row);
+});
+var first = matches.find(function(x){return x.whatsapp;});
+var msg ='✅ نزل بذاكرة الأسعار.';
+if(matches.length) msg +=' <b>'+matches.length+'</b> طلب حي بهالسعر أو أعلى.';
+if(first) msg +=' <a class="btn green" href="'+waLink(first.whatsapp,'مرحبا! شفت طلبك على CastingMe: '+huntLabel(first)+' لحد '+first.target_price+' دينار. عندي واحد بـ '+cash+' دينار.')+'">💬 احكي الطالب</a>';
+ msg +=' <a class="btn share" href="'+shareLink()+'">📤 شارك</a>';
+ document.getElementById('priceMsg').innerHTML = msg;
+ loadFeeds();
+}catch(e){ toast('⚠️ في مشكلة بالحفظ','err');}
+}
+
+asyncfunction castHunt(){
+if(noDb()){ toast('⚠️ لا يوجد اتصال بقاعدة البيانات','err');return;}
+var sel =await resolveSelection('hunt');
+if(!sel)return;
+var budget =+document.getElementById('huntPrice').value;
+if(!budget){ toast('ضيف أقصى ميزانية','err');return;}
+try{
+var r =await db.from('hunts').insert({
+ category_id: currentCategoryId,
+ target_price: budget,
+ condition: document.getElementById('huntCond').value,
+ whatsapp: document.getElementById('huntWa').value ||null,
+ status:'OPEN', boost_count:1,
+ model_id: sel.modelId,
+ want_brand: sel.want? sel.want.want_brand :null,
+ want_vram: sel.want? sel.want.want_vram :null,
+ want_mem: sel.want? sel.want.want_mem :null
+});
+if(r.error){ toast('⚠️ '+r.error.message,'err');return;}
+var o =await db.from('prices').select('id, cash_price, whatsapp, models(*)')
+.eq('status','ACTIVE').eq('category_id', currentCategoryId).lte('cash_price', budget)
+.order('cash_price').limit(20);
+var probe ={model_id: sel.modelId, want_brand: sel.want? sel.want.want_brand:null, want_vram: sel.want? sel.want.want_vram:null, want_mem: sel.want? sel.want.want_mem:null};
+var offers =(o.data||[]).filter(function(x){
+return sel.modelId ?(x.model_id===sel.modelId): huntMatches(probe, x.models);
+});
+var code ='CM-'+Math.floor(1000+Math.random()*9000);
+var msg ='✅ طلبك منتشر.';
+if(offers[0]){
+ msg +=' <b>لقينا مطابق:</b> '+labelOf(offers[0].models)+' بـ '+offers[0].cash_price+' دينار.';
+if(offers[0].whatsapp){
+ msg +=' <a class="btn green" href="'+waLink(offers[0].whatsapp,'مرحبا! شفت '+labelOf(offers[0].models)+' بسعر '+offers[0].cash_price+' دينار على CastingMe ('+code+'). لسا موجود؟')+'">💬 احكي البائع ('+code+')</a>';
+}
+}
+ msg +=' <a class="btn share" href="'+shareLink()+'">📤 شارك</a>';
+ document.getElementById('huntMsg').innerHTML = msg;
+ loadFeeds();
+}catch(e){ toast('⚠️ في مشكلة بالنشر','err');}
+}
+
+myToken();
+bindFacets('hunt');
+bindFacets('price');
+loadCategories();
+</script>
+</body>
+</html>
