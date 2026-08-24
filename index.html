@@ -3,16 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CastingMe — سوق الكروت الحي بالأردن</title>
+<title>CastingMe — ذاكرة أسعار. طلبات حية. لأي شي.</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#111;color:#eee;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;padding:20px;max-width:640px;margin:0 auto}
-.warn{background:#2a2000;color:#ffc94d;padding:10px;border-radius:8px;font-size:14px;text-align:center;line-height:1.7}
-#timer{text-align:center;font-size:26px;font-weight:700;color:#ffc94d;margin:12px 0;direction:ltr}
-h1{text-align:center;font-size:24px;margin:16px 0 8px;line-height:1.6}
-.sub{text-align:center;color:#aaa;font-size:14px;margin-bottom:20px;line-height:1.8}
-h2{font-size:16px;margin:24px 0 8px;color:#ffc94d}
+.brand{text-align:center;margin:16px 0}
+.brand h1{font-size:30px;color:#ffc94d}
+.tagline{font-size:15px;color:#ddd;margin-top:6px;font-weight:700}
+.hero-sub{font-size:13px;color:#888;margin-top:10px;line-height:1.9}
+#statusLine{display:none;margin:10px 0;padding:10px;border-radius:8px;font-size:13px;text-align:center}
+#statusLine.err{display:block;background:#4d1d1d;color:#ffa8a8}
+#statusLine.ok{display:block;background:#1d4d2b;color:#7dffa8}
+.market-strip{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+.market-pill{padding:9px 14px;border-radius:25px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid #444;background:#1b1b1b;color:#ccc}
+.market-pill.active{background:#ffc94d;color:#111;border-color:#ffc94d}
+.market-pill.vote{border-color:#2a6a3a;color:#7dffa8}
+.market-pill.new-market{background:#1d4d2b;color:#7dffa8;border-color:#2a6a3a}
+.freeform{display:flex;gap:8px;width:100%}
+.freeform input{flex:1;padding:10px;border-radius:8px;border:1px solid #444;background:#222;color:#eee;font-size:14px}
 .card{background:#1b1b1b;border:1px solid #333;border-radius:10px;padding:14px;margin-bottom:10px}
+.card h2{font-size:16px;margin-bottom:10px;color:#ffc94d}
 label{display:block;font-size:13px;color:#aaa;margin:8px 0 4px}
 select,input{width:100%;padding:10px;border-radius:8px;border:1px solid #444;background:#222;color:#eee;font-size:15px}
 .btn{display:block;width:100%;padding:14px;border:none;border-radius:10px;font-size:16px;font-weight:700;margin-top:12px;cursor:pointer;text-decoration:none;text-align:center}
@@ -21,19 +31,28 @@ select,input{width:100%;padding:10px;border-radius:8px;border:1px solid #444;bac
 .share{background:#222;color:#eee;border:1px solid #444}
 .msg{margin-top:10px;font-size:14px;color:#7dffa8;line-height:1.9}
 .msg a{display:inline-block;width:auto;padding:8px 12px;margin-top:6px}
-.row{display:flex;justify-content:space-between;align-items:center;font-size:14px;padding:6px 0;border-bottom:1px solid #2a2a2a}
+.feed-section{margin-top:22px}
+.feed-section h2{font-size:17px;color:#ffc94d;margin-bottom:10px}
+.row{display:flex;justify-content:space-between;align-items:center;font-size:14px;padding:8px 0;border-bottom:1px solid #2a2a2a;flex-wrap:wrap;gap:8px}
 .tag{font-size:11px;padding:2px 8px;border-radius:20px;background:#2a2000;color:#ffc94d;margin-inline-start:6px}
+.boost-btn{background:#2a2000;color:#ffc94d;border:1px solid #ffc94d;border-radius:20px;padding:4px 12px;font-size:12px;cursor:pointer}
+.dead-btn{background:#2a0000;color:#ff6b6b;border:1px solid #6b2a2a;border-radius:20px;padding:4px 8px;font-size:11px;cursor:pointer}
 footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-height:1.9}
 </style>
 </head>
 <body>
-<div class="warn">⚠️ فيسبوك رح يبلش يحذف المنشورات القديمة يوم 30/8/2026.<br>عم بنأرشف أسعار الكروت بالأردن قبل ما تضيع.</div>
-<div id="timer"></div>
-<h1>بطل تسأل «موجود؟» على منشورات ميتة.</h1>
-<p class="sub">اعرف شو الموجود فعلاً وبكم.<br>فيسبوك بحذف. CastingMe بتذكّر.</p>
 
-<h2>🔥 بدي كرت شاشه</h2>
+<div class="brand">
+<h1>CastingMe</h1>
+<div class="tagline">ذاكرة أسعار. طلبات حية. لأي شي.</div>
+<div class="hero-sub">فيسبوك بنسى. CastingMe بيذكر.<br>بلشنا بكروت الشاشة — والآلية نفسها بتشتغل لأي سوق.</div>
+</div>
+
+<div id="statusLine"></div>
+<div class="market-strip" id="marketStrip"></div>
+
 <div class="card">
+<h2>🔥 بدي شي</h2>
 <label>شو عم تدوّر؟</label>
 <select id="huntModel"></select>
 <label>أقصى ميزانية (دينار)</label>
@@ -46,9 +65,9 @@ footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-heigh
 <div class="msg" id="huntMsg"></div>
 </div>
 
-<h2>📸 عندي كرت للبيع</h2>
 <div class="card">
-<label>شو الكرت؟</label>
+<h2>📸 عندي شي للبيع</h2>
+<label>شو عندك؟</label>
 <select id="priceModel"></select>
 <label>الحالة</label>
 <select id="priceCond"><option value="used">مستعمل</option><option value="new">جديد</option></select>
@@ -62,35 +81,35 @@ footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-heigh
 <div class="msg" id="priceMsg"></div>
 </div>
 
-<h2>🟢 أسعار حية هلأ</h2>
-<div id="priceFeed"></div>
+<div class="feed-section"><h2>🟢 أسعار حية هلأ</h2><div id="priceFeed"></div></div>
+<div class="feed-section"><h2>🔥 طلبات مفتوحة</h2><div id="huntFeed"></div></div>
 
-<h2>🔥 طلبات مفتوحة</h2>
-<div id="huntFeed"></div>
+<footer>CastingMe — آلية سوق: ذاكرة أسعار + طلب حي.<br>أول سوق: كروت الشاشة · الأردن. السوق الجاي: إنتو بتقرروا.</footer>
 
-<footer>CastingMe — سوق الكروت الحي بالأردن<br>فيسبوك بحذف. إحنا منذكّر.</footer>
-
-<script>
-// TIMER — separate script, runs no matter what happens below
-(function(){
-var target = new Date('2026-08-30T00:00:00+03:00').getTime();
-setInterval(function(){
-var d = target - Date.now(); if (d < 0) d = 0;
-var dd=Math.floor(d/864e5), h=Math.floor(d/36e5)%24, m=Math.floor(d/6e4)%60, s=Math.floor(d/1e3)%60;
-var el = document.getElementById('timer');
-if (el) el.textContent = dd+'d : '+h+'h : '+m+'m : '+s+'s';
-}, 1000);
-})();
-</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
+window.addEventListener('error', function(e){
+var el = document.getElementById('statusLine');
+el.className = 'err';
+el.textContent = '⚠️ خطأ: ' + (e.message || 'غير معروف');
+});
+
 var db = null;
-try { db = window.supabase.createClient('https://ktngduotvfaxnohvcasf.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt0bmdkdW90dmZheG5vaHZjYXNmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc0NzY5MTgsImV4cCI6MjEwMzA1MjkxOH0.w1f88i4Cux1FqReObhaZaEYwvLbLh6dPUQY0lrKrLRA'); } catch(e) { console.error('Supabase init failed:', e); }
+try {
+db = window.supabase.createClient('https://ktngduotvfaxnohvcasf.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt0bmdkdW90dmZheG5vaHZjYXNmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc0NzY5MTgsImV4cCI6MjEwMzA1MjkxOH0.w1f88i4Cux1FqReObhaZaEYwvLbLh6dPUQY0lrKrLRA');
+} catch(e) { db = null; }
 
+var THRESHOLD = 25;
 var condLabel = {new:'جديد', used:'مستعمل', any:'أي شي'};
-
-function getFallbackModels(){
-return [
+var allCategories = [];
+var currentCategoryId = null;
+var lastCounts = {};
+var FALLBACK_CATS = [
+{id:1,name:'كروت الشاشة',is_active:true},
+{id:2,name:'رامات',is_active:false},
+{id:3,name:'SSD',is_active:false}
+];
+var FALLBACK_MODELS = [
 {id:1,brand:'NVIDIA',model:'RTX 3060',variant:'12GB'},
 {id:2,brand:'NVIDIA',model:'RTX 4060',variant:'8GB'},
 {id:3,brand:'NVIDIA',model:'RTX 4070 Super',variant:'12GB'},
@@ -99,108 +118,260 @@ return [
 {id:6,brand:'NVIDIA',model:'GTX 1070 Ti',variant:'8GB'},
 {id:7,brand:'NVIDIA',model:'GTX 1080',variant:'8GB'},
 {id:8,brand:'AMD',model:'RX 7800 XT',variant:'16GB'}
- ];
+];
+
+function myToken(){
+var t = localStorage.getItem('cm_token');
+if(!t){ t = 'u_' + Date.now() + '_' + Math.random().toString(36).slice(2,10); localStorage.setItem('cm_token', t); }
+return t;
+}
+function toast(msg, kind){
+var el = document.getElementById('statusLine');
+el.className = kind || 'ok';
+el.textContent = msg;
+setTimeout(function(){ el.style.display='none'; el.className=''; }, 4000);
+}
+function noDb(){ return !db; }
+
+async function getVoteCounts(){
+var counts = {};
+if (noDb()) return counts;
+try {
+var r = await db.from('category_votes').select('category_id');
+(r.data||[]).forEach(function(v){ counts[v.category_id] = (counts[v.category_id]||0) + 1; });
+} catch(e){}
+return counts;
 }
 
-function fillDropdowns(){
+async function loadCategories(){
+if (noDb()) { allCategories = FALLBACK_CATS; }
+else {
+try {
+var r = await db.from('categories').select('id,name,slug,is_active,sort_order').order('sort_order');
+allCategories = (!r.error && r.data && r.data.length) ? r.data : FALLBACK_CATS;
+} catch(e) { allCategories = FALLBACK_CATS; }
+}
+var first = allCategories.find(function(c){return c.is_active;}) || allCategories[0];
+currentCategoryId = first.id;
+lastCounts = await getVoteCounts();
+renderMarketStrip();
+loadModelsForCategory(currentCategoryId);
+}
+
+function renderMarketStrip(){
+var html = '';
+var actives = allCategories.filter(function(c){return c.is_active;});
+var voters = allCategories.filter(function(c){return !c.is_active;})
+.sort(function(a,b){ return (lastCounts[b.id]||0) - (lastCounts[a.id]||0); });
+actives.forEach(function(c){
+html += '<button class="market-pill'+(c.id===currentCategoryId?' active':'')+'" onclick="switchCategory('+c.id+')">'+c.name+' · مفتوح</button>';
+});
+voters.slice(0,4).forEach(function(c){
+var v = lastCounts[c.id]||0;
+html += '<button class="market-pill vote" onclick="voteForCategory('+c.id+')">'+c.name+' · '+v+'/'+THRESHOLD+' صوت</button>';
+});
+html += '<div class="freeform"><input id="newMarketName" placeholder="سوق جديد؟ اكتب اسمه…"><button class="market-pill new-market" onclick="submitFreeformVote()">+ صوّت</button></div>';
+document.getElementById('marketStrip').innerHTML = html;
+}
+
+function switchCategory(id){
+currentCategoryId = id;
+renderMarketStrip();
+loadModelsForCategory(id);
+}
+
+async function voteForCategory(id){
+if (noDb()) { toast('⚠️ لا يوجد اتصال بقاعدة البيانات','err'); return; }
+var token = myToken();
+try {
+var ex = await db.from('category_votes').select('id').eq('category_id', id).eq('user_token', token).limit(1);
+if (ex.data && ex.data.length) { toast('⚡ صوتك موجود هلأ!'); return; }
+var r = await db.from('category_votes').insert({ category_id: id, user_token: token });
+if (r.error) { toast('⚠️ ' + r.error.message, 'err'); return; }
+toast('✅ صوتك انضاف!');
+lastCounts = await getVoteCounts();
+renderMarketStrip();
+} catch(e) { toast('⚠️ في مشكلة بالتصويت','err'); }
+}
+
+function normalizeMarket(name){
+var n = name.toLowerCase();
+if(/ram|ddr|ذاكرة|رام/.test(n)) return 'رامات';
+if(/ssd|nvme|هارد|تخزين/.test(n)) return 'SSD';
+if(/monitor|شاش/.test(n)) return 'شاشات';
+if(/cpu|معالج|بروسيسور/.test(n)) return 'معالجات';
+return name.trim();
+}
+
+async function submitFreeformVote(){
+var raw = (document.getElementById('newMarketName').value || '').trim();
+if (!raw) { toast('اكتب اسم السوق أولاً','err'); return; }
+if (noDb()) { toast('⚠️ لا يوجد اتصال بقاعدة البيانات','err'); return; }
+var name = normalizeMarket(raw);
+try {
+var f = await db.from('categories').select('id,name').ilike('name', name).limit(1);
+var found = (f.data && f.data.length) ? f.data[0] : null;
+if (!found) {
+var f2 = await db.from('categories').select('id,name').ilike('name', '%'+name+'%').limit(1);
+found = (f2.data && f2.data.length) ? f2.data[0] : null;
+}
+if (!found) {
+var ins = await db.from('categories').insert({ name: name, slug: name.replace(/\s+/g,'-'), is_active: false, sort_order: 999 }).select().single();
+if (ins.error) { toast('⚠️ ' + ins.error.message, 'err'); return; }
+found = ins.data;
+}
+document.getElementById('newMarketName').value = '';
+await voteForCategory(found.id);
+toast('✅ اقتراحك وصل! إذا وصل '+THRESHOLD+' صوت، بنجهّز السوق وبنفتحه.');
+} catch(e) { toast('⚠️ في مشكلة بالاقتراح','err'); }
+}
+
+async function loadModelsForCategory(catId){
+window.models = [];
+if (!noDb()) {
+try {
+var r = await db.from('models').select('id,brand,model,variant').eq('category_id', catId).order('brand').order('model');
+if (!r.error && r.data && r.data.length) window.models = r.data;
+} catch(e){}
+}
+if (!window.models.length) window.models = FALLBACK_MODELS;
 for (var i=0;i<2;i++){
 var id = i===0 ? 'huntModel' : 'priceModel';
 document.getElementById(id).innerHTML = window.models.map(function(m){
 return '<option value="'+m.id+'">'+m.brand+' '+m.model+' '+(m.variant||'')+'</option>';
 }).join('');
 }
+loadFeeds();
 }
 
 function modelName(id){
 var m = (window.models||[]).find(function(x){return x.id==id;});
-return m ? (m.brand+' '+m.model+' '+(m.variant||'')) : 'كرت';
-}
-
-async function loadModels(){
-window.models = getFallbackModels();
-if (db) {
-try {
-var r = await db.from('gpu_models').select('*').order('brand').order('model');
-if (!r.error && r.data && r.data.length) window.models = r.data;
-} catch(e) { console.error('loadModels:', e); }
-}
-fillDropdowns();
-loadFeeds();
+return m ? (m.brand+' '+m.model+' '+(m.variant||'')) : 'عنصر';
 }
 
 async function loadFeeds(){
 var pRows = [], hRows = [];
-if (db) {
-try { var p = await db.from('prices').select('').eq('status','ACTIVE').order('created_at',{ascending:false}).limit(10); pRows = p.data||[]; } catch(e){}
-try { var h = await db.from('hunts').select('').eq('status','OPEN').order('created_at',{ascending:false}).limit(10); hRows = h.data||[]; } catch(e){}
+if (!noDb()) {
+try {
+var p = await db.from('prices')
+.select('id, model_id, category_id, condition, cash_price, trade_price, status, created_at')
+.eq('status','ACTIVE').eq('category_id', currentCategoryId)
+.order('created_at',{ascending:false}).limit(10);
+pRows = p.data||[];
+} catch(e){}
+try {
+var h = await db.from('hunts')
+.select('id, model_id, category_id, condition, target_price, boost_count, status, created_at')
+.eq('status','OPEN').eq('category_id', currentCategoryId)
+.order('boost_count',{ascending:false}).order('created_at',{ascending:false}).limit(10);
+hRows = h.data||[];
+} catch(e){}
 }
 document.getElementById('priceFeed').innerHTML = pRows.map(function(r){
-return '<div class="row"><span>'+modelName(r.gpu_model_id)+' <span class="tag">'+(condLabel[r.condition]||r.condition)+'</span></span><b>'+r.cash_price+' دينار</b></div>';
-}).join('') || '<div class="row">لسا في أسعار. كن أول واحد.</div>';
+var extra = r.trade_price ? '<span class="tag">بدل '+r.trade_price+'</span>' : '';
+return '<div class="row"><span>'+modelName(r.model_id)+' <span class="tag">'+(condLabel[r.condition]||r.condition)+'</span>'+extra+'</span>' +
+'<div style="display:flex;gap:6px;align-items:center;"><b>'+r.cash_price+' دينار</b>' +
+'<button class="dead-btn" onclick="reportDead('+r.id+')">⚰️</button></div></div>';
+}).join('') || '<div class="row">لسا في أسعار بهالسوق. كن أول واحد.</div>';
+
 document.getElementById('huntFeed').innerHTML = hRows.map(function(r){
-return '<div class="row"><span>'+modelName(r.gpu_model_id)+' <span class="tag">'+(condLabel[r.condition]||r.condition)+'</span></span><b>لحد '+r.target_price+' دينار</b></div>';
-}).join('') || '<div class="row">لسا في طلبات. انشر أول طلب.</div>';
+return '<div class="row"><span>'+modelName(r.model_id)+' <span class="tag">'+(condLabel[r.condition]||r.condition)+'</span></span>' +
+'<div style="display:flex;gap:8px;align-items:center;"><b>لحد '+r.target_price+' دينار</b>' +
+'<button class="boost-btn" onclick="boostHunt('+r.id+')">🔥 '+(r.boost_count||0)+'</button></div></div>';
+}).join('') || '<div class="row">لسا في طلبات بهالسوق. انشر أول طلب.</div>';
+}
+
+async function reportDead(id){
+if (noDb()) return;
+if (!confirm('متأكد إنو هاد العرض ميت/مباع؟')) return;
+try {
+var r = await db.from('prices').update({status:'DEAD'}).eq('id', id);
+if (!r.error) { toast('✅ شكراً! هيك بيضل السوق نظيف وما ننسى السعر.'); loadFeeds(); }
+} catch(e){}
+}
+
+async function boostHunt(id){
+if (noDb()) { toast('⚠️ لا يوجد اتصال','err'); return; }
+var token = myToken();
+try {
+var ex = await db.from('boosts').select('id').eq('hunt_id', id).eq('user_token', token).limit(1);
+if (ex.data && ex.data.length) { toast('⚡ أنت معزّز هلأ هالطلب!'); return; }
+var b = await db.from('boosts').insert({ hunt_id: id, user_token: token });
+if (b.error) { toast('⚠️ ' + b.error.message, 'err'); return; }
+var h = await db.from('hunts').select('boost_count').eq('id', id).single();
+await db.from('hunts').update({ boost_count: ((h.data && h.data.boost_count) || 0) + 1 }).eq('id', id);
+loadFeeds();
+} catch(e) { toast('⚠️ في مشكلة بالتعزيز','err'); }
 }
 
 function waLink(num, text){
 var d = (num||'').replace(/\D/g,'');
-if (d.startsWith('0')) d = '962'+d.slice(1);
-return 'https://wa.me/'+d+'?text='+encodeURIComponent(text);
+if (d.startsWith('0')) d = '962' + d.slice(1);
+return 'https://wa.me/' + d + '?text=' + encodeURIComponent(text);
 }
 function shareLink(){
-var t = 'عم بنأرشف أسعار الكروت ومطلوبات الشباب بالأردن قبل ما فيسبوك يحذف المنشورات القديمة 🔥 شوف السعر الحي واطلب كرتك: '+location.href;
-return 'https://wa.me/?text='+encodeURIComponent(t);
+return 'https://wa.me/?text=' + encodeURIComponent('ذاكرة أسعار. طلبات حية. لأي شي. شوف السوق الحي: ' + location.href);
 }
 
 async function savePrice(){
-if (!db) { alert('الاتصال بقاعدة البيانات فشل'); return; }
-var gpu = +document.getElementById('priceModel').value;
+if (noDb()) { toast('⚠️ لا يوجد اتصال بقاعدة البيانات','err'); return; }
+var modelId = +document.getElementById('priceModel').value;
 var cash = +document.getElementById('cashPrice').value;
-if (!cash) { alert('ضيف سعر الكاش'); return; }
+if (!cash) { toast('ضيف سعر الكاش','err'); return; }
+try {
 var r = await db.from('prices').insert({
-gpu_model_id: gpu, condition: document.getElementById('priceCond').value,
+model_id: modelId, category_id: currentCategoryId,
+condition: document.getElementById('priceCond').value,
 cash_price: cash, trade_price: +document.getElementById('tradePrice').value || null,
-whatsapp: document.getElementById('priceWa').value || null
+whatsapp: document.getElementById('priceWa').value || null, status: 'ACTIVE'
 });
-if (r.error) { alert(r.error.message); return; }
-var h = await db.from('hunts').select('*').eq('status','OPEN').eq('gpu_model_id',gpu).gte('target_price',cash);
+if (r.error) { toast('⚠️ ' + r.error.message, 'err'); return; }
+var h = await db.from('hunts').select('id,target_price,whatsapp')
+.eq('status','OPEN').eq('model_id', modelId).gte('target_price', cash);
 var hunts = h.data||[];
 var first = hunts.find(function(x){return x.whatsapp;});
-var msg = '✅ نزل بالأرشيف.';
-if (hunts.length) msg += ' <b>'+hunts.length+'</b> شباب عم يدوّروا عليه بهالسعر أو أعلى — رح يشوفوا عرضك هلأ.';
-if (first) msg += ' <a class="btn green" href="'+waLink(first.whatsapp,'مرحبا! شفت طلبك على CastingMe: '+modelName(gpu)+' لحد '+first.target_price+' دينار. عندي واحد بـ '+cash+' دينار. متى بتقدر تمر؟')+'">💬 احكي الطالب</a>';
-msg += ' <a class="btn share" href="'+shareLink()+'">📤 شارك الجروب</a>';
+var msg = '✅ نزل بذاكرة الأسعار.';
+if (hunts.length) msg += ' <b>'+hunts.length+'</b> طلب حي بهالسعر أو أعلى.';
+if (first) msg += ' <a class="btn green" href="'+waLink(first.whatsapp,'مرحبا! شفت طلبك على CastingMe: '+modelName(modelId)+' لحد '+first.target_price+' دينار. عندي واحد بـ '+cash+' دينار.')+'">💬 احكي الطالب</a>';
+msg += ' <a class="btn share" href="'+shareLink()+'">📤 شارك</a>';
 document.getElementById('priceMsg').innerHTML = msg;
 loadFeeds();
+} catch(e) { toast('⚠️ في مشكلة بالحفظ','err'); }
 }
 
 async function castHunt(){
-if (!db) { alert('الاتصال بقاعدة البيانات فشل'); return; }
-var gpu = +document.getElementById('huntModel').value;
+if (noDb()) { toast('⚠️ لا يوجد اتصال بقاعدة البيانات','err'); return; }
+var modelId = +document.getElementById('huntModel').value;
 var budget = +document.getElementById('huntPrice').value;
-if (!budget) { alert('ضيف أقصى ميزانية'); return; }
+if (!budget) { toast('ضيف أقصى ميزانية','err'); return; }
+try {
 var r = await db.from('hunts').insert({
-gpu_model_id: gpu, target_price: budget,
-condition: document.getElementById('huntCond').value,
-whatsapp: document.getElementById('huntWa').value || null
+model_id: modelId, category_id: currentCategoryId,
+target_price: budget, condition: document.getElementById('huntCond').value,
+whatsapp: document.getElementById('huntWa').value || null,
+status: 'OPEN', boost_count: 1
 });
-if (r.error) { alert(r.error.message); return; }
-var o = await db.from('prices').select('*').eq('status','ACTIVE').eq('gpu_model_id',gpu).lte('cash_price',budget).order('cash_price').limit(1);
+if (r.error) { toast('⚠️ ' + r.error.message, 'err'); return; }
+var o = await db.from('prices').select('id,cash_price,whatsapp')
+.eq('status','ACTIVE').eq('model_id', modelId).lte('cash_price', budget)
+.order('cash_price').limit(1);
 var offers = o.data||[];
-var code = 'CM-'+Math.floor(1000+Math.random()*9000);
+var code = 'CM-' + Math.floor(1000 + Math.random()*9000);
 var msg = '✅ طلبك منتشر.';
 if (offers[0]) {
-msg += ' <b>لقينا مطابق:</b> '+modelName(gpu)+' بـ '+offers[0].cash_price+' دينار.';
+msg += ' <b>لقينا مطابق:</b> '+modelName(modelId)+' بـ '+offers[0].cash_price+' دينار.';
 if (offers[0].whatsapp) {
-msg += ' <a class="btn green" href="'+waLink(offers[0].whatsapp,'مرحبا! شفت '+modelName(gpu)+' بسعر '+offers[0].cash_price+' دينار على CastingMe ('+code+'). لسا موجود؟')+'">💬 احكي البائع ('+code+')</a>';
-} else { msg += ' (البائع ما ترك واتساب — تابع الأسعار من هون.)'; }
+msg += ' <a class="btn green" href="'+waLink(offers[0].whatsapp,'مرحبا! شفت '+modelName(modelId)+' بسعر '+offers[0].cash_price+' دينار على CastingMe ('+code+'). لسا موجود؟')+'">💬 احكي البائع ('+code+')</a>';
 }
-msg += ' <a class="btn share" href="'+shareLink()+'">📤 شارك الجروب</a>';
+}
+msg += ' <a class="btn share" href="'+shareLink()+'">📤 شارك</a>';
 document.getElementById('huntMsg').innerHTML = msg;
 loadFeeds();
+} catch(e) { toast('⚠️ في مشكلة بالنشر','err'); }
 }
 
-loadModels();
+myToken();
+loadCategories();
 </script>
 </body>
 </html>
