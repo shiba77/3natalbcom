@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>عنّا طلبكم — السوق اللي بيلبّي الطلب</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#111;color:#eee;font-family:system-ui,sans-serif;padding:20px;max-width:640px;margin:0 auto}
+.brand{text-align:center;margin:16px 0}
+.brand img{max-width:120px;margin:0 auto 10px;display:block}
+.brand h1{font-size:34px;color:#ffc94d;letter-spacing:-0.5px}
+.tagline{font-size:15px;color:#ddd;margin-top:6px;font-weight:700}
+.tagline .live-red{color:#ff4444}
+.hero-sub{font-size:13px;color:#888;margin-top:10px;line-height:1.9}
+#statusLine{display:none;margin:10px 0;padding:10px;border-radius:8px;font-size:13px;text-align:center}
+#statusLine.err{display:block;background:#4d1d1d;color:#ffa8a8}
+#statusLine.ok{display:block;background:#1d4d2b;color:#7dffa8}
+.market-strip{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+.market-pill{padding:9px 14px;border-radius:25px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid #444;background:#1b1b1b;color:#ccc}
+.market-pill.active{background:#ffc94d;color:#111}
+.market-pill.vote{border-color:#2a6a3a;color:#7dffa8}
+.market-pill.new-market{background:#1d4d2b;color:#7dffa8}
+.freeform{display:flex;gap:8px;width:100%}
+.freeform input{flex:1;padding:10px;border-radius:8px;border:1px solid #444;background:#222;color:#eee;font-size:14px}
+.card{background:#1b1b1b;border:1px solid #333;border-radius:10px;padding:14px;margin-bottom:10px}
+.card h2{font-size:16px;margin-bottom:10px;color:#ffc94d}
+label{display:block;font-size:13px;color:#aaa;margin:8px 0 4px}
+select,input{width:100%;padding:10px;border-radius:8px;border:1px solid #444;background:#222;color:#eee;font-size:15px}
+.search-wrapper{position:relative;transition:opacity 0.2s}
+.search-wrapper.dimmed{opacity:0.4}
+.search-wrapper.dimmed:hover{opacity:0.7}
+.suggestions{position:absolute;top:100%;right:0;left:0;background:#222;border:1px solid #444;border-radius:8px;max-height:200px;overflow-y:auto;z-index:10;display:none}
+.suggestion{padding:10px;cursor:pointer;font-size:14px;border-bottom:1px solid #333}
+.suggestion:hover{background:#333}
+.suggestion:last-child{border-bottom:none}
+.or-divider{text-align:center;margin:12px 0;position:relative}
+.or-divider::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:#333}
+.or-divider span{position:relative;background:#1b1b1b;padding:0 12px;color:#888;font-size:12px}
+.facet-row{display:flex;gap:8px;transition:opacity 0.2s}
+.facet-row.dimmed{opacity:0.4}
+.facet-row.dimmed:hover{opacity:0.7}
+.facet-row > div{flex:1}
+.facet-label{font-size:11px;color:#888;margin-bottom:4px}
+.btn{display:block;width:100%;padding:14px;border:none;border-radius:10px;font-size:16px;font-weight:700;margin-top:12px;cursor:pointer;text-decoration:none;text-align:center}
+.primary{background:#ffc94d;color:#111}
+.green{background:#1d4d2b;color:#7dffa8}
+.share{background:#222;color:#eee;border:1px solid #444}
+.msg{margin-top:10px;font-size:14px;color:#7dffa8;line-height:1.9}
+.msg a{display:inline-block;width:auto;padding:8px 12px;margin-top:6px}
+.feed-section{margin-top:22px}
+.feed-section h2{font-size:17px;color:#ffc94d;margin-bottom:10px}
+.row{display:flex;justify-content:space-between;align-items:center;font-size:14px;padding:8px 0;border-bottom:1px solid #2a2a2a;flex-wrap:wrap;gap:8px}
+.row-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.tag{font-size:11px;padding:2px 8px;border-radius:20px;background:#2a2000;color:#ffc94d;margin-inline-start:6px}
+.boost-btn{background:#2a2000;color:#ffc94d;border:1px solid #ffc94d;border-radius:20px;padding:4px 12px;font-size:12px;cursor:pointer}
+.dead-btn{background:#2a0000;color:#ff6b6b;border:1px solid #6b2a2a;border-radius:20px;padding:4px 8px;font-size:11px;cursor:pointer}
+.reply-btn{background:#1d4d2b;color:#7dffa8;border:1px solid #2a6a3a;border-radius:20px;padding:4px 12px;font-size:12px;cursor:pointer}
+.share-btn{background:#1a2a4a;color:#8ab4ff;border:1px solid #2a3a6a;border-radius:20px;padding:4px 10px;font-size:11px;cursor:pointer}
+.number-btn{background:#4a1a6a;color:#d4a8ff;border:1px solid #6a2a8a;border-radius:20px;padding:4px 10px;font-size:11px;cursor:pointer}
+.dashboard{background:#0d1d0d;border:1px solid #2a6a3a;border-radius:10px;padding:14px;margin-bottom:10px}
+.dashboard h2{color:#7dffa8;font-size:16px;margin-bottom:10px}
+.lead-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #1a3a1a;font-size:13px}
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:100;display:none;align-items:center;justify-content:center}
+.modal-box{background:#1b1b1b;border:1px solid #444;border-radius:12px;padding:20px;width:90%;max-width:350px}
+.modal-box h3{color:#ffc94d;margin-bottom:12px;font-size:18px}
+.modal-box p{font-size:13px;color:#aaa;margin-bottom:12px;line-height:1.7}
+footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-height:1.9}
+</style>
+</head>
+<body>
+
+<div class="brand">
+<img src="logo.webp" alt="عنّا طلبكم" style="max-width:120px;margin:0 auto 10px;display:block;" onerror="this.style.display='none'">
+<h1>عنّا طلبكم</h1>
+<div class="tagline">اطلبوا. وردّوا ع الطلب.</div>
+<div class="hero-sub">بلشنا بكروت الشاشة — وبتشتغل لأي سوق.</div>
+</div>
+
+<div id="statusLine"></div>
+
+<div id="sellerDashboard" class="dashboard" style="display:none;">
+<h2>📋 لوحة إدارة عروضكم</h2>
+<div id="dashboardContent"></div>
+</div>
+
+<div class="market-strip" id="marketStrip"></div>
+
+<div class="feed-section"><h2>🟢 العروض</h2><div id="priceFeed"></div></div>
+<div class="feed-section"><h2>🔥 الطلبات</h2><div id="huntFeed"></div></div>
+
+<div class="card">
+<h2>📢 طلباتكم؟</h2>
+<div class="search-wrapper" id="huntSearchWrapper">
+<input id="huntSearch" type="text" placeholder="ابحثوا عن موديل محدد…" autocomplete="off">
+<div class="suggestions" id="huntSuggestions"></div>
+</div>
+<div class="or-divider"><span>أو</span></div>
+<div class="facet-row" id="huntFacets">
+<div>
+<div class="facet-label">المصنّع</div>
+<select id="huntMfr"><option value="">غير محدد</option></select>
+</div>
+<div>
+<div class="facet-label">الذاكرة</div>
+<select id="huntVram"><option value="">غير محدد</option></select>
+</div>
+</div>
+<label>أقصى ميزانية (دينار)</label><input id="huntPrice" type="number" placeholder="210">
+<label>الحالة</label>
+<select id="huntCond"><option value="any">غير محدد</option><option value="used">مستعمل</option><option value="new">جديد</option></select>
+<label>واتساب (اختياري)</label><input id="huntWa" type="tel" placeholder="079xxxxxxx">
+<button class="btn primary" onclick="castHunt()">📢 أرسلوا الطلب</button>
+<div class="msg" id="huntMsg"></div>
+</div>
+
+<div class="card">
+<h2>🚚 عندي</h2>
+<div class="search-wrapper" id="priceSearchWrapper">
+<input id="priceSearch" type="text" placeholder="ابحثوا عن موديل محدد…" autocomplete="off">
+<div class="suggestions" id="priceSuggestions"></div>
+</div>
+<div class="or-divider"><span>أو</span></div>
+<div class="facet-row" id="priceFacets">
+<div>
+<div class="facet-label">المصنّع</div>
+<select id="priceMfr"><option value="">غير محدد</option></select>
+</div>
+<div>
+<div class="facet-label">الذاكرة</div>
+<select id="priceVram"><option value="">غير محدد</option></select>
+</div>
+</div>
+<label>الحالة</label>
+<select id="priceCond"><option value="used">مستعمل</option><option value="new">جديد</option></select>
+<label>سعر الكاش (دينار)</label><input id="cashPrice" type="number" placeholder="210">
+<label>سعر البدل (اختياري)</label><input id="tradePrice" type="number" placeholder="220">
+<label>واتساب (اختياري)</label><input id="priceWa" type="tel" placeholder="079xxxxxxx">
+<button class="btn primary" onclick="savePrice()">📸 اعرضوا</button>
+<div class="msg" id="priceMsg"></div>
+</div>
+
+<div class="modal-overlay" id="phoneModal">
+<div class="modal-box">
+<h3>📞 اكتبوا رقمكم</h3>
+<p>البائع رح يشوفه ويتواصل معكم مباشرة.</p>
+<input id="phoneInput" type="tel" placeholder="079xxxxxxx">
+<button class="btn primary" onclick="submitPhoneNumber()">✅ أرسلوا</button>
+<button class="btn share" onclick="closePhoneModal()">❌ إلغاء</button>
+</div>
+</div>
+
+<footer>عنّا طلبكم — السوق اللي بيلبّي الطلب.<br>أول سوق: كروت الشاشة · الأردن.</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+window.addEventListener('error', function(e) {
+var el = document.getElementById('statusLine');
+el.className = 'err';
+el.textContent = '⚠️ خطأ: ' + (e.message || 'غير معروف');
+el.style.display = 'block';
+});
+
+var db = null;
+try {
+db = window.supabase.createClient(
+'https://ktngduotvfaxnohvcasf.supabase.co',
+'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt0bmdkdW90dmZheG5vaHZjYXNmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc0NzY5MTgsImV4cCI6MjEwMzA1MjkxOH0.w1f88i4Cux1FqReObhaZaEYwvLbLh6dPUQY0lrKrLRA'
+);
+} catch(e) { db = null; }
+
+var THRESHOLD = 25;
+var condLabel = {new:'جديد', used:'مستعمل', any:'غير محدد'};
+var allCategories = [];
+var currentCategoryId = null;
+var lastCounts = {};
+var huntSelectedModelId = null;
+var priceSelectedModelId = null;
+var currentPriceId = null;
+var loadCounter = 0;
+var FALLBACK_CATS = [
+{id:1, name:'كروت الشاشة', is_active:true},
+{id:2, name:'رامات', is_active:false},
+{id:3, name:'SSD', is_active:false}
+];
+
+function myToken() {
+  try {
+    var t = localStorage.getItem('cm_token');
+    if(!t) {
+      t = 'u_' + Date.now() + '_' + Math.random().toString(36).slice(2,10);
+      localStorage.setItem('cm_token', t);
+    }
+    return t;
+  } catch(e) {
+    return 'u_' + Date.now() + '_' + Math.random().toString(36).slice(2,10);
+  }
+}
+
+function toast(m, k) {
+var el = document.getElementById('statusLine');
+el.className = k || 'ok';
+el.textContent = m;
+el.style.display = 'block';
+setTimeout(function() { el.style.display = 'none'; }, 4000);
+}
+
+function noDb() { return !db; }
+function val(id) { return document.getElementById(id).value; }
+function isAny(v) { return !v || v === 'غير محدد'; }
+
+function esc(s) {
+return String(s == null ? '' : s).replace(/[&<>"']/g, function(c) {
+return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+});
+}
+
+function normalizeCustomInput(s) {
+var cleaned = String(s).trim().replace(/\s+/g, ' ').toUpperCase();
+cleaned = cleaned.replace(/([A-Z]+)(\d+)/g, '$1 $2');
+return cleaned;
+}
+
+function normalizeCustomName(s) {
+return String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+function uniq(l) {
+var o = [];
+(l||[]).forEach(function(v) { if(v && o.indexOf(v) < 0) o.push(v); });
+return o;
+}
+
+function getModelById(id) {
+return (window.models || []).find(function(m) { return m.id == id; }) || null;
+}
+
+function labelOf(m) {
+return m ? esc((m.manufacturer ? m.manufacturer+' ' : '') + m.model + (m.vram_gb ? ' '+m.vram_gb+'GB' : '') + (m.vram_type ? ' '+m.vram_type : '')) : 'عنصر';
+}
+
+function modelName(id) {
+return labelOf(getModelById(id));
+}
+
+function priceLabel(r) {
+if(r.models) return labelOf(r.models);
+return esc(r.custom_model_name || 'عنصر');
+}
+
+function huntLabel(h) {
+if(h.model_id) return modelName(h.model_id);
+if(h.custom_model_name) return 'كرت '+esc(h.custom_model_name);
+var parts = [h.manufacturer, h.family, (h.min_vram_gb != null ? h.min_vram_gb+'GB+' : null), h.vram_type].filter(function(v){return v;});
+return parts.length ? ('كرت '+esc(parts.join(' '))) : 'كرت';
+}
+
+function hasFacetSelected(facetsId) {
+  var facetsContainer = document.getElementById(facetsId);
+  if(!facetsContainer) return false;
+  return Array.from(facetsContainer.querySelectorAll('select'))
+    .some(function(s) { return s.value !== ''; });
+}
+
+function clearFacets(facetsId) {
+  var facetsContainer = document.getElementById(facetsId);
+  if(!facetsContainer) return;
+  facetsContainer.querySelectorAll('select').forEach(function(s) { s.value = ''; });
+}
+
+function dimSearch(prefix) {
+  document.getElementById(prefix + 'SearchWrapper').classList.add('dimmed');
+  document.getElementById(prefix + 'Facets').classList.remove('dimmed');
+}
+
+function dimFacets(prefix) {
+  document.getElementById(prefix + 'SearchWrapper').classList.remove('dimmed');
+  document.getElementById(prefix + 'Facets').classList.add('dimmed');
+}
+
+function undimAll(prefix) {
+  document.getElementById(prefix + 'SearchWrapper').classList.remove('dimmed');
+  document.getElementById(prefix + 'Facets').classList.remove('dimmed');
+}
+
+function setupSearch(inputId, suggestionsId, setModelId, prefix) {
+var input = document.getElementById(inputId);
+var suggestions = document.getElementById(suggestionsId);
+
+input.addEventListener('input', function() {
+clearFacets(prefix + 'Facets');
+undimAll(prefix);
+
+var query = normalizeCustomInput(input.value);
+if(!query || query.length < 2) {
+suggestions.style.display = 'none';
+return;
+}
+var matches = (window.models || []).filter(function(m) {
+var label = normalizeCustomName((m.manufacturer || '') + ' ' + m.model + ' ' + (m.vram_gb || '') + 'GB');
+return label.indexOf(normalizeCustomName(query)) >= 0;
+}).slice(0, 8);
+
+if(matches.length) {
+suggestions.innerHTML = matches.map(function(m) {
+return '<div class="suggestion" data-id="' + m.id + '">' + labelOf(m) + '</div>';
+}).join('');
+suggestions.style.display = 'block';
+suggestions.querySelectorAll('.suggestion').forEach(function(el) {
+el.onclick = function() {
+input.value = labelOf(matches.find(function(x) { return x.id == el.dataset.id; }));
+suggestions.style.display = 'none';
+setModelId(el.dataset.id);
+clearFacets(prefix + 'Facets');
+dimFacets(prefix);
+};
+});
+} else {
+suggestions.innerHTML = '<div class="suggestion" style="color:#aaa;">مش موجود؟ استخدموا المواصفات العامة تحت</div>';
+suggestions.style.display = 'block';
+}
+});
+
+input.addEventListener('focus', function() {
+  if(document.getElementById(prefix + 'SearchWrapper').classList.contains('dimmed')) {
+    clearFacets(prefix + 'Facets');
+    undimAll(prefix);
+    setModelId(null);
+  }
+});
+
+document.addEventListener('click', function(e) {
+if(!suggestions.contains(e.target) && e.target !== input) {
+suggestions.style.display = 'none';
+}
+});
+}
+
+function bindFacetsChange(prefix, clearModelId) {
+  var facetsContainer = document.getElementById(prefix + 'Facets');
+  if(!facetsContainer) return;
+
+  facetsContainer.querySelectorAll('select').forEach(function(sel) {
+    sel.addEventListener('change', function() {
+      if(hasFacetSelected(prefix + 'Facets')) {
+        document.getElementById(prefix + 'Search').value = '';
+        clearModelId(null);
+        dimSearch(prefix);
+      } else {
+        undimAll(prefix);
+      }
+    });
+  });
+
+  facetsContainer.addEventListener('focusin', function() {
+    if(facetsContainer.classList.contains('dimmed')) {
+      document.getElementById(prefix + 'Search').value = '';
+      clearModelId(null);
+      undimAll(prefix);
+    }
+  });
+}
+
+setupSearch('huntSearch', 'huntSuggestions', function(id) { huntSelectedModelId = id; }, 'hunt');
+setupSearch('priceSearch', 'priceSuggestions', function(id) { priceSelectedModelId = id; }, 'price');
+
+bindFacetsChange('hunt', function(id) { huntSelectedModelId = id; });
+bindFacetsChange('price', function(id) { priceSelectedModelId = id; });
+
+function populateFacets(prefix) {
+  var mfrEl = document.getElementById(prefix + 'Mfr');
+  var vramEl = document.getElementById(prefix + 'Vram');
+  if(!mfrEl || !vramEl) return;
+
+  var mfrs = uniq((window.models || []).map(function(m) { return m.manufacturer; }));
+  var vrams = uniq((window.models || []).map(function(m) { return m.vram_gb; }))
+    .filter(function(v) { return v != null; })
+    .sort(function(a,b) { return a - b; });
+
+  mfrEl.innerHTML = '<option value="">غير محدد</option>' + 
+    mfrs.map(function(v) { return '<option value="' + esc(v) + '">' + esc(v) + '</option>'; }).join('');
+  
+  vramEl.innerHTML = '<option value="">غير محدد</option>' + 
+    vrams.map(function(v) { return '<option value="' + v + '">' + v + 'GB+</option>'; }).join('');
+}
+
+function replyToHunt(modelId, modelLabel, targetPrice) {
+  var priceSearchEl = document.getElementById('priceSearch');
+  priceSearchEl.value = modelLabel;
+  priceSearchEl.scrollIntoView({behavior: 'smooth', block: 'center'});
+  priceSearchEl.focus();
+  
+  if(targetPrice && targetPrice > 0) {
+    document.getElementById('cashPrice').value = targetPrice;
+  }
+  
+  if(modelId) {
+    priceSelectedModelId = modelId;
+    dimFacets('price');
+    clearFacets('priceFacets');
+  } else {
+    priceSelectedModelId = null;
+    undimAll('price');
+  }
+  
+  toast('📢 رد ع الطلب — سعّروا عرضكم', 'ok');
+}
+
+function shareHunt(modelLabel, targetPrice) {
+var t = 'اللي عندهم ' + modelLabel + ' — مطلوب بحد أقصى ' + targetPrice + ' دينار. شوفوا السوق: ' + location.href;
+return 'https://wa.me/?text=' + encodeURIComponent(t);
+}
+
+function askForNumber(priceId) {
+currentPriceId = priceId;
+document.getElementById('phoneModal').style.display = 'flex';
+document.getElementById('phoneInput').value = '';
+document.getElementById('phoneInput').focus();
+}
+
+function closePhoneModal() {
+document.getElementById('phoneModal').style.display = 'none';
+currentPriceId = null;
+}
+
+function submitPhoneNumber() {
+var phone = document.getElementById('phoneInput').value.trim();
+if(!phone) { toast('اكتبوا رقمكم', 'err'); return; }
+
+var token = myToken();
+
+db.from('offer_leads').insert({
+price_id: currentPriceId,
+buyer_phone: phone,
+user_token: token
+}).then(function(res) {
+if(res.error) {
+if(res.error.code === '23505') {
+toast('⚡ رقمكم موجود مسبقاً', 'ok');
+} else {
+console.error('Lead error:', res.error);
+toast('⚠️ في مشكلة: ' + res.error.message, 'err');
+}
+} else {
+toast('✅ رقمكم وصل للبائع', 'ok');
+}
+closePhoneModal();
+});
+}
+
+function checkSellerDashboard() {
+var params = new URLSearchParams(window.location.search);
+var token = params.get('seller');
+if(token) {
+document.getElementById('sellerDashboard').style.display = 'block';
+loadSellerDashboard(token);
+}
+}
+
+async function loadSellerDashboard(token) {
+try {
+var {data: offers, error} = await db.rpc('get_seller_offers', {p_seller_token: token});
+if(error) {
+document.getElementById('dashboardContent').innerHTML = '<div class="lead-row">خطأ: ' + esc(error.message) + '</div>';
+return;
+}
+if(!offers || !offers.length) {
+document.getElementById('dashboardContent').innerHTML = '<div class="lead-row">لا عروض لهذا الرابط.</div>';
+return;
+}
+
+var html = '';
+for(var i = 0; i < offers.length; i++) {
+var o = offers[i];
+var label = o.model_name || o.custom_model_name || 'عنصر';
+html += '<div class="lead-row"><b>' + esc(label) + ' — ' + esc(o.cash_price) + ' دينار</b></div>';
+
+var {data: leads} = await db.rpc('get_offer_leads', {
+p_price_id: o.price_id,
+p_seller_token: token
+});
+
+if(leads && leads.length) {
+html += '<div style="padding-right:12px;">';
+leads.forEach(function(l) {
+html += '<div class="lead-row">📞 <b>' + esc(l.buyer_phone) + '</b> <span style="color:#888;font-size:11px;">' + new Date(l.created_at).toLocaleString('ar') + '</span></div>';
+});
+html += '</div>';
+} else {
+html += '<div class="lead-row" style="color:#666;">لا طلبات تواصل بعد.</div>';
+}
+html += '<br>';
+}
+document.getElementById('dashboardContent').innerHTML = html;
+} catch(e) {
+document.getElementById('dashboardContent').innerHTML = '<div class="lead-row">خطأ في تحميل اللوحة.</div>';
+}
+}
+
+async function getVoteCounts() {
+var c = {};
+if(noDb()) return c;
+try {
+var r = await db.from('category_votes').select('category_id');
+(r.data || []).forEach(function(v) { c[v.category_id] = (c[v.category_id]||0) + 1; });
+} catch(e) {}
+return c;
+}
+
+async function loadCategories() {
+if(noDb()) {
+allCategories = FALLBACK_CATS;
+currentCategoryId = 1;
+renderMarketStrip();
+toast('⚠️ لا يوجد اتصال بقاعدة البيانات', 'err');
+return;
+}
+try {
+var r = await db.from('categories').select('id,name,slug,is_active,sort_order').order('sort_order');
+if(r.error || !r.data || !r.data.length) {
+allCategories = FALLBACK_CATS;
+currentCategoryId = 1;
+renderMarketStrip();
+toast('⚠️ ما قدرنا نحمل الأسواق', 'err');
+return;
+}
+allCategories = r.data;
+var first = allCategories.find(function(c){return c.is_active;}) || allCategories[0];
+currentCategoryId = first.id;
+lastCounts = await getVoteCounts();
+renderMarketStrip();
+loadModelsForCategory(currentCategoryId);
+} catch(e) {
+allCategories = FALLBACK_CATS;
+currentCategoryId = 1;
+renderMarketStrip();
+toast('⚠️ خطأ في تحميل الأسواق', 'err');
+}
+}
+
+function renderMarketStrip() {
+var html = '';
+allCategories.filter(function(c){return c.is_active;}).forEach(function(c) {
+html += '<button class="market-pill'+(c.id===currentCategoryId?' active':'')+'" onclick="switchCategory('+c.id+')">'+esc(c.name)+' · مفتوح</button>';
+});
+allCategories.filter(function(c){return !c.is_active;}).sort(function(a,b){return (lastCounts[b.id]||0)-(lastCounts[a.id]||0);}).slice(0,4).forEach(function(c) {
+html += '<button class="market-pill vote" onclick="voteForCategory('+c.id+')">'+esc(c.name)+' · '+(lastCounts[c.id]||0)+'/'+THRESHOLD+' تصويت</button>';
+});
+html += '<div class="freeform"><input id="newMarketName" placeholder="سوق جديد؟ كتابة اسم السوق…"><button class="market-pill new-market" onclick="submitFreeformVote()">+ تصويت</button></div>';
+document.getElementById('marketStrip').innerHTML = html;
+}
+
+function switchCategory(id) {
+currentCategoryId = id;
+renderMarketStrip();
+loadModelsForCategory(id);
+}
+
+async function voteForCategory(id) {
+if(noDb()) { toast('⚠️ لا يوجد اتصال', 'err'); return; }
+var token = myToken();
+try {
+var {data: existing} = await db.from('category_votes')
+.select('id')
+.eq('category_id', id)
+.eq('user_token', token)
+.limit(1);
+
+if(existing && existing.length) {
+toast('⚡ تم التصويت مسبقاً', 'ok');
+return;
+}
+
+var {error} = await db.from('category_votes').insert({category_id: id, user_token: token});
+if(error) {
+if(error.code === '23505') { toast('⚡ تم التصويت مسبقاً', 'ok'); } else { toast('⚠️ في مشكلة بالتصويت', 'err'); }
+return;
+}
+lastCounts = await getVoteCounts();
+renderMarketStrip();
+toast('✅ تم التصويت بنجاح', 'ok');
+} catch(e) { toast('⚠️ في مشكلة', 'err'); }
+}
+
+async function submitFreeformVote() {
+var name = document.getElementById('newMarketName').value.trim();
+if(!name) { toast('كتابة اسم السوق', 'err'); return; }
+if(noDb()) { toast('⚠️ لا يوجد اتصال', 'err'); return; }
+var token = myToken();
+try {
+var {error} = await db.rpc('suggest_market', {p_name: name, p_token: token});
+if(error) {
+toast('⚠️ في مشكلة: ' + error.message, 'err');
+return;
+}
+document.getElementById('newMarketName').value = '';
+lastCounts = await getVoteCounts();
+renderMarketStrip();
+toast('✅ سوق جديد مقترح', 'ok');
+} catch(e) { toast('⚠️ في مشكلة', 'err'); }
+}
+
+async function loadModelsForCategory(catId) {
+var myLoad = ++loadCounter;
+if(noDb()) { window.models = []; toast('⚠️ لا يوجد اتصال', 'err'); return; }
+try {
+var {data, error} = await db.from('models').select('*').eq('category_id', catId).order('manufacturer').order('family').order('vram_gb');
+if(myLoad !== loadCounter) return;
+if(error) { window.models = []; toast('⚠️ ما قدرنا نحمل موديلات السوق', 'err'); return; }
+window.models = data || [];
+} catch(e) { window.models = []; toast('⚠️ خطأ في تحميل الموديلات', 'err'); return; }
+if(myLoad !== loadCounter) return;
+populateFacets('hunt');
+populateFacets('price');
+loadFeeds();
+}
+
+async function loadFeeds() {
+try {
+var p = await db.from('public_prices')
+.select('*, models(*)')
+.eq('status', 'ACTIVE')
+.eq('category_id', currentCategoryId)
+.order('created_at', {ascending: false})
+.limit(10);
+document.getElementById('priceFeed').innerHTML = (p.data || []).map(function(r) {
+var label = priceLabel(r);
+return '<div class="row"><span>' + label + ' <span class="tag">' + (condLabel[r.condition] || esc(r.condition)) + '</span></span>' +
+'<div class="row-actions">' +
+'<b>' + esc(r.cash_price) + ' دينار</b>' +
+'<button class="boost-btn" onclick="boostPrice(' + r.id + ')">🔥 ' + (r.boost_count || 0) + '</button>' +
+'<button class="number-btn" onclick="askForNumber(' + r.id + ')">📞 رقمي</button>' +
+'<button class="dead-btn" onclick="reportDead(' + r.id + ')">⚰️</button>' +
+'</div></div>';
+}).join('') || '<div class="row">لا عروض بعد. اعرضوا أول واحد.</div>';
+} catch(e) {
+document.getElementById('priceFeed').innerHTML = '<div class="row">لا عروض بعد. اعرضوا أول واحد.</div>';
+}
+
+try {
+var h = await db.from('public_hunts')
+.select('*')
+.eq('status', 'OPEN')
+.eq('category_id', currentCategoryId)
+.order('boost_count', {ascending: false})
+.limit(10);
+document.getElementById('huntFeed').innerHTML = (h.data || []).map(function(r) {
+var label = huntLabel(r);
+var modelId = r.model_id || 0;
+return '<div class="row"><span>' + label + ' <span class="tag">' + (condLabel[r.condition] || esc(r.condition)) + '</span></span>' +
+'<div class="row-actions">' +
+'<b>الحد الأعلى ' + esc(r.target_price) + '</b>' +
+'<button class="boost-btn" onclick="boostHunt(' + r.id + ')">🔥 ' + (r.boost_count || 0) + '</button>' +
+'<button class="reply-btn" onclick="replyToHunt(' + modelId + ', \'' + esc(label) + '\', ' + (r.target_price || 0) + ')">📢 رد</button>' +
+'<button class="share-btn" onclick="window.open(shareHunt(\'' + esc(label) + '\', ' + (r.target_price || 0) + '))">📤 شاركوا</button>' +
+'</div></div>';
+}).join('') || '<div class="row">لا طلبات بعد. اطلبوا أول واحد.</div>';
+} catch(e) {
+document.getElementById('huntFeed').innerHTML = '<div class="row">لا طلبات بعد. اطلبوا أول واحد.</div>';
+}
+}
+
+async function boostHunt(huntId) {
+  if(noDb()) { toast('⚠️ لا يوجد اتصال', 'err'); return; }
+  
+  var boostedKey = 'boosted_hunt_' + huntId;
+  try {
+    if(localStorage.getItem(boostedKey)) {
+      toast('⚡ معزز مسبقاً', 'ok');
+      return;
+    }
+  } catch(e) {}
+  
+  try {
+    var {error} = await db.rpc('boost_hunt', {p_hunt_id: huntId, p_token: myToken()});
+    if(error) { toast('⚠️ في مشكلة بالتعزيز', 'err'); return; }
+    
+    try { localStorage.setItem(boostedKey, '1'); } catch(e) {}
+    
+    loadFeeds();
+  } catch(e) { toast('⚠️ في مشكلة', 'err'); }
+}
+
+async function boostPrice(priceId) {
+  if(noDb()) { toast('⚠️ لا يوجد اتصال', 'err'); return; }
+  
+  var boostedKey = 'boosted_price_' + priceId;
+  try {
+    if(localStorage.getItem(boostedKey)) {
+      toast('⚡ معزز مسبقاً', 'ok');
+      return;
+    }
+  } catch(e) {}
+  
+  try {
+    var {error} = await db.rpc('boost_price', {p_price_id: priceId, p_token: myToken()});
+    if(error) { toast('⚠️ في مشكلة بالتعزيز', 'err'); return; }
+    
+    try { localStorage.setItem(boostedKey, '1'); } catch(e) {}
+    
+    loadFeeds();
+  } catch(e) { toast('⚠️ في مشكلة', 'err'); }
+}
+
+async function reportDead(priceId) {
+if(!confirm('تأكيد أن هذا العرض منتهي الصلاحية/مباع؟')) return;
+if(noDb()) { toast('⚠️ لا يوجد اتصال', 'err'); return; }
+try {
+var {error} = await db.rpc('report_dead', {p_price_id: priceId, p_token: myToken()});
+if(error) { toast('⚠️ في مشكلة بالتبليغ', 'err'); return; }
+loadFeeds();
+toast('✅ شكراً. هذا يخلي السوق أنظف.', 'ok');
+} catch(e) { toast('⚠️ في مشكلة', 'err'); }
+}
+
+function waLink(num, text) {
+var d = (num || '').replace(/\D/g, '');
+if(d.startsWith('0')) d = '962' + d.slice(1);
+return 'https://wa.me/' + d + '?text=' + encodeURIComponent(text);
+}
+
+function shareLink() {
+var t = 'طلبوا على عنّا طلبكم — شوفوا السوق: ' + location.href;
+return 'https://wa.me/?text=' + encodeURIComponent(t);
+}
+
+async function savePrice() {
+if(noDb()) { toast('⚠️ لا يوجد اتصال', 'err'); return; }
+var searchVal = val('priceSearch').trim();
+var mfrFacet = val('priceMfr');
+var vramFacet = val('priceVram');
+
+if(!searchVal && !mfrFacet && !vramFacet) {
+toast('ابحثوا عن موديل أو حددوا مواصفات', 'err');
+return;
+}
+
+var cash = +val('cashPrice');
+if(!cash) { toast('إضافة سعر الكاش', 'err'); return; }
+
+var sellerTok = 'S_' + Math.random().toString(36).slice(2,10) + Date.now().toString(36);
+
+try {
+var {data: priceId, error: insertErr} = await db.rpc('create_price', {
+p_category_id: currentCategoryId,
+p_model_id: priceSelectedModelId || null,
+p_custom_model_name: (priceSelectedModelId || !searchVal) ? null : normalizeCustomInput(searchVal),
+p_manufacturer: mfrFacet || null,
+p_vram_gb: vramFacet ? parseInt(vramFacet, 10) : null,
+p_condition: val('priceCond'),
+p_cash_price: cash,
+p_trade_price: +val('tradePrice') || null,
+p_whatsapp: val('priceWa') || null,
+p_seller_token: sellerTok
+});
+if(insertErr) { toast('⚠️ ' + insertErr.message, 'err'); return; }
+
+// REVERSE MATCHING with authorized contact reveal
+var msg = '✅ عرضكم نزل.';
+var {data: rpcMatch} = await db.rpc('match_price_to_hunts', {p_price_id: priceId});
+if(rpcMatch && rpcMatch.length) {
+  msg += ' <b>في ' + rpcMatch.length + ' طلب مطابق!</b>';
+  
+  // Fetch contact with both IDs (authorized)
+  var {data: contactData} = await db.rpc('reveal_hunt_contact', {
+    p_hunt_id: rpcMatch[0].hunt_id,
+    p_price_id: priceId
+  });
+  
+  if(contactData && contactData.length && contactData[0].whatsapp) {
+    var label = priceSelectedModelId ? modelName(priceSelectedModelId) : normalizeCustomInput(searchVal);
+    msg += ' <a class="btn green" href="' + waLink(contactData[0].whatsapp, 'مرحبا! عندي ' + label + ' بـ ' + cash + ' دينار. شفت طلبكم على عنّا طلبكم.') + '">💬 أبلغوا الطالب</a>';
+  }
+}
+
+var dashboardUrl = 'https://3natalb.com?seller=' + sellerTok;
+var waMsg = 'رابط إدارة عرضكم على عنّا طلبكم:%0A' + dashboardUrl;
+msg += ' <a class="btn green" href="https://wa.me/?text=' + encodeURIComponent(waMsg) + '">📩 احفظوا رابط إدارة العرض</a>';
+msg += ' <a class="btn share" href="' + shareLink() + '">📤 شاركوا</a>';
+document.getElementById('priceMsg').innerHTML = msg;
+loadFeeds();
+} catch(e) { toast('⚠️ في مشكلة تقنية', 'err'); }
+}
+
+async function castHunt() {
+if(noDb()) { toast('⚠️ لا يوجد اتصال', 'err'); return; }
+var searchVal = val('huntSearch').trim();
+var mfrFacet = val('huntMfr');
+var vramFacet = val('huntVram');
+
+if(!searchVal && !mfrFacet && !vramFacet) {
+toast('ابحثوا عن موديل أو حددوا مواصفات', 'err');
+return;
+}
+
+var budget = +val('huntPrice');
+if(!budget) { toast('إضافة أقصى ميزانية', 'err'); return; }
+
+try {
+var {data: huntId, error: insertErr} = await db.rpc('create_hunt', {
+p_category_id: currentCategoryId,
+p_model_id: huntSelectedModelId || null,
+p_custom_model_name: (huntSelectedModelId || !searchVal) ? null : normalizeCustomInput(searchVal),
+p_manufacturer: mfrFacet || null,
+p_min_vram_gb: vramFacet ? parseInt(vramFacet, 10) : null,
+p_target_price: budget,
+p_condition: val('huntCond'),
+p_whatsapp: val('huntWa') || null
+});
+if(insertErr) { toast('⚠️ ' + insertErr.message, 'err'); return; }
+
+var code = 'CM-' + Math.floor(1000 + Math.random() * 9000);
+var msg = '✅ طلبكم انعرض.';
+
+var {data: rpcMatch} = await db.rpc('match_hunt_to_prices', {p_hunt_id: huntId});
+if(rpcMatch && rpcMatch.length) {
+var best = rpcMatch[0];
+msg += ' <b>لقينا رد على طلبكم</b> ' + esc(best.model_name || best.custom_model_name) + ' بـ ' + esc(best.cash_price) + ' دينار.';
+
+// Fetch contact with both IDs (authorized)
+var {data: contactData} = await db.rpc('reveal_price_contact', {
+  p_price_id: best.price_id,
+  p_hunt_id: huntId
+});
+
+if(contactData && contactData.length && contactData[0].whatsapp) {
+msg += ' <a class="btn green" href="' + waLink(contactData[0].whatsapp, 'مرحبا! شفت طلبكم على عنّا طلبكم (' + code + '). لسا موجود؟') + '">💬 تواصلوا مع البائع (' + code + ')</a>';
+} else {
+msg += ' لايوجد رقم للتواصل، تابعوا العروض من هنا.';
+}
+}
+msg += ' <a class="btn share" href="' + shareLink() + '">📤 شاركوا</a>';
+document.getElementById('huntMsg').innerHTML = msg;
+loadFeeds();
+} catch(e) { toast('⚠️ في مشكلة تقنية', 'err'); }
+}
+
+loadCategories();
+checkSellerDashboard();
+</script>
+
+</body>
+</html>
