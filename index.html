@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8">    
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>عنّا طلبكم — السوق اللي بيلبّي الطلب</title>
 <style>
@@ -110,7 +110,7 @@ footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-heigh
 <label>الحالة</label>
 <select id="huntCond"><option value="any">غير محدد</option><option value="used">مستعمل</option><option value="new">جديد</option></select>
 <label>واتساب (اختياري)</label><input id="huntWa" type="tel" placeholder="079xxxxxxx">
-<button class="btn primary" onclick="castHunt()">📢 أرسلوا الطلب</button>
+<button class="btn primary" onclick="castHunt()">📢 أرسلوا الطلب</button> <div style="text-align:center;font-size:11px;color:#666;margin-top:8px;">ينتهي الطلب تلقائياً بعد 7 أيام</div>
 <div class="msg" id="huntMsg"></div>
 </div>
 
@@ -136,7 +136,7 @@ footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-heigh
 <label>سعر الكاش (دينار)</label><input id="cashPrice" type="number" placeholder="210">
 <label>سعر البدل (اختياري)</label><input id="tradePrice" type="number" placeholder="220">
 <label>واتساب (اختياري)</label><input id="priceWa" type="tel" placeholder="079xxxxxxx">
-<button class="btn primary" onclick="savePrice()">📸 اعرضوا</button>
+<button class="btn primary" onclick="savePrice()">📸 اعرضوا</button> <div style="text-align:center;font-size:11px;color:#666;margin-top:8px;">ينتهي العرض تلقائياً بعد 30 يوم</div>
 <div class="msg" id="priceMsg"></div>
 </div>
 
