@@ -92,7 +92,7 @@ footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-heigh
 <div class="card">
 <h2>📢 طلباتكم؟</h2>
 <div class="search-wrapper" id="huntSearchWrapper">
-<input id="huntSearch" type="text" placeholder="ابحثوا عن موديل محدد…" autocomplete="off">
+<input id="huntSearch" type="text" placeholder="ابحث عن موديل محدد…" autocomplete="off">
 <div class="suggestions" id="huntSuggestions"></div>
 </div>
 <div class="or-divider"><span>أو</span></div>
@@ -110,14 +110,14 @@ footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-heigh
 <label>الحالة</label>
 <select id="huntCond"><option value="any">غير محدد</option><option value="used">مستعمل</option><option value="new">جديد</option></select>
 <label>واتساب (اختياري)</label><input id="huntWa" type="tel" placeholder="079xxxxxxx">
-<button class="btn primary" onclick="castHunt()">📢 أرسلوا الطلب</button> <div style="text-align:center;font-size:11px;color:#666;margin-top:8px;">ينتهي الطلب تلقائياً بعد 7 أيام</div>
+<button class="btn primary" onclick="castHunt()">📢 اتمام الطلب</button> <div style="text-align:center;font-size:11px;color:#666;margin-top:8px;">ينتهي الطلب تلقائياً بعد 7 أيام</div>
 <div class="msg" id="huntMsg"></div>
 </div>
 
 <div class="card">
 <h2>🚚 عندي</h2>
 <div class="search-wrapper" id="priceSearchWrapper">
-<input id="priceSearch" type="text" placeholder="ابحثوا عن موديل محدد…" autocomplete="off">
+<input id="priceSearch" type="text" placeholder="ابحث عن موديل محدد…" autocomplete="off">
 <div class="suggestions" id="priceSuggestions"></div>
 </div>
 <div class="or-divider"><span>أو</span></div>
@@ -136,7 +136,7 @@ footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-heigh
 <label>سعر الكاش (دينار)</label><input id="cashPrice" type="number" placeholder="210">
 <label>سعر البدل (اختياري)</label><input id="tradePrice" type="number" placeholder="220">
 <label>واتساب (اختياري)</label><input id="priceWa" type="tel" placeholder="079xxxxxxx">
-<button class="btn primary" onclick="savePrice()">📸 اعرضوا</button> <div style="text-align:center;font-size:11px;color:#666;margin-top:8px;">ينتهي العرض تلقائياً بعد 30 يوم</div>
+<button class="btn primary" onclick="savePrice()">📸 اتمام العرض</button> <div style="text-align:center;font-size:11px;color:#666;margin-top:8px;">ينتهي العرض تلقائياً بعد 30 يوم</div>
 <div class="msg" id="priceMsg"></div>
 </div>
 
@@ -632,9 +632,9 @@ return '<div class="row"><span>' + label + ' <span class="tag">' + (condLabel[r.
 '<button class="number-btn" onclick="askForNumber(' + r.id + ')">📞 رقمي</button>' +
 '<button class="dead-btn" onclick="reportDead(' + r.id + ')">⚰️</button>' +
 '</div></div>';
-}).join('') || '<div class="row">لا عروض بعد. اعرضوا أول واحد.</div>';
+}).join('') || '<div class="row">لا يوجد عروض، كن الأول</div>';
 } catch(e) {
-document.getElementById('priceFeed').innerHTML = '<div class="row">لا عروض بعد. اعرضوا أول واحد.</div>';
+document.getElementById('priceFeed').innerHTML = '<div class="row">لا يوجد عروض، كن الأول</div>';
 }
 
 try {
@@ -654,9 +654,9 @@ return '<div class="row"><span>' + label + ' <span class="tag">' + (condLabel[r.
 '<button class="reply-btn" onclick="replyToHunt(' + modelId + ', \'' + esc(label) + '\', ' + (r.target_price || 0) + ')">📢 رد</button>' +
 '<button class="share-btn" onclick="window.open(shareHunt(\'' + esc(label) + '\', ' + (r.target_price || 0) + '))">📤 شاركوا</button>' +
 '</div></div>';
-}).join('') || '<div class="row">لا طلبات بعد. اطلبوا أول واحد.</div>';
+}).join('') || '<div class="row">لا يوجد طلبات، كن الأول</div>';
 } catch(e) {
-document.getElementById('huntFeed').innerHTML = '<div class="row">لا طلبات بعد. اطلبوا أول واحد.</div>';
+document.getElementById('huntFeed').innerHTML = '<div class="row">لا يوجد طلبات، كن الأول</div>';
 }
 }
 
