@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">    
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>عنّا طلبكم — السوق اللي بيلبّي الطلب</title>
 <style>
@@ -17,9 +17,8 @@ body{background:#111;color:#eee;font-family:system-ui,sans-serif;padding:20px;ma
 #statusLine.err{display:block;background:#4d1d1d;color:#ffa8a8}
 #statusLine.ok{display:block;background:#1d4d2b;color:#7dffa8}
 .market-strip{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
-.market-pill{position:relative;padding:9px 14px;border-radius:25px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid #444;background:#1b1b1b;color:#ccc}
+.market-pill{padding:9px 14px;border-radius:25px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid #444;background:#1b1b1b;color:#ccc}
 .market-pill.active{background:#ffc94d;color:#111}
-.market-pill.active::after{content:'';position:absolute;bottom:-5px;left:25%;right:25%;height:2px;background:#ffc94d;border-radius:2px}
 .market-pill.vote{border-color:#2a6a3a;color:#7dffa8}
 .market-pill.new-market{background:#1d4d2b;color:#7dffa8}
 .freeform{display:flex;gap:8px;width:100%}
@@ -49,22 +48,12 @@ select,input{width:100%;padding:10px;border-radius:8px;border:1px solid #444;bac
 .share{background:#222;color:#eee;border:1px solid #444}
 .msg{margin-top:10px;font-size:14px;color:#7dffa8;line-height:1.9}
 .msg a{display:inline-block;width:auto;padding:8px 12px;margin-top:6px}
-.match-found{animation:matchIn 0.4s ease-out;border-inline-start:3px solid #7dffa8;padding-inline-start:10px}
-@keyframes matchIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
 .feed-section{margin-top:22px}
 .feed-section h2{font-size:17px;color:#ffc94d;margin-bottom:10px}
-.feed-count{color:#888;font-size:13px;font-weight:400;margin-inline-start:4px}
 .row{display:flex;justify-content:space-between;align-items:center;font-size:14px;padding:8px 0;border-bottom:1px solid #2a2a2a;flex-wrap:wrap;gap:8px}
 .row-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .tag{font-size:11px;padding:2px 8px;border-radius:20px;background:#2a2000;color:#ffc94d;margin-inline-start:6px}
-.tag-time{background:#1a1a1a;color:#888}
-.tag-urgent{background:#3a1a00;color:#ff9944}
-.tag-crown{background:#4a1a6a;color:#d4a8ff}
-.live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#7dffa8;margin-inline-end:5px;animation:ping 2s infinite}
-@keyframes ping{0%{box-shadow:0 0 0 0 rgba(125,255,168,0.5)}100%{box-shadow:0 0 0 8px rgba(125,255,168,0)}}
 .boost-btn{background:#2a2000;color:#ffc94d;border:1px solid #ffc94d;border-radius:20px;padding:4px 12px;font-size:12px;cursor:pointer}
-@keyframes pulseGlow{0%,100%{box-shadow:0 0 0 rgba(255,201,77,0)}50%{box-shadow:0 0 10px rgba(255,201,77,0.5)}}
-.boost-btn.hot{animation:pulseGlow 1.8s ease-in-out infinite}
 .dead-btn{background:#2a0000;color:#ff6b6b;border:1px solid #6b2a2a;border-radius:20px;padding:4px 8px;font-size:11px;cursor:pointer}
 .reply-btn{background:#1d4d2b;color:#7dffa8;border:1px solid #2a6a3a;border-radius:20px;padding:4px 12px;font-size:12px;cursor:pointer}
 .share-btn{background:#1a2a4a;color:#8ab4ff;border:1px solid #2a3a6a;border-radius:20px;padding:4px 10px;font-size:11px;cursor:pointer}
@@ -76,9 +65,6 @@ select,input{width:100%;padding:10px;border-radius:8px;border:1px solid #444;bac
 .modal-box{background:#1b1b1b;border:1px solid #444;border-radius:12px;padding:20px;width:90%;max-width:350px}
 .modal-box h3{color:#ffc94d;margin-bottom:12px;font-size:18px}
 .modal-box p{font-size:13px;color:#aaa;margin-bottom:12px;line-height:1.7}
-.empty-state{text-align:center;padding:26px 10px;color:#666;font-size:14px}
-.skeleton-row{height:44px;border-radius:8px;margin-bottom:10px;background:linear-gradient(90deg,#1b1b1b 25%,#242424 37%,#1b1b1b 63%);background-size:400px 100%;animation:shimmer 1.4s infinite}
-@keyframes shimmer{0%{background-position:-200px 0}100%{background-position:200px 0}}
 footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-height:1.9}
 </style>
 </head>
@@ -100,13 +86,13 @@ footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-heigh
 
 <div class="market-strip" id="marketStrip"></div>
 
-<div class="feed-section"><h2>🟢 العروض <span class="feed-count" id="priceCount"></span></h2><div id="priceFeed"></div></div>
-<div class="feed-section"><h2>🔥 الطلبات <span class="feed-count" id="huntCount"></span></h2><div id="huntFeed"></div></div>
+<div class="feed-section"><h2>🟢 العروض</h2><div id="priceFeed"></div></div>
+<div class="feed-section"><h2>🔥 الطلبات</h2><div id="huntFeed"></div></div>
 
 <div class="card">
 <h2>📢 طلباتكم؟</h2>
 <div class="search-wrapper" id="huntSearchWrapper">
-<input id="huntSearch" type="text" placeholder="ابحث عن موديل محدد…" autocomplete="off">
+<input id="huntSearch" type="text" placeholder="ابحثوا عن موديل محدد…" autocomplete="off">
 <div class="suggestions" id="huntSuggestions"></div>
 </div>
 <div class="or-divider"><span>أو</span></div>
@@ -124,14 +110,15 @@ footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-heigh
 <label>الحالة</label>
 <select id="huntCond"><option value="any">غير محدد</option><option value="used">مستعمل</option><option value="new">جديد</option></select>
 <label>واتساب (اختياري)</label><input id="huntWa" type="tel" placeholder="079xxxxxxx">
-<button class="btn primary" onclick="castHunt()">📢 اتمام الطلب</button> <div style="text-align:center;font-size:11px;color:#666;margin-top:8px;">ينتهي الطلب تلقائياً بعد 7 أيام</div>
+<button class="btn primary" onclick="castHunt()">📢 أرسلوا الطلب</button>
+<div style="text-align:center;font-size:11px;color:#666;margin-top:8px;">ينتهي الطلب تلقائياً بعد 7 أيام</div>
 <div class="msg" id="huntMsg"></div>
 </div>
 
 <div class="card">
 <h2>🚚 عندي</h2>
 <div class="search-wrapper" id="priceSearchWrapper">
-<input id="priceSearch" type="text" placeholder="ابحث عن موديل محدد…" autocomplete="off">
+<input id="priceSearch" type="text" placeholder="ابحثوا عن موديل محدد…" autocomplete="off">
 <div class="suggestions" id="priceSuggestions"></div>
 </div>
 <div class="or-divider"><span>أو</span></div>
@@ -150,7 +137,8 @@ footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-heigh
 <label>سعر الكاش (دينار)</label><input id="cashPrice" type="number" placeholder="210">
 <label>سعر البدل (اختياري)</label><input id="tradePrice" type="number" placeholder="220">
 <label>واتساب (اختياري)</label><input id="priceWa" type="tel" placeholder="079xxxxxxx">
-<button class="btn primary" onclick="savePrice()">📸 اتمام العرض</button> <div style="text-align:center;font-size:11px;color:#666;margin-top:8px;">ينتهي العرض تلقائياً بعد 30 يوم</div>
+<button class="btn primary" onclick="savePrice()">📸 اعرضوا</button>
+<div style="text-align:center;font-size:11px;color:#666;margin-top:8px;">ينتهي العرض تلقائياً بعد 30 يوم</div>
 <div class="msg" id="priceMsg"></div>
 </div>
 
@@ -192,55 +180,30 @@ var huntSelectedModelId = null;
 var priceSelectedModelId = null;
 var currentPriceId = null;
 var loadCounter = 0;
+var commentCounts = {};
 var FALLBACK_CATS = [
 {id:1, name:'كروت الشاشة', is_active:true},
 {id:2, name:'رامات', is_active:false},
 {id:3, name:'SSD', is_active:false}
 ];
 
-function toArabicNum(n) {
-  return String(n).replace(/[0-9]/g, function(d) { return '٠١٢٣٤٥٦٧٨٩'[d]; });
+// ============ OWNERSHIP HELPERS ============
+function myPosts() {
+  try {
+    return JSON.parse(localStorage.getItem('my_posts') || '[]');
+  } catch(e) { return []; }
 }
 
-function pluralize(n, unit) {
-  if (n === 1) return unit.one;
-  if (n === 2) return unit.two;
-  if (n >= 3 && n <= 10) return toArabicNum(n) + ' ' + unit.few;
-  return toArabicNum(n) + ' ' + unit.many;
+function saveMyPost(type, id) {
+  try {
+    var posts = myPosts();
+    posts.push({type: type, id: id});
+    localStorage.setItem('my_posts', JSON.stringify(posts));
+  } catch(e) {}
 }
 
-var UNITS = {
-  minute: { one: 'دقيقة', two: 'دقيقتين', few: 'دقائق', many: 'دقيقة' },
-  hour:   { one: 'ساعة',  two: 'ساعتين',  few: 'ساعات', many: 'ساعة' },
-  day:    { one: 'يوم',   two: 'يومين',   few: 'أيام',  many: 'يوم' }
-};
-
-function timeAgo(dateStr) {
-  var mins = Math.floor((Date.now() - new Date(dateStr).getTime()) / 60000);
-  if (mins < 1) return 'الآن';
-  if (mins < 60) return 'منذ ' + pluralize(mins, UNITS.minute);
-  var hrs = Math.floor(mins / 60);
-  if (hrs < 24) return 'منذ ' + pluralize(hrs, UNITS.hour);
-  var days = Math.floor(hrs / 24);
-  return 'منذ ' + pluralize(days, UNITS.day);
-}
-
-function expiresIn(expiresAtStr) {
-  var remainMs = new Date(expiresAtStr).getTime() - Date.now();
-  var days = Math.ceil(remainMs / 86400000);
-  if (days <= 0) return 'ينتهي اليوم';
-  if (days === 1) return 'باقي يوم';
-  if (days === 2) return 'باقي يومين';
-  return 'باقي ' + pluralize(days, UNITS.day);
-}
-
-function isFresh(dateStr) {
-  return (Date.now() - new Date(dateStr).getTime()) < 3600000;
-}
-
-function isUrgent(expiresAtStr) {
-  var remainMs = new Date(expiresAtStr).getTime() - Date.now();
-  return Math.ceil(remainMs / 86400000) <= 3;
+function isMyPost(type, id) {
+  return myPosts().some(function(p) { return p.type === type && p.id === id; });
 }
 
 function myToken() {
@@ -321,6 +284,22 @@ if(h.vram_type) parts.push(h.vram_type);
 return parts.length ? ('كرت '+esc(parts.join(' '))) : 'كرت';
 }
 
+// ============ COMMENT COUNTS ============
+async function loadCommentCounts() {
+  try {
+    var {data} = await db.from('comment_counts').select('*');
+    commentCounts = {};
+    (data || []).forEach(function(c) {
+      commentCounts[c.target_type + '_' + c.target_id] = c.count;
+    });
+  } catch(e) { commentCounts = {}; }
+}
+
+function getCommentCount(type, id) {
+  return commentCounts[type + '_' + id] || 0;
+}
+
+// ============ SOFT-DIM MUTUAL EXCLUSION ============
 function hasFacetSelected(facetsId) {
   var facetsContainer = document.getElementById(facetsId);
   if(!facetsContainer) return false;
@@ -450,6 +429,105 @@ function populateFacets(prefix) {
     vrams.map(function(v) { return '<option value="' + v + '">' + v + 'GB+</option>'; }).join('');
 }
 
+// ============ CANCEL ============
+async function cancelHunt(huntId) {
+  if(!confirm('تأكيد الحذف')) return;
+  try {
+    var {error} = await db.rpc('cancel_hunt', {p_hunt_id: huntId, p_user_token: myToken()});
+    if(error) { toast('⚠️ ' + error.message, 'err'); return; }
+    toast('✅ تم حذف الطلب', 'ok');
+    document.getElementById('huntMsg').innerHTML = '';
+    loadFeeds();
+  } catch(e) { toast('⚠️ في مشكلة', 'err'); }
+}
+
+async function cancelPrice(priceId) {
+  if(!confirm('تأكيد الحذف')) return;
+  try {
+    var {error} = await db.rpc('cancel_price', {p_price_id: priceId, p_user_token: myToken()});
+    if(error) { toast('⚠️ ' + error.message, 'err'); return; }
+    toast('✅ تم حذف العرض', 'ok');
+    document.getElementById('priceMsg').innerHTML = '';
+    loadFeeds();
+  } catch(e) { toast('⚠️ في مشكلة', 'err'); }
+}
+
+// ============ COMMENTS ============
+async function toggleComments(type, id) {
+  var container = document.getElementById('comments-' + type + '-' + id);
+  if(!container) return;
+  if(container.style.display !== 'none') {
+    container.style.display = 'none';
+    return;
+  }
+  container.style.display = 'block';
+  container.innerHTML = '<div style="color:#888;font-size:12px;">جاري التحميل…</div>';
+  await loadComments(type, id);
+}
+
+async function loadComments(type, id) {
+  var container = document.getElementById('comments-' + type + '-' + id);
+  if(!container) return;
+  
+  var {data, error} = await db.from('comments')
+    .select('*')
+    .eq('target_type', type)
+    .eq('target_id', id)
+    .order('created_at', {ascending: true})
+    .limit(30);
+  
+  if(error) {
+    container.innerHTML = '<div style="color:#ff6b6b;font-size:12px;">خطأ في تحميل التعليقات</div>';
+    return;
+  }
+  
+  var html = '';
+  (data || []).forEach(function(c) {
+    html += '<div style="padding:6px 0;border-bottom:1px solid #1a1a1a;font-size:13px;">' +
+      '<b style="color:#ffc94d;">' + esc(c.nickname || 'عضو') + ':</b> ' +
+      esc(c.body) + '</div>';
+  });
+  if(!html) html = '<div style="color:#666;font-size:12px;">لا تعليقات بعد. كونوا الأول.</div>';
+  
+  html += '<div style="display:flex;gap:6px;margin-top:8px;">' +
+    '<input id="comment-input-' + type + '-' + id + '" type="text" maxlength="200" placeholder="اكتبوا تعليق…" style="flex:1;padding:8px;font-size:13px;background:#222;border:1px solid #444;border-radius:6px;color:#eee;">' +
+    '<button onclick="postComment(\'' + type + '\',' + id + ')" style="padding:8px 12px;background:#ffc94d;color:#111;border:none;border-radius:6px;font-weight:700;cursor:pointer;font-size:13px;">أرسلوا</button>' +
+    '</div>';
+  
+  container.innerHTML = html;
+}
+
+async function postComment(type, id) {
+  var input = document.getElementById('comment-input-' + type + '-' + id);
+  if(!input) return;
+  var body = input.value.trim();
+  if(!body) { toast('اكتبوا تعليق', 'err'); return; }
+  if(body.length > 200) { toast('التعليق طويل كتير', 'err'); return; }
+  
+  var nickname = null;
+  try { nickname = localStorage.getItem('3natalb_nickname') || null; } catch(e) {}
+  
+  var {error} = await db.from('comments').insert({
+    target_type: type,
+    target_id: id,
+    user_token: myToken(),
+    nickname: nickname,
+    body: body
+  });
+  
+  if(error) { toast('⚠️ ' + error.message, 'err'); return; }
+  input.value = '';
+  
+  commentCounts[type + '_' + id] = (commentCounts[type + '_' + id] || 0) + 1;
+  var counterBtn = document.getElementById('comment-btn-' + type + '-' + id);
+  if(counterBtn) {
+    counterBtn.innerHTML = '💬 ' + commentCounts[type + '_' + id];
+  }
+  
+  await loadComments(type, id);
+}
+
+// ============ REPLY / SHARE ============
 function replyToHunt(modelId, modelLabel, targetPrice) {
   var priceSearchEl = document.getElementById('priceSearch');
   priceSearchEl.value = modelLabel;
@@ -469,14 +547,15 @@ function replyToHunt(modelId, modelLabel, targetPrice) {
     undimAll('price');
   }
   
-  toast('📢 رد ع الطلب — حددوا سعركم', 'ok');
+  toast('📢 رد ع الطلب — سعّروا عرضكم', 'ok');
 }
 
 function shareHunt(modelLabel, targetPrice) {
-var t = 'مطلوب ' + modelLabel + ' — بحد أقصى ' + targetPrice + ' دينار. ساعدوني وادعموا طلبي: ' + location.href;
+var t = 'اللي عندهم ' + modelLabel + ' — مطلوب بحد أقصى ' + targetPrice + ' دينار. شوفوا السوق: ' + location.href;
 return 'https://wa.me/?text=' + encodeURIComponent(t);
 }
 
+// ============ PHONE MODAL ============
 function askForNumber(priceId) {
 currentPriceId = priceId;
 document.getElementById('phoneModal').style.display = 'flex';
@@ -492,9 +571,7 @@ currentPriceId = null;
 function submitPhoneNumber() {
 var phone = document.getElementById('phoneInput').value.trim();
 if(!phone) { toast('اكتبوا رقمكم', 'err'); return; }
-
 var token = myToken();
-
 db.from('offer_leads').insert({
 price_id: currentPriceId,
 buyer_phone: phone,
@@ -514,6 +591,7 @@ closePhoneModal();
 });
 }
 
+// ============ SELLER DASHBOARD ============
 function checkSellerDashboard() {
 var params = new URLSearchParams(window.location.search);
 var token = params.get('seller');
@@ -534,18 +612,15 @@ if(!offers || !offers.length) {
 document.getElementById('dashboardContent').innerHTML = '<div class="lead-row">لا عروض لهذا الرابط.</div>';
 return;
 }
-
 var html = '';
 for(var i = 0; i < offers.length; i++) {
 var o = offers[i];
 var label = o.model_name || o.custom_model_name || 'عنصر';
 html += '<div class="lead-row"><b>' + esc(label) + ' — ' + esc(o.cash_price) + ' دينار</b></div>';
-
 var {data: leads} = await db.rpc('get_offer_leads', {
 p_price_id: o.price_id,
 p_seller_token: token
 });
-
 if(leads && leads.length) {
 html += '<div style="padding-right:12px;">';
 leads.forEach(function(l) {
@@ -563,6 +638,7 @@ document.getElementById('dashboardContent').innerHTML = '<div class="lead-row">�
 }
 }
 
+// ============ CATEGORIES ============
 async function getVoteCounts() {
 var c = {};
 if(noDb()) return c;
@@ -631,22 +707,19 @@ var {data: existing} = await db.from('category_votes')
 .eq('category_id', id)
 .eq('user_token', token)
 .limit(1);
-
 if(existing && existing.length) {
 toast('⚡ تم التصويت مسبقاً', 'ok');
 return;
 }
-
 var {error} = await db.from('category_votes').insert({category_id: id, user_token: token});
 if(error) {
-console.error('voteForCategory insert error:', JSON.stringify(error, null, 2));
-if(error.code === '23505') { toast('⚡ تم التصويت مسبقاً', 'ok'); } else { toast('⚠️ ' + (error.message || 'في مشكلة بالتصويت') + ' (' + (error.code || '?') + ')', 'err'); }
+if(error.code === '23505') { toast('⚡ تم التصويت مسبقاً', 'ok'); } else { toast('⚠️ في مشكلة بالتصويت', 'err'); }
 return;
 }
 lastCounts = await getVoteCounts();
 renderMarketStrip();
 toast('✅ تم التصويت بنجاح', 'ok');
-} catch(e) { console.error('voteForCategory exception:', e); toast('⚠️ ' + (e.message || 'في مشكلة'), 'err'); }
+} catch(e) { toast('⚠️ في مشكلة', 'err'); }
 }
 
 async function submitFreeformVote() {
@@ -657,15 +730,14 @@ var token = myToken();
 try {
 var {error} = await db.rpc('suggest_market', {p_name: name, p_token: token});
 if(error) {
-console.error('submitFreeformVote rpc error:', JSON.stringify(error, null, 2));
-toast('⚠️ ' + (error.message || 'في مشكلة') + ' (' + (error.code || '?') + ')', 'err');
+toast('⚠️ في مشكلة: ' + error.message, 'err');
 return;
 }
 document.getElementById('newMarketName').value = '';
 lastCounts = await getVoteCounts();
 renderMarketStrip();
 toast('✅ سوق جديد مقترح', 'ok');
-} catch(e) { console.error('submitFreeformVote exception:', e); toast('⚠️ ' + (e.message || 'في مشكلة'), 'err'); }
+} catch(e) { toast('⚠️ في مشكلة', 'err'); }
 }
 
 async function loadModelsForCategory(catId) {
@@ -683,36 +755,9 @@ populateFacets('price');
 loadFeeds();
 }
 
-function skeletonRows(n) {
-  var out = '';
-  for (var i = 0; i < n; i++) out += '<div class="skeleton-row"></div>';
-  return out;
-}
-
+// ============ FEEDS ============
 async function loadFeeds() {
-document.getElementById('priceFeed').innerHTML = skeletonRows(3);
-document.getElementById('huntFeed').innerHTML = skeletonRows(3);
-
-// FIX 1: Get real counts with head:true
-try {
-  var {count: priceTotal} = await db.from('public_prices')
-    .select('id', {count: 'exact', head: true})
-    .eq('status', 'ACTIVE')
-    .eq('category_id', currentCategoryId);
-  document.getElementById('priceCount').textContent = '— ' + (priceTotal ? pluralize(priceTotal, {one:'عرض',two:'عرضين',few:'عروض',many:'عرض'}) : 'كن أول بائع 🚀');
-} catch(e) {
-  document.getElementById('priceCount').textContent = '';
-}
-
-try {
-  var {count: huntTotal} = await db.from('public_hunts')
-    .select('id', {count: 'exact', head: true})
-    .eq('status', 'OPEN')
-    .eq('category_id', currentCategoryId);
-  document.getElementById('huntCount').textContent = '— ' + (huntTotal ? pluralize(huntTotal, {one:'طلب',two:'طلبين',few:'طلبات',many:'طلب'}) : 'كن أول طالب 📢');
-} catch(e) {
-  document.getElementById('huntCount').textContent = '';
-}
+await loadCommentCounts();
 
 try {
 var p = await db.from('public_prices')
@@ -721,22 +766,26 @@ var p = await db.from('public_prices')
 .eq('category_id', currentCategoryId)
 .order('created_at', {ascending: false})
 .limit(10);
-
 document.getElementById('priceFeed').innerHTML = (p.data || []).map(function(r) {
 var label = priceLabel(r);
-var freshDot = isFresh(r.created_at) ? '<span class="live-dot"></span>' : '';
-// FIX 2: Use expires_at directly
-var expiryTag = isUrgent(r.expires_at) ? '<span class="tag tag-urgent">' + expiresIn(r.expires_at) + '</span>' : '';
-return '<div class="row"><span>' + freshDot + label + ' <span class="tag">' + (condLabel[r.condition] || esc(r.condition)) + '</span><span class="tag tag-time">' + timeAgo(r.created_at) + '</span>' + expiryTag + '</span>' +
+var mine = isMyPost('price', r.id);
+var cc = getCommentCount('price', r.id);
+var ccLabel = cc > 0 ? '💬 ' + cc : '💬';
+return '<div class="row">' +
+'<span>' + label + ' <span class="tag">' + (condLabel[r.condition] || esc(r.condition)) + '</span></span>' +
 '<div class="row-actions">' +
 '<b>' + esc(r.cash_price) + ' دينار</b>' +
-'<button class="boost-btn' + ((r.boost_count||0) >= 5 ? ' hot' : '') + '" onclick="boostPrice(' + r.id + ')">🔥 ' + (r.boost_count || 0) + '</button>' +
+'<button class="boost-btn" onclick="boostPrice(' + r.id + ')">🔥 ' + (r.boost_count || 0) + '</button>' +
 '<button class="number-btn" onclick="askForNumber(' + r.id + ')">📞 رقمي</button>' +
+'<button class="share-btn" id="comment-btn-price-' + r.id + '" onclick="toggleComments(\'price\', ' + r.id + ')">' + ccLabel + '</button>' +
+(mine ? '<button class="dead-btn" onclick="cancelPrice(' + r.id + ')">❌ احذف</button>' : '') +
 '<button class="dead-btn" onclick="reportDead(' + r.id + ')">⚰️</button>' +
-'</div></div>';
-}).join('') || '<div class="empty-state">لا يوجد عروض — كن الأول 🚀</div>';
+'</div>' +
+'<div id="comments-price-' + r.id + '" style="display:none;width:100%;margin-top:8px;padding:8px;background:#161616;border-radius:6px;"></div>' +
+'</div>';
+}).join('') || '<div class="row">لا عروض بعد. اعرضوا أول واحد.</div>';
 } catch(e) {
-document.getElementById('priceFeed').innerHTML = '<div class="empty-state">لا يوجد عروض — كن الأول 🚀</div>';
+document.getElementById('priceFeed').innerHTML = '<div class="row">لا عروض بعد. اعرضوا أول واحد.</div>';
 }
 
 try {
@@ -746,30 +795,33 @@ var h = await db.from('public_hunts')
 .eq('category_id', currentCategoryId)
 .order('boost_count', {ascending: false})
 .limit(10);
-
-document.getElementById('huntFeed').innerHTML = (h.data || []).map(function(r, i) {
+document.getElementById('huntFeed').innerHTML = (h.data || []).map(function(r) {
 var label = huntLabel(r);
 var modelId = r.model_id || 0;
-var freshDot = isFresh(r.created_at) ? '<span class="live-dot"></span>' : '';
-// FIX 2: Use expires_at directly
-var expiryTag = isUrgent(r.expires_at) ? '<span class="tag tag-urgent">' + expiresIn(r.expires_at) + '</span>' : '';
-var crown = (i === 0 && r.boost_count > 0) ? '<span class="tag tag-crown">🔥 الأعلى طلباً</span>' : '';
-return '<div class="row"><span>' + freshDot + crown + label + ' <span class="tag">' + (condLabel[r.condition] || esc(r.condition)) + '</span><span class="tag tag-time">' + timeAgo(r.created_at) + '</span>' + expiryTag + '</span>' +
+var mine = isMyPost('hunt', r.id);
+var cc = getCommentCount('hunt', r.id);
+var ccLabel = cc > 0 ? '💬 ' + cc : '💬';
+return '<div class="row">' +
+'<span>' + label + ' <span class="tag">' + (condLabel[r.condition] || esc(r.condition)) + '</span></span>' +
 '<div class="row-actions">' +
 '<b>الحد الأعلى ' + esc(r.target_price) + '</b>' +
-'<button class="boost-btn' + ((r.boost_count||0) >= 5 ? ' hot' : '') + '" onclick="boostHunt(' + r.id + ')">🔥 ' + (r.boost_count || 0) + '</button>' +
+'<button class="boost-btn" onclick="boostHunt(' + r.id + ')">🔥 ' + (r.boost_count || 0) + '</button>' +
 '<button class="reply-btn" onclick="replyToHunt(' + modelId + ', \'' + esc(label) + '\', ' + (r.target_price || 0) + ')">📢 رد</button>' +
 '<button class="share-btn" onclick="window.open(shareHunt(\'' + esc(label) + '\', ' + (r.target_price || 0) + '))">📤 شاركوا</button>' +
-'</div></div>';
-}).join('') || '<div class="empty-state">لا يوجد طلبات — كن الأول 📢</div>';
+'<button class="share-btn" id="comment-btn-hunt-' + r.id + '" onclick="toggleComments(\'hunt\', ' + r.id + ')">' + ccLabel + '</button>' +
+(mine ? '<button class="dead-btn" onclick="cancelHunt(' + r.id + ')">❌ احذف</button>' : '') +
+'</div>' +
+'<div id="comments-hunt-' + r.id + '" style="display:none;width:100%;margin-top:8px;padding:8px;background:#161616;border-radius:6px;"></div>' +
+'</div>';
+}).join('') || '<div class="row">لا طلبات بعد. اطلبوا أول واحد.</div>';
 } catch(e) {
-document.getElementById('huntFeed').innerHTML = '<div class="empty-state">لا يوجد طلبات — كن الأول 📢</div>';
+document.getElementById('huntFeed').innerHTML = '<div class="row">لا طلبات بعد. اطلبوا أول واحد.</div>';
 }
 }
 
+// ============ BOOSTS / REPORTS ============
 async function boostHunt(huntId) {
   if(noDb()) { toast('⚠️ لا يوجد اتصال', 'err'); return; }
-  
   var boostedKey = 'boosted_hunt_' + huntId;
   try {
     if(localStorage.getItem(boostedKey)) {
@@ -777,20 +829,16 @@ async function boostHunt(huntId) {
       return;
     }
   } catch(e) {}
-  
   try {
     var {error} = await db.rpc('boost_hunt', {p_hunt_id: huntId, p_token: myToken()});
     if(error) { toast('⚠️ في مشكلة بالدعم', 'err'); return; }
-    
     try { localStorage.setItem(boostedKey, '1'); } catch(e) {}
-    
     loadFeeds();
   } catch(e) { toast('⚠️ في مشكلة', 'err'); }
 }
 
 async function boostPrice(priceId) {
   if(noDb()) { toast('⚠️ لا يوجد اتصال', 'err'); return; }
-  
   var boostedKey = 'boosted_price_' + priceId;
   try {
     if(localStorage.getItem(boostedKey)) {
@@ -798,13 +846,10 @@ async function boostPrice(priceId) {
       return;
     }
   } catch(e) {}
-  
   try {
     var {error} = await db.rpc('boost_price', {p_price_id: priceId, p_token: myToken()});
     if(error) { toast('⚠️ في مشكلة بالدعم', 'err'); return; }
-    
     try { localStorage.setItem(boostedKey, '1'); } catch(e) {}
-    
     loadFeeds();
   } catch(e) { toast('⚠️ في مشكلة', 'err'); }
 }
@@ -820,6 +865,7 @@ toast('✅ شكراً. هذا يخلي السوق أنظف.', 'ok');
 } catch(e) { toast('⚠️ في مشكلة', 'err'); }
 }
 
+// ============ WHATSAPP / SHARE ============
 function waLink(num, text) {
 var d = (num || '').replace(/\D/g, '');
 if(d.startsWith('0')) d = '962' + d.slice(1);
@@ -831,6 +877,7 @@ var t = 'طلبوا على عنّا طلبكم — شوفوا السوق: ' + lo
 return 'https://wa.me/?text=' + encodeURIComponent(t);
 }
 
+// ============ CREATE PRICE ============
 async function savePrice() {
 if(noDb()) { toast('⚠️ لا يوجد اتصال', 'err'); return; }
 var searchVal = val('priceSearch').trim();
@@ -862,36 +909,33 @@ p_seller_token: sellerTok
 });
 if(insertErr) { toast('⚠️ ' + insertErr.message, 'err'); return; }
 
+saveMyPost('price', priceId);
+
 var msg = '✅ عرضكم نزل.';
-var matchWrapOpen = '';
-var matchWrapClose = '';
 var {data: rpcMatch} = await db.rpc('match_price_to_hunts', {p_price_id: priceId});
 if(rpcMatch && rpcMatch.length) {
-  matchWrapOpen = '<div class="match-found">';
-  matchWrapClose = '</div>';
   msg += ' <b>في ' + rpcMatch.length + ' طلب مطابق!</b>';
-  
   var {data: contactData} = await db.rpc('reveal_hunt_contact', {
     p_hunt_id: rpcMatch[0].hunt_id,
     p_price_id: priceId
   });
-  
   if(contactData && contactData.length && contactData[0].whatsapp) {
     var label = priceSelectedModelId ? modelName(priceSelectedModelId) : normalizeCustomInput(searchVal);
     msg += ' <a class="btn green" href="' + waLink(contactData[0].whatsapp, 'مرحبا! عندي ' + label + ' بـ ' + cash + ' دينار. شفت طلبكم على عنّا طلبكم.') + '">💬 أبلغوا الطالب</a>';
   }
-  msg = matchWrapOpen + msg + matchWrapClose;
 }
 
 var dashboardUrl = 'https://3natalb.com?seller=' + sellerTok;
 var waMsg = 'رابط إدارة عرضكم على عنّا طلبكم:%0A' + dashboardUrl;
 msg += ' <a class="btn green" href="https://wa.me/?text=' + encodeURIComponent(waMsg) + '">📩 احفظوا رابط إدارة العرض</a>';
 msg += ' <a class="btn share" href="' + shareLink() + '">📤 شاركوا</a>';
+msg += ' <button class="btn share" style="background:#4d1d1d;color:#ffa8a8;border-color:#6b2a2a;" onclick="cancelPrice(' + priceId + ')">❌ احذف العرض</button>';
 document.getElementById('priceMsg').innerHTML = msg;
 loadFeeds();
 } catch(e) { toast('⚠️ في مشكلة تقنية', 'err'); }
 }
 
+// ============ CREATE HUNT ============
 async function castHunt() {
 if(noDb()) { toast('⚠️ لا يوجد اتصال', 'err'); return; }
 var searchVal = val('huntSearch').trim();
@@ -915,40 +959,38 @@ p_manufacturer: mfrFacet || null,
 p_min_vram_gb: vramFacet ? parseInt(vramFacet, 10) : null,
 p_target_price: budget,
 p_condition: val('huntCond'),
-p_whatsapp: val('huntWa') || null
+p_whatsapp: val('huntWa') || null,
+p_user_token: myToken()
 });
 if(insertErr) { toast('⚠️ ' + insertErr.message, 'err'); return; }
 
+saveMyPost('hunt', huntId);
+
 var code = 'CM-' + Math.floor(1000 + Math.random() * 9000);
 var msg = '✅ طلبكم انعرض.';
-var matchWrapOpen = '';
-var matchWrapClose = '';
 
 var {data: rpcMatch} = await db.rpc('match_hunt_to_prices', {p_hunt_id: huntId});
 if(rpcMatch && rpcMatch.length) {
 var best = rpcMatch[0];
-matchWrapOpen = '<div class="match-found">';
-matchWrapClose = '</div>';
 msg += ' <b>لقينا رد على طلبكم</b> ' + esc(best.model_name || best.custom_model_name) + ' بـ ' + esc(best.cash_price) + ' دينار.';
-
 var {data: contactData} = await db.rpc('reveal_price_contact', {
   p_price_id: best.price_id,
   p_hunt_id: huntId
 });
-
 if(contactData && contactData.length && contactData[0].whatsapp) {
 msg += ' <a class="btn green" href="' + waLink(contactData[0].whatsapp, 'مرحبا! شفت طلبكم على عنّا طلبكم (' + code + '). لسا موجود؟') + '">💬 تواصلوا مع البائع (' + code + ')</a>';
 } else {
 msg += ' لايوجد رقم للتواصل، تابعوا العروض من هنا.';
 }
-msg = matchWrapOpen + msg + matchWrapClose;
 }
 msg += ' <a class="btn share" href="' + shareLink() + '">📤 شاركوا</a>';
+msg += ' <button class="btn share" style="background:#4d1d1d;color:#ffa8a8;border-color:#6b2a2a;" onclick="cancelHunt(' + huntId + ')">❌ احذف الطلب</button>';
 document.getElementById('huntMsg').innerHTML = msg;
 loadFeeds();
 } catch(e) { toast('⚠️ في مشكلة تقنية', 'err'); }
 }
 
+// ============ INIT ============
 loadCategories();
 checkSellerDashboard();
 </script>
