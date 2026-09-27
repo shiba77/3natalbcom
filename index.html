@@ -487,7 +487,7 @@ async function loadComments(type, id) {
       '<b style="color:#ffc94d;">' + esc(c.nickname || 'عضو') + ':</b> ' +
       esc(c.body) + '</div>';
   });
-  if(!html) html = '<div style="color:#666;font-size:12px;">لا تعليقات بعد. كونوا الأول.</div>';
+  if(!html) html = '<div style="color:#666;font-size:12px;">لا يوجد تعليقات. كن الأول.</div>';
   
   html += '<div style="display:flex;gap:6px;margin-top:8px;">' +
     '<input id="comment-input-' + type + '-' + id + '" type="text" maxlength="200" placeholder="اكتبوا تعليق…" style="flex:1;padding:8px;font-size:13px;background:#222;border:1px solid #444;border-radius:6px;color:#eee;">' +
@@ -783,9 +783,9 @@ return '<div class="row">' +
 '</div>' +
 '<div id="comments-price-' + r.id + '" style="display:none;width:100%;margin-top:8px;padding:8px;background:#161616;border-radius:6px;"></div>' +
 '</div>';
-}).join('') || '<div class="row">لا عروض بعد. اعرضوا أول واحد.</div>';
+}).join('') || '<div class="row">لا يوجد عروض, كن الأول.</div>';
 } catch(e) {
-document.getElementById('priceFeed').innerHTML = '<div class="row">لا عروض بعد. اعرضوا أول واحد.</div>';
+document.getElementById('priceFeed').innerHTML = '<div class="row">لا يوجد عروض, كن الأول.</div>';
 }
 
 try {
@@ -813,9 +813,9 @@ return '<div class="row">' +
 '</div>' +
 '<div id="comments-hunt-' + r.id + '" style="display:none;width:100%;margin-top:8px;padding:8px;background:#161616;border-radius:6px;"></div>' +
 '</div>';
-}).join('') || '<div class="row">لا طلبات بعد. اطلبوا أول واحد.</div>';
+}).join('') || '<div class="row">لا يوجد طلبات. كن الأول .</div>';
 } catch(e) {
-document.getElementById('huntFeed').innerHTML = '<div class="row">لا طلبات بعد. اطلبوا أول واحد.</div>';
+document.getElementById('huntFeed').innerHTML = '<div class="row">لا يوجد طلبات, كن الأول</div>';
 }
 }
 
@@ -885,7 +885,7 @@ var mfrFacet = val('priceMfr');
 var vramFacet = val('priceVram');
 
 if(!searchVal && !mfrFacet && !vramFacet) {
-toast('ابحثوا عن موديل أو حددوا مواصفات', 'err');
+toast('ابحث عن موديل أو حدد مواصفات', 'err');
 return;
 }
 
@@ -921,7 +921,7 @@ if(rpcMatch && rpcMatch.length) {
   });
   if(contactData && contactData.length && contactData[0].whatsapp) {
     var label = priceSelectedModelId ? modelName(priceSelectedModelId) : normalizeCustomInput(searchVal);
-    msg += ' <a class="btn green" href="' + waLink(contactData[0].whatsapp, 'مرحبا! عندي ' + label + ' بـ ' + cash + ' دينار. شفت طلبكم على عنّا طلبكم.') + '">💬 أبلغوا الطالب</a>';
+    msg += ' <a class="btn green" href="' + waLink(contactData[0].whatsapp, 'مرحبا! عندي ' + label + ' بـ ' + cash + ' دينار. شفت طلبكم على عنّا طلبكم.') + '">💬 أبلغ الطالب</a>';
   }
 }
 
@@ -943,7 +943,7 @@ var mfrFacet = val('huntMfr');
 var vramFacet = val('huntVram');
 
 if(!searchVal && !mfrFacet && !vramFacet) {
-toast('ابحثوا عن موديل أو حددوا مواصفات', 'err');
+toast('ابحث عن موديل أو حدد مواصفات', 'err');
 return;
 }
 
@@ -983,7 +983,7 @@ msg += ' <a class="btn green" href="' + waLink(contactData[0].whatsapp, 'مرح�
 msg += ' لايوجد رقم للتواصل، تابعوا العروض من هنا.';
 }
 }
-msg += ' <a class="btn share" href="' + shareLink() + '">📤 شاركوا</a>';
+msg += ' <a class="btn share" href="' + shareLink() + '">📤 شارك</a>';
 msg += ' <button class="btn share" style="background:#4d1d1d;color:#ffa8a8;border-color:#6b2a2a;" onclick="cancelHunt(' + huntId + ')">❌ احذف الطلب</button>';
 document.getElementById('huntMsg').innerHTML = msg;
 loadFeeds();
