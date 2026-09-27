@@ -304,13 +304,20 @@ return labelOf(getModelById(id));
 
 function priceLabel(r) {
 if(r.models) return labelOf(r.models);
-return esc(r.custom_model_name || 'عنصر');
+if(r.custom_model_name) return esc(r.custom_model_name);
+var parts = [];
+if(r.manufacturer) parts.push(r.manufacturer);
+if(r.vram_gb) parts.push(r.vram_gb + 'GB');
+return parts.length ? esc(parts.join(' ')) : 'عنصر';
 }
 
 function huntLabel(h) {
 if(h.model_id) return modelName(h.model_id);
 if(h.custom_model_name) return 'كرت '+esc(h.custom_model_name);
-var parts = [h.manufacturer, h.family, (h.min_vram_gb != null ? h.min_vram_gb+'GB+' : null), h.vram_type].filter(function(v){return v;});
+var parts = [];
+if(h.manufacturer) parts.push(h.manufacturer);
+if(h.min_vram_gb != null) parts.push(h.min_vram_gb + 'GB+');
+if(h.vram_type) parts.push(h.vram_type);
 return parts.length ? ('كرت '+esc(parts.join(' '))) : 'كرت';
 }
 
