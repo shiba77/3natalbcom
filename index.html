@@ -92,7 +92,7 @@ footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-heigh
 <div class="card">
 <h2>📢 طلباتكم؟</h2>
 <div class="search-wrapper" id="huntSearchWrapper">
-<input id="huntSearch" type="text" placeholder="ابحثوا عن موديل محدد…" autocomplete="off">
+<input id="huntSearch" type="text" placeholder="ابحث عن موديل محدد…" autocomplete="off">
 <div class="suggestions" id="huntSuggestions"></div>
 </div>
 <div class="or-divider"><span>أو</span></div>
@@ -110,7 +110,7 @@ footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-heigh
 <label>الحالة</label>
 <select id="huntCond"><option value="any">غير محدد</option><option value="used">مستعمل</option><option value="new">جديد</option></select>
 <label>واتساب (اختياري)</label><input id="huntWa" type="tel" placeholder="079xxxxxxx">
-<button class="btn primary" onclick="castHunt()">📢 أرسلوا الطلب</button>
+<button class="btn primary" onclick="castHunt()">📢 ارسال</button>
 <div style="text-align:center;font-size:11px;color:#666;margin-top:8px;">ينتهي الطلب تلقائياً بعد 7 أيام</div>
 <div class="msg" id="huntMsg"></div>
 </div>
@@ -118,7 +118,7 @@ footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-heigh
 <div class="card">
 <h2>🚚 عندي</h2>
 <div class="search-wrapper" id="priceSearchWrapper">
-<input id="priceSearch" type="text" placeholder="ابحثوا عن موديل محدد…" autocomplete="off">
+<input id="priceSearch" type="text" placeholder="ابحث عن موديل محدد…" autocomplete="off">
 <div class="suggestions" id="priceSuggestions"></div>
 </div>
 <div class="or-divider"><span>أو</span></div>
@@ -137,7 +137,7 @@ footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-heigh
 <label>سعر الكاش (دينار)</label><input id="cashPrice" type="number" placeholder="210">
 <label>سعر البدل (اختياري)</label><input id="tradePrice" type="number" placeholder="220">
 <label>واتساب (اختياري)</label><input id="priceWa" type="tel" placeholder="079xxxxxxx">
-<button class="btn primary" onclick="savePrice()">📸 اعرضوا</button>
+<button class="btn primary" onclick="savePrice()">📸 ارسال</button>
 <div style="text-align:center;font-size:11px;color:#666;margin-top:8px;">ينتهي العرض تلقائياً بعد 30 يوم</div>
 <div class="msg" id="priceMsg"></div>
 </div>
@@ -147,7 +147,7 @@ footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-heigh
 <h3>📞 اكتبوا رقمكم</h3>
 <p>البائع رح يشوفه ويتواصل معكم مباشرة.</p>
 <input id="phoneInput" type="tel" placeholder="079xxxxxxx">
-<button class="btn primary" onclick="submitPhoneNumber()">✅ أرسلوا</button>
+<button class="btn primary" onclick="submitPhoneNumber()">✅ ارسال</button>
 <button class="btn share" onclick="closePhoneModal()">❌ إلغاء</button>
 </div>
 </div>
@@ -490,8 +490,8 @@ async function loadComments(type, id) {
   if(!html) html = '<div style="color:#666;font-size:12px;">لا يوجد تعليقات. كن الأول.</div>';
   
   html += '<div style="display:flex;gap:6px;margin-top:8px;">' +
-    '<input id="comment-input-' + type + '-' + id + '" type="text" maxlength="200" placeholder="اكتبوا تعليق…" style="flex:1;padding:8px;font-size:13px;background:#222;border:1px solid #444;border-radius:6px;color:#eee;">' +
-    '<button onclick="postComment(\'' + type + '\',' + id + ')" style="padding:8px 12px;background:#ffc94d;color:#111;border:none;border-radius:6px;font-weight:700;cursor:pointer;font-size:13px;">أرسلوا</button>' +
+    '<input id="comment-input-' + type + '-' + id + '" type="text" maxlength="200" placeholder="اكتب تعليق…" style="flex:1;padding:8px;font-size:13px;background:#222;border:1px solid #444;border-radius:6px;color:#eee;">' +
+    '<button onclick="postComment(\'' + type + '\',' + id + ')" style="padding:8px 12px;background:#ffc94d;color:#111;border:none;border-radius:6px;font-weight:700;cursor:pointer;font-size:13px;">ارسال</button>' +
     '</div>';
   
   container.innerHTML = html;
@@ -501,7 +501,7 @@ async function postComment(type, id) {
   var input = document.getElementById('comment-input-' + type + '-' + id);
   if(!input) return;
   var body = input.value.trim();
-  if(!body) { toast('اكتبوا تعليق', 'err'); return; }
+  if(!body) { toast('اكتب تعليق', 'err'); return; }
   if(body.length > 200) { toast('التعليق طويل كتير', 'err'); return; }
   
   var nickname = null;
