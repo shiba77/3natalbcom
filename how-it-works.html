@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>كيف يشتغل عنّا طلبكم؟</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#111;color:#eee;font-family:system-ui,sans-serif;padding:20px;max-width:640px;margin:0 auto}
+
+/* ===== scoped styles: safe to paste into index.html ===== */
+.hiw{margin:24px 0}
+.hiw h2{font-size:22px;color:#ffc94d;text-align:center;margin-bottom:6px}
+.hiw .hiw-sub{font-size:13px;color:#888;text-align:center;margin-bottom:18px;line-height:1.9}
+.hiw-flow{display:flex;gap:8px;margin-bottom:22px}
+.hiw-step{flex:1;background:#1b1b1b;border:1px solid #333;border-radius:10px;padding:12px 8px;text-align:center}
+.hiw-step b{display:block;width:26px;height:26px;line-height:26px;margin:0 auto 6px;border-radius:50%;background:#ffc94d;color:#111;font-size:14px}
+.hiw-step span{font-size:12px;color:#ddd;line-height:1.7;display:block}
+.hiw-group{font-size:14px;color:#888;margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid #2a2a2a}
+.hiw-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}
+.hiw-card{background:#1b1b1b;border:1px solid #333;border-radius:10px;padding:14px;border-inline-start:3px solid #ffc94d}
+.hiw-card.green{border-inline-start-color:#7dffa8}
+.hiw-card.purple{border-inline-start-color:#d4a8ff}
+.hiw-card.blue{border-inline-start-color:#8ab4ff}
+.hiw-card.red{border-inline-start-color:#ff6b6b}
+.hiw-card h3{font-size:15px;color:#ffc94d;margin-bottom:6px}
+.hiw-card.green h3{color:#7dffa8}
+.hiw-card.purple h3{color:#d4a8ff}
+.hiw-card.blue h3{color:#8ab4ff}
+.hiw-card.red h3{color:#ff6b6b}
+.hiw-card p{font-size:13px;color:#bbb;line-height:1.9}
+.hiw-note{display:inline-block;margin-top:8px;font-size:11px;padding:2px 10px;border-radius:20px;background:#2a2000;color:#ffc94d}
+.hiw-legend{background:#1b1b1b;border:1px solid #333;border-radius:10px;padding:14px;margin-top:10px}
+.hiw-legend div{display:flex;align-items:center;gap:10px;font-size:13px;color:#bbb;padding:6px 0;border-bottom:1px solid #262626}
+.hiw-legend div:last-child{border-bottom:none}
+.hiw-legend .tag{font-size:11px;padding:2px 8px;border-radius:20px;background:#1a1a1a;color:#888;white-space:nowrap}
+.hiw-legend .tag.urgent{background:#3a1a00;color:#ff9944}
+.hiw-legend .tag.crown{background:#4a1a6a;color:#d4a8ff}
+.hiw-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#7dffa8}
+.hiw-cta{display:block;text-align:center;margin-top:20px;padding:14px;border-radius:10px;background:#ffc94d;color:#111;font-weight:700;font-size:16px;text-decoration:none}
+</style>
+</head>
+<body>
+
+<section class="hiw" id="howItWorks">
+<h2>كيف يشتغل عنّا طلبكم؟</h2>
+<div class="hiw-sub">سوق بيلبّي الطلب: إنتوا بتقولوا شو بدكم، والبائعين بيردوا عليكم.</div>
+
+<div class="hiw-flow">
+<div class="hiw-step"><b>1</b><span>انشروا طلبكم أو عرضكم</span></div>
+<div class="hiw-step"><b>2</b><span>الموقع بيطابق بينهم تلقائياً</span></div>
+<div class="hiw-step"><b>3</b><span>تواصلوا مباشرة وخلصوا الصفقة</span></div>
+</div>
+
+<div class="hiw-group">للمشترين</div>
+<div class="hiw-grid">
+<div class="hiw-card">
+<h3>📢 طلباتكم؟</h3>
+<p>دوروا على موديل محدد، أو اختاروا المصنّع والذاكرة، وحددوا أقصى ميزانية. طلبكم بيظهر للبائعين.</p>
+<span class="hiw-note">ينتهي بعد 7 أيام</span>
+</div>
+<div class="hiw-card green">
+<h3>🔔 مطابقة تلقائية</h3>
+<p>لما تنشروا طلب، الموقع بيدور فوراً على عروض مطابقة. ولما بائع بينزل عرض مطابق لطلبكم، بيطلعله زر واتساب يتواصل معكم مباشرة (إذا حطيتوا رقمكم).</p>
+</div>
+<div class="hiw-card purple">
+<h3>📞 رقمي</h3>
+<p>عجبكم عرض؟ اضغطوا «رقمي» واكتبوا رقمكم، والبائع بيشوفه وبيتواصل معكم.</p>
+</div>
+</div>
+
+<div class="hiw-group">للبائعين</div>
+<div class="hiw-grid">
+<div class="hiw-card">
+<h3>🚚 عندي</h3>
+<p>حددوا الموديل، الحالة (جديد أو مستعمل)، وسعر الكاش. وممكن تضيفوا سعر البدل كمان.</p>
+<span class="hiw-note">ينتهي بعد 30 يوم</span>
+</div>
+<div class="hiw-card green">
+<h3>📢 رد على طلب</h3>
+<p>شفتوا طلب بتقدروا تلبّوه؟ اضغطوا «رد» وبينفتح نموذج العرض معبّى بالمواصفات والسعر المطلوب.</p>
+</div>
+<div class="hiw-card blue">
+<h3>📋 لوحة إدارة العرض</h3>
+<p>بعد نشر عرضكم بتحصلوا على رابط خاص. احفظوه: منه بتشوفوا أرقام المهتمين بعرضكم.</p>
+</div>
+</div>
+
+<div class="hiw-group">تفاعل المجتمع</div>
+<div class="hiw-grid">
+<div class="hiw-card">
+<h3>🔥 دعم</h3>
+<p>الطلب أو العرض اللي بيهمكم؟ ادعموه، ومرة وحدة لكل واحد. الطلبات الأكثر دعماً بتطلع أول.</p>
+</div>
+<div class="hiw-card blue">
+<h3>💬 التعليقات</h3>
+<p>اسألوا واستفسروا تحت أي عرض أو طلب: هل السعر قابل للتفاوض؟ شو الماركة؟ كله بالعلن ليستفيد الكل.</p>
+</div>
+<div class="hiw-card blue">
+<h3>📤 شاركوا</h3>
+<p>شاركوا الطلب على واتساب. كل ما وصل لناس أكثر، زادت فرصة تلاقوا اللي بدكم.</p>
+</div>
+</div>
+
+<div class="hiw-group">حافظوا على نظافة السوق</div>
+<div class="hiw-grid">
+<div class="hiw-card red">
+<h3>❌ احذف</h3>
+<p>سواء كنتوا مشترين أو بائعين: غلطتوا بمعلومة أو خلص الموضوع؟ زر «احذف» بيظهر على طلباتكم وعروضكم إنتوا بس، من نفس الجهاز اللي نشرتوا منه، وبيطلعلكم كمان مباشرة بعد النشر.</p>
+</div>
+<div class="hiw-card red">
+<h3>⚰️ عرض منتهي</h3>
+<p>لقيتوا عرض مباع أو مش موجود؟ بلّغوا عنه، وهيك بنخلي السوق أنظف للكل.</p>
+</div>
+<div class="hiw-card green">
+<h3>🌍 أسواق جديدة</h3>
+<p>بلشنا بكروت الشاشة. بدكم سوق ثاني؟ صوتوا عليه أو اقترحوا اسم جديد، ولما يوصل للعدد المطلوب بنفتحه.</p>
+</div>
+</div>
+
+<a class="hiw-cta" href="/">ابدأوا الآن</a>
+</section>
+
+</body>
+</html>
