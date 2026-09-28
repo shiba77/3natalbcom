@@ -203,7 +203,7 @@ function saveMyPost(type, id) {
 }
 
 function isMyPost(type, id) {
-  return myPosts().some(function(p) { return p.type === type && p.id === id; });
+  return myPosts().some(function(p) { return p.type == type && p.id == id; });
 }
 
 function myToken() {
