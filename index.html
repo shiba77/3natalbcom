@@ -231,6 +231,31 @@ function noDb() { return !db; }
 function val(id) { return document.getElementById(id).value; }
 function isAny(v) { return !v || v === 'غير محدد'; }
 
+function timeAgo(dateStr) {
+  if(!dateStr) return '';
+  var now = new Date();
+  var then = new Date(dateStr);
+  var diff = Math.floor((now - then) / 1000);
+  if(diff < 60) return 'الآن';
+  var minutes = Math.floor(diff / 60);
+  if(minutes < 60) return 'منذ ' + arabicTime(minutes, 'دقيقة', 'دقيقتين', 'دقائق');
+  var hours = Math.floor(diff / 3600);
+  if(hours < 24) return 'منذ ' + arabicTime(hours, 'ساعة', 'ساعتين', 'ساعات');
+  var days = Math.floor(diff / 86400);
+  if(days < 7) return 'منذ ' + arabicTime(days, 'يوم', 'يومين', 'أيام');
+  var weeks = Math.floor(diff / 604800);
+  if(weeks < 4) return 'منذ ' + arabicTime(weeks, 'أسبوع', 'أسبوعين', 'أسابيع');
+  var months = Math.floor(diff / 2592000);
+  return 'منذ ' + arabicTime(months, 'شهر', 'شهرين', 'أشهر');
+}
+
+function arabicTime(n, singular, dual, plural) {
+  if(n === 1) return singular;
+  if(n === 2) return dual;
+  if(n >= 3 && n <= 10) return n + ' ' + plural;
+  return n + ' ' + singular;
+}
+  
 function esc(s) {
 return String(s == null ? '' : s).replace(/[&<>"']/g, function(c) {
 return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
@@ -772,7 +797,7 @@ var mine = isMyPost('price', r.id);
 var cc = getCommentCount('price', r.id);
 var ccLabel = cc > 0 ? '💬 ' + cc : '💬';
 return '<div class="row">' +
-'<span>' + label + ' <span class="tag">' + (condLabel[r.condition] || esc(r.condition)) + '</span></span>' +
+'<span>' + label + ' <span class="tag">' + (condLabel[r.condition] || esc(r.condition)) + '</span> <span style="color:#666;font-size:11px;">' + timeAgo(r.created_at) + '</span></span>' +
 '<div class="row-actions">' +
 '<b>' + esc(r.cash_price) + ' دينار</b>' +
 '<button class="boost-btn" onclick="boostPrice(' + r.id + ')">🔥 ' + (r.boost_count || 0) + '</button>' +
@@ -802,7 +827,7 @@ var mine = isMyPost('hunt', r.id);
 var cc = getCommentCount('hunt', r.id);
 var ccLabel = cc > 0 ? '💬 ' + cc : '💬';
 return '<div class="row">' +
-'<span>' + label + ' <span class="tag">' + (condLabel[r.condition] || esc(r.condition)) + '</span></span>' +
+'<span>' + label + ' <span class="tag">' + (condLabel[r.condition] || esc(r.condition)) + '</span> <span style="color:#666;font-size:11px;">' + timeAgo(r.created_at) + '</span></span>' +
 '<div class="row-actions">' +
 '<b>الحد الأعلى ' + esc(r.target_price) + '</b>' +
 '<button class="boost-btn" onclick="boostHunt(' + r.id + ')">🔥 ' + (r.boost_count || 0) + '</button>' +
