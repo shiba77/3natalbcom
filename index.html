@@ -905,7 +905,8 @@ p_condition: val('priceCond'),
 p_cash_price: cash,
 p_trade_price: +val('tradePrice') || null,
 p_whatsapp: val('priceWa') || null,
-p_seller_token: sellerTok
+p_seller_token: sellerTok,
+p_user_token: myToken()
 });
 if(insertErr) { toast('⚠️ ' + insertErr.message, 'err'); return; }
 
