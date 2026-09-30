@@ -920,8 +920,6 @@ return;
 var cash = +val('cashPrice');
 if(!cash) { toast('إضافة سعر الكاش', 'err'); return; }
 
-var wa = val('priceWa').trim();
-if(!wa) { toast('رقم الواتساب مطلوب', 'err'); return; }
 
 var sellerTok = 'S_' + Math.random().toString(36).slice(2,10) + Date.now().toString(36);
 
@@ -981,9 +979,6 @@ return;
 
 var budget = +val('huntPrice');
 if(!budget) { toast('إضافة أقصى ميزانية', 'err'); return; }
-
-var wa = val('huntWa').trim();
-if(!wa) { toast('رقم الواتساب مطلوب', 'err'); return; }
 
 try {
 var {data: huntId, error: insertErr} = await db.rpc('create_hunt', {
