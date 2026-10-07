@@ -125,9 +125,14 @@ footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-heigh
 
 <div class="market-strip" id="marketStrip"></div>
 
-<div class="feed-section"><h2>🟢 العروض</h2><div id="priceFeed"></div></div>
-<div class="feed-section"><h2>🔥 الطلبات</h2><div id="huntFeed"></div></div>
-
+<div class="feed-section">
+  <h2>🟢 العروض <button class="add-btn" onclick="scrollToForm('price')"><span class="add-btn-plus">＋</span><span class="add-btn-label">إضافة عرض</span></button></h2>
+  <div id="priceFeed"></div>
+</div>
+<div class="feed-section">
+  <h2>🔥 الطلبات <button class="add-btn" onclick="scrollToForm('hunt')"><span class="add-btn-plus">＋</span><span class="add-btn-label">إضافة طلب</span></button></h2>
+  <div id="huntFeed"></div>
+</div>
 <div class="card" id="huntFormCard">
 <h2>📢 طلباتكم؟</h2>
 <div class="search-wrapper" id="huntSearchWrapper">
