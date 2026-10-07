@@ -66,6 +66,42 @@ select,input{width:100%;padding:10px;border-radius:8px;border:1px solid #444;bac
 .modal-box h3{color:#ffc94d;margin-bottom:12px;font-size:18px}
 .modal-box p{font-size:13px;color:#aaa;margin-bottom:12px;line-height:1.7}
 footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-height:1.9}
+
+.add-btn {
+  background: transparent;
+  color: #666;
+  border: 1px solid #333;
+  border-radius: 20px;
+  padding: 3px 10px 3px 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-inline-start: 8px;
+  vertical-align: middle;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all .15s;
+}
+.add-btn:hover {
+  border-color: #ffc94d;
+  color: #ffc94d;
+}
+.add-btn:active {
+  transform: scale(0.95);
+}
+.add-btn-plus {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+}
+.add-btn-label {
+  font-size: 11px;
+  color: #888;
+}
+.add-btn:hover .add-btn-label {
+  color: #ffc94d;
+}
 </style>
 </head>
 <body>
@@ -92,7 +128,7 @@ footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-heigh
 <div class="feed-section"><h2>🟢 العروض</h2><div id="priceFeed"></div></div>
 <div class="feed-section"><h2>🔥 الطلبات</h2><div id="huntFeed"></div></div>
 
-<div class="card">
+<div class="card" id="huntFormCard">
 <h2>📢 طلباتكم؟</h2>
 <div class="search-wrapper" id="huntSearchWrapper">
 <input id="huntSearch" type="text" placeholder="ابحث عن موديل محدد…" autocomplete="off">
@@ -118,7 +154,7 @@ footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-heigh
 <div class="msg" id="huntMsg"></div>
 </div>
 
-<div class="card">
+<div class="card" id="priceFormCard">
 <h2>🚚 عندي</h2>
 <div class="search-wrapper" id="priceSearchWrapper">
 <input id="priceSearch" type="text" placeholder="ابحث عن موديل محدد…" autocomplete="off">
@@ -1021,6 +1057,16 @@ loadFeeds();
 }
 
 // ============ INIT ============
+function scrollToForm(type) {
+  var id = type === 'price' ? 'priceFormCard' : 'huntFormCard';
+  var el = document.getElementById(id);
+  if(!el) return;
+  el.scrollIntoView({behavior: 'smooth', block: 'start'});
+  el.style.transition = 'box-shadow .3s';
+  el.style.boxShadow = '0 0 0 2px #ffc94d';
+  setTimeout(function() { el.style.boxShadow = 'none'; }, 1200);
+}
+  
 loadCategories();
 checkSellerDashboard();
 </script>
