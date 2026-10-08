@@ -102,6 +102,48 @@ footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-heigh
 .add-btn:hover .add-btn-label {
   color: #ffc94d;
 }
+@keyframes readyPulse {
+  0%, 100% {
+    background: #1d4d2b;
+    color: #7dffa8;
+    border-color: #2a6a3a;
+    box-shadow: 0 0 0 0 rgba(125,255,168,0);
+  }
+  50% {
+    background: #ffc94d;
+    color: #111;
+    border-color: #ffc94d;
+    box-shadow: 0 0 12px 2px rgba(255,201,77,0.35);
+  }
+}
+@keyframes textSwap {
+  0%, 45% { opacity: 1; }
+  50%, 95% { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes textSwapReverse {
+  0%, 45% { opacity: 0; }
+  50%, 95% { opacity: 1; }
+  100% { opacity: 0; }
+}
+.market-pill.ready {
+  animation: readyPulse 3s ease-in-out infinite;
+  cursor: default;
+  font-weight: 700;
+  position: relative;
+  min-width: 140px;
+}
+.market-pill.ready:hover { transform: none; }
+.ready-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 14px;
+}
+.ready-text-a { animation: textSwap 3s ease-in-out infinite; }
+.ready-text-b { animation: textSwapReverse 3s ease-in-out infinite; }
 </style>
 </head>
 <body>
@@ -755,7 +797,7 @@ allCategories.filter(function(c){return c.is_active;}).forEach(function(c) {
 html += '<button class="market-pill'+(c.id===currentCategoryId?' active':'')+'" onclick="switchCategory('+c.id+')">'+esc(c.name)+' · مفتوح</button>';
 });
 allCategories.filter(function(c){return !c.is_active;}).sort(function(a,b){return (lastCounts[b.id]||0)-(lastCounts[a.id]||0);}).slice(0,4).forEach(function(c) {
-html += '<button class="market-pill vote" onclick="voteForCategory('+c.id+')">'+esc(c.name)+' · '+(lastCounts[c.id]||0)+'/'+THRESHOLD+' تصويت</button>';
+var cnt = lastCounts[c.id] || 0; var reached = cnt >= THRESHOLD;  if(reached) {   html += '<button class="market-pill ready" data-name="' + esc(c.name) + '">' +     '<span class="ready-text ready-text-a">اكتمل التصويت</span>' +     '<span class="ready-text ready-text-b">' + esc(c.name) + ' · قريباً</span>' +     '</button>'; } else {   html += '<button class="market-pill vote" onclick="voteForCategory('+c.id+')">'+esc(c.name)+' · '+cnt+'/'+THRESHOLD+' تصويت</button>'; }
 });
 html += '<div class="freeform"><input id="newMarketName" placeholder="سوق جديد؟ كتابة اسم السوق…"><button class="market-pill new-market" onclick="submitFreeformVote()">+ تصويت</button></div>';
 document.getElementById('marketStrip').innerHTML = html;
