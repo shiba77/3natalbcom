@@ -21,7 +21,7 @@ body{background:#111;color:#eee;font-family:system-ui,sans-serif;padding:20px;ma
 .market-pill.active{background:#ffc94d;color:#111}
 .market-pill.vote{border-color:#2a6a3a;color:#7dffa8}
 .market-pill.new-market{background:#1d4d2b;color:#7dffa8}
-.freeform{display:flex;gap:8px;width:100%}
+.freeform{display:flex;gap:8px;width:100%;flex-basis:100%;margin-top:4px}
 .freeform input{flex:1;padding:10px;border-radius:8px;border:1px solid #444;background:#222;color:#eee;font-size:14px}
 .card{background:#1b1b1b;border:1px solid #333;border-radius:10px;padding:14px;margin-bottom:10px}
 .card h2{font-size:16px;margin-bottom:10px;color:#ffc94d}
@@ -37,10 +37,10 @@ select,input{width:100%;padding:10px;border-radius:8px;border:1px solid #444;bac
 .or-divider{text-align:center;margin:12px 0;position:relative}
 .or-divider::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:#333}
 .or-divider span{position:relative;background:#1b1b1b;padding:0 12px;color:#888;font-size:12px}
-.facet-row{display:flex;gap:8px;transition:opacity 0.2s}
+.facet-row{display:flex;flex-wrap:wrap;gap:8px;transition:opacity 0.2s}
 .facet-row.dimmed{opacity:0.4}
 .facet-row.dimmed:hover{opacity:0.7}
-.facet-row > div{flex:1}
+.facet-row > div{flex:1 1 130px;min-width:0}
 .facet-label{font-size:11px;color:#888;margin-bottom:4px}
 .btn{display:block;width:100%;padding:14px;border:none;border-radius:10px;font-size:16px;font-weight:700;margin-top:12px;cursor:pointer;text-decoration:none;text-align:center}
 .primary{background:#ffc94d;color:#111}
@@ -51,7 +51,10 @@ select,input{width:100%;padding:10px;border-radius:8px;border:1px solid #444;bac
 .feed-section{margin-top:22px;margin-bottom:24px}
 .feed-section h2{font-size:17px;color:#ffc94d;margin-bottom:10px}
 .row{display:flex;justify-content:space-between;align-items:center;font-size:14px;padding:8px 0;border-bottom:1px solid #2a2a2a;flex-wrap:wrap;gap:8px}
-.row-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap;flex-basis:100%;justify-content:flex-end}
+.row-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+@media (max-width: 640px) {
+  .row-actions{flex-basis:100%;justify-content:flex-end;margin-top:4px}
+}
 .tag{font-size:11px;padding:2px 8px;border-radius:20px;background:#2a2000;color:#ffc94d;margin-inline-start:6px}
 .boost-btn{background:#2a2000;color:#ffc94d;border:1px solid #ffc94d;border-radius:20px;padding:4px 12px;font-size:12px;cursor:pointer}
 .dead-btn{background:#2a0000;color:#ff6b6b;border:1px solid #6b2a2a;border-radius:20px;padding:4px 8px;font-size:11px;cursor:pointer}
@@ -152,7 +155,6 @@ footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-heigh
 <img src="logo.webp" alt="عنّا طلبكم" style="max-width:120px;margin:0 auto 10px;display:block;" onerror="this.style.display='none'">
 <h1>عنّا طلبكم</h1>
 <div class="tagline">اطلبوا. وردّوا ع الطلب.</div>
-<div class="hero-sub">بلشنا بكروت الشاشة — وبتشتغل لأي سوق.</div>
 <div style="text-align:center;margin-top:10px;">
 <a href="how-it-works.html" style="color:#7dffa8;font-size:13px;text-decoration:none;border-bottom:1px dashed #7dffa8;padding-bottom:2px;">كيف يشتغل؟ →</a>
 </div>
@@ -181,17 +183,8 @@ footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-heigh
 <input id="huntSearch" type="text" placeholder="ابحث عن موديل محدد…" autocomplete="off">
 <div class="suggestions" id="huntSuggestions"></div>
 </div>
-<div class="or-divider"><span>أو</span></div>
-<div class="facet-row" id="huntFacets">
-<div>
-<div class="facet-label">المصنّع</div>
-<select id="huntMfr"><option value="">غير محدد</option></select>
-</div>
-<div>
-<div class="facet-label">الذاكرة</div>
-<select id="huntVram"><option value="">غير محدد</option></select>
-</div>
-</div>
+<div class="or-divider" id="huntDivider"><span>أو</span></div>
+<div class="facet-row" id="huntFacets"></div>
 <label>أقصى ميزانية (دينار)</label><input id="huntPrice" type="number" placeholder="210">
 <label>الحالة</label>
 <select id="huntCond"><option value="any">غير محدد</option><option value="used">مستعمل</option><option value="new">جديد</option></select>
@@ -207,17 +200,8 @@ footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-heigh
 <input id="priceSearch" type="text" placeholder="ابحث عن موديل محدد…" autocomplete="off">
 <div class="suggestions" id="priceSuggestions"></div>
 </div>
-<div class="or-divider"><span>أو</span></div>
-<div class="facet-row" id="priceFacets">
-<div>
-<div class="facet-label">المصنّع</div>
-<select id="priceMfr"><option value="">غير محدد</option></select>
-</div>
-<div>
-<div class="facet-label">الذاكرة</div>
-<select id="priceVram"><option value="">غير محدد</option></select>
-</div>
-</div>
+<div class="or-divider" id="priceDivider"><span>أو</span></div>
+<div class="facet-row" id="priceFacets"></div>
 <label>الحالة</label>
 <select id="priceCond"><option value="used">مستعمل</option><option value="new">جديد</option></select>
 <label>سعر الكاش (دينار)</label><input id="cashPrice" type="number" placeholder="210">
@@ -238,7 +222,7 @@ footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-heigh
 </div>
 </div>
 
-<footer>عنّا طلبكم — السوق اللي بيلبّي الطلب.<br>أول سوق: كروت الشاشة · الأردن.</footer>
+<footer>عنّا طلبكم — السوق اللي بيلبّي الطلب.</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
@@ -267,10 +251,17 @@ var priceSelectedModelId = null;
 var currentPriceId = null;
 var loadCounter = 0;
 var commentCounts = {};
+var feedRows = {};
 var FALLBACK_CATS = [
 {id:1, name:'كروت الشاشة', is_active:true},
 {id:2, name:'رامات', is_active:false},
 {id:3, name:'SSD', is_active:false}
+];
+
+// Used only when the categories table has no facet_schema column yet.
+var DEFAULT_GPU_SCHEMA = [
+  {key:'manufacturer', label:'المصنّع', type:'select', match:'exact'},
+  {key:'vram_gb', label:'الذاكرة', type:'number', unit:'GB', match:'min'}
 ];
 
 // ============ OWNERSHIP HELPERS ============
@@ -364,35 +355,138 @@ var o = [];
 return o;
 }
 
+// ============ FACETS / LABELS (schema-driven) ============
+function currentCat() {
+  return allCategories.find(function(c) { return c.id === currentCategoryId; }) || null;
+}
+
+function currentSchema() {
+  var c = currentCat();
+  if(c && Array.isArray(c.facet_schema) && c.facet_schema.length) return c.facet_schema;
+  if(c && c.facet_schema === undefined) return DEFAULT_GPU_SCHEMA;
+  return [];
+}
+
+// Reads a facet value from a model/hunt/price row. Prefers attributes,
+// falls back to the legacy GPU columns so old rows still display.
+function rowAttr(r, key) {
+  if(!r) return null;
+  if(r.attributes && r.attributes[key] != null) return r.attributes[key];
+  if(key === 'manufacturer') return r.manufacturer;
+  if(key === 'vram_gb') return r.vram_gb != null ? r.vram_gb : r.min_vram_gb;
+  return null;
+}
+
+function facetOptions(f) {
+  if(Array.isArray(f.options)) return f.options;
+  var vals = uniq((window.models || []).map(function(m) { return rowAttr(m, f.key); }));
+  if(f.type === 'number') vals.sort(function(a, b) { return a - b; });
+  return vals;
+}
+
+function specParts(get, forHunt) {
+  var parts = [];
+  var mf = get('manufacturer');
+  if(mf) parts.push(mf);
+  currentSchema().forEach(function(f) {
+    if(f.key === 'manufacturer') return;
+    var v = get(f.key);
+    if(v == null || v === '') return;
+    parts.push(v + (f.unit || '') + ((forHunt && f.match === 'min') ? '+' : ''));
+  });
+  return parts;
+}
+
 function getModelById(id) {
 return (window.models || []).find(function(m) { return m.id == id; }) || null;
 }
 
-function labelOf(m) {
-return m ? esc((m.manufacturer ? m.manufacturer+' ' : '') + m.model + (m.vram_gb ? ' '+m.vram_gb+'GB' : '') + (m.vram_type ? ' '+m.vram_type : '')) : 'عنصر';
+function rawLabelOf(m) {
+  if(!m) return 'عنصر';
+  var parts = [];
+  var mf = rowAttr(m, 'manufacturer');
+  if(mf) parts.push(mf);
+  parts.push(m.model);
+  currentSchema().forEach(function(f) {
+    if(f.key === 'manufacturer') return;
+    var v = rowAttr(m, f.key);
+    if(v != null && v !== '') parts.push(v + (f.unit || ''));
+  });
+  var vt = (m.attributes && m.attributes.vram_type) || m.vram_type;
+  if(vt) parts.push(vt);
+  return parts.join(' ');
 }
 
-function modelName(id) {
-return labelOf(getModelById(id));
+function labelOf(m) { return esc(rawLabelOf(m)); }
+function modelName(id) { return labelOf(getModelById(id)); }
+
+function rawPriceLabel(r) {
+  if(r.models) return rawLabelOf(r.models);
+  if(r.custom_model_name) return r.custom_model_name;
+  var p = specParts(function(k) { return rowAttr(r, k); }, false);
+  return p.length ? p.join(' ') : 'عنصر';
+}
+function priceLabel(r) { return esc(rawPriceLabel(r)); }
+
+function rawHuntLabel(h) {
+  if(h.model_id) return rawLabelOf(getModelById(h.model_id));
+  if(h.custom_model_name) return h.custom_model_name;
+  var p = specParts(function(k) { return rowAttr(h, k); }, true);
+  return p.length ? p.join(' ') : 'طلب';
+}
+function huntLabel(h) { return esc(rawHuntLabel(h)); }
+
+function renderFacets(prefix) {
+  var box = document.getElementById(prefix + 'Facets');
+  var divider = document.getElementById(prefix + 'Divider');
+  if(!box) return;
+  var schema = currentSchema();
+  var show = schema.length > 0;
+  box.style.display = show ? '' : 'none';
+  if(divider) divider.style.display = show ? '' : 'none';
+  var forHunt = prefix === 'hunt';
+  box.innerHTML = schema.map(function(f) {
+    var opts = facetOptions(f);
+    var label = esc(f.label) + (f.required ? ' *' : '');
+    var ctl;
+    if(opts.length) {
+      ctl = '<select class="facet-ctl" data-facet="' + esc(f.key) + '"><option value="">غير محدد</option>' +
+        opts.map(function(v) {
+          var t = (f.type === 'number') ? (v + (f.unit || '') + ((forHunt && f.match === 'min') ? '+' : '')) : v;
+          return '<option value="' + esc(v) + '">' + esc(t) + '</option>';
+        }).join('') + '</select>';
+    } else {
+      ctl = '<input class="facet-ctl" data-facet="' + esc(f.key) + '" type="' + (f.type === 'number' ? 'number' : 'text') + '" placeholder="غير محدد">';
+    }
+    return '<div><div class="facet-label">' + label + '</div>' + ctl + '</div>';
+  }).join('');
+  box.classList.remove('dimmed');
 }
 
-function priceLabel(r) {
-if(r.models) return labelOf(r.models);
-if(r.custom_model_name) return esc(r.custom_model_name);
-var parts = [];
-if(r.manufacturer) parts.push(r.manufacturer);
-if(r.vram_gb) parts.push(r.vram_gb + 'GB');
-return parts.length ? esc(parts.join(' ')) : 'عنصر';
+function collectAttrs(prefix) {
+  var out = {};
+  var box = document.getElementById(prefix + 'Facets');
+  if(!box) return out;
+  box.querySelectorAll('.facet-ctl').forEach(function(el) {
+    var v = (el.value || '').trim();
+    if(v) out[el.dataset.facet] = v;
+  });
+  return out;
 }
 
-function huntLabel(h) {
-if(h.model_id) return modelName(h.model_id);
-if(h.custom_model_name) return 'كرت '+esc(h.custom_model_name);
-var parts = [];
-if(h.manufacturer) parts.push(h.manufacturer);
-if(h.min_vram_gb != null) parts.push(h.min_vram_gb + 'GB+');
-if(h.vram_type) parts.push(h.vram_type);
-return parts.length ? ('كرت '+esc(parts.join(' '))) : 'كرت';
+function missingRequired(attrs) {
+  return currentSchema().filter(function(f) { return f.required && !attrs[f.key]; })
+    .map(function(f) { return f.label; });
+}
+
+function resetForms() {
+  huntSelectedModelId = null;
+  priceSelectedModelId = null;
+  ['hunt', 'price'].forEach(function(p) {
+    document.getElementById(p + 'Search').value = '';
+    document.getElementById(p + 'Suggestions').style.display = 'none';
+    undimAll(p);
+  });
 }
 
 // ============ COMMENT COUNTS ============
@@ -414,14 +508,14 @@ function getCommentCount(type, id) {
 function hasFacetSelected(facetsId) {
   var facetsContainer = document.getElementById(facetsId);
   if(!facetsContainer) return false;
-  return Array.from(facetsContainer.querySelectorAll('select'))
+  return Array.from(facetsContainer.querySelectorAll('select, input'))
     .some(function(s) { return s.value !== ''; });
 }
 
 function clearFacets(facetsId) {
   var facetsContainer = document.getElementById(facetsId);
   if(!facetsContainer) return;
-  facetsContainer.querySelectorAll('select').forEach(function(s) { s.value = ''; });
+  facetsContainer.querySelectorAll('select, input').forEach(function(s) { s.value = ''; });
 }
 
 function dimSearch(prefix) {
@@ -453,8 +547,7 @@ suggestions.style.display = 'none';
 return;
 }
 var matches = (window.models || []).filter(function(m) {
-var label = normalizeCustomName((m.manufacturer || '') + ' ' + m.model + ' ' + (m.vram_gb || '') + 'GB');
-return label.indexOf(normalizeCustomName(query)) >= 0;
+return normalizeCustomName(rawLabelOf(m)).indexOf(normalizeCustomName(query)) >= 0;
 }).slice(0, 8);
 
 if(matches.length) {
@@ -464,7 +557,7 @@ return '<div class="suggestion" data-id="' + m.id + '">' + labelOf(m) + '</div>'
 suggestions.style.display = 'block';
 suggestions.querySelectorAll('.suggestion').forEach(function(el) {
 el.onclick = function() {
-input.value = labelOf(matches.find(function(x) { return x.id == el.dataset.id; }));
+input.value = rawLabelOf(matches.find(function(x) { return x.id == el.dataset.id; }));
 suggestions.style.display = 'none';
 setModelId(el.dataset.id);
 clearFacets(prefix + 'Facets');
@@ -492,20 +585,24 @@ suggestions.style.display = 'none';
 });
 }
 
+// Delegated listeners: they keep working when the facet controls are re-rendered.
 function bindFacetsChange(prefix, clearModelId) {
   var facetsContainer = document.getElementById(prefix + 'Facets');
   if(!facetsContainer) return;
 
-  facetsContainer.querySelectorAll('select').forEach(function(sel) {
-    sel.addEventListener('change', function() {
-      if(hasFacetSelected(prefix + 'Facets')) {
-        document.getElementById(prefix + 'Search').value = '';
-        clearModelId(null);
-        dimSearch(prefix);
-      } else {
-        undimAll(prefix);
-      }
-    });
+  function onFacetChange() {
+    if(hasFacetSelected(prefix + 'Facets')) {
+      document.getElementById(prefix + 'Search').value = '';
+      clearModelId(null);
+      dimSearch(prefix);
+    } else {
+      undimAll(prefix);
+    }
+  }
+
+  facetsContainer.addEventListener('change', onFacetChange);
+  facetsContainer.addEventListener('input', function(e) {
+    if(e.target.tagName === 'INPUT') onFacetChange();
   });
 
   facetsContainer.addEventListener('focusin', function() {
@@ -522,23 +619,6 @@ setupSearch('priceSearch', 'priceSuggestions', function(id) { priceSelectedModel
 
 bindFacetsChange('hunt', function(id) { huntSelectedModelId = id; });
 bindFacetsChange('price', function(id) { priceSelectedModelId = id; });
-
-function populateFacets(prefix) {
-  var mfrEl = document.getElementById(prefix + 'Mfr');
-  var vramEl = document.getElementById(prefix + 'Vram');
-  if(!mfrEl || !vramEl) return;
-
-  var mfrs = uniq((window.models || []).map(function(m) { return m.manufacturer; }));
-  var vrams = uniq((window.models || []).map(function(m) { return m.vram_gb; }))
-    .filter(function(v) { return v != null; })
-    .sort(function(a,b) { return a - b; });
-
-  mfrEl.innerHTML = '<option value="">غير محدد</option>' + 
-    mfrs.map(function(v) { return '<option value="' + esc(v) + '">' + esc(v) + '</option>'; }).join('');
-  
-  vramEl.innerHTML = '<option value="">غير محدد</option>' + 
-    vrams.map(function(v) { return '<option value="' + v + '">' + v + 'GB+</option>'; }).join('');
-}
 
 // ============ CANCEL ============
 async function cancelHunt(huntId) {
@@ -639,36 +719,67 @@ async function postComment(type, id) {
 }
 
 // ============ REPLY / SHARE ============
-function replyToHunt(modelId, modelLabel, targetPrice) {
-  var priceSearchEl = document.getElementById('priceSearch');
-  priceSearchEl.value = modelLabel;
-  priceSearchEl.scrollIntoView({behavior: 'smooth', block: 'center'});
-  priceSearchEl.focus();
-  
-  if(targetPrice && targetPrice > 0) {
-    document.getElementById('cashPrice').value = targetPrice;
-  }
-  
-  if(modelId) {
-    priceSelectedModelId = modelId;
+// Reply copies the request into the offer form: the model if it has one,
+// otherwise the request's specs (so the offer can match a spec-only request).
+function replyToHunt(huntId) {
+  var r = feedRows['hunt_' + huntId];
+  if(!r) return;
+  var searchEl = document.getElementById('priceSearch');
+  var cashEl = document.getElementById('cashPrice');
+  var facetsBox = document.getElementById('priceFacets');
+  var specOnly = false;
+
+  if(r.target_price && r.target_price > 0) cashEl.value = r.target_price;
+  clearFacets('priceFacets');
+
+  if(r.model_id) {
+    searchEl.value = rawLabelOf(getModelById(r.model_id));
+    priceSelectedModelId = r.model_id;
     dimFacets('price');
-    clearFacets('priceFacets');
-  } else {
+  } else if(r.custom_model_name) {
+    searchEl.value = r.custom_model_name;
     priceSelectedModelId = null;
     undimAll('price');
+  } else {
+    specOnly = true;
+    searchEl.value = '';
+    priceSelectedModelId = null;
+    currentSchema().forEach(function(f) {
+      var v = rowAttr(r, f.key);
+      var el = facetsBox.querySelector('[data-facet="' + f.key + '"]');
+      if(!el || v == null || v === '') return;
+      if(el.tagName === 'SELECT' && !Array.prototype.some.call(el.options, function(o) { return o.value == v; })) {
+        el.insertAdjacentHTML('beforeend', '<option value="' + esc(v) + '">' + esc(v + (f.unit || '')) + '</option>');
+      }
+      el.value = v;
+    });
+    if(hasFacetSelected('priceFacets')) dimSearch('price'); else undimAll('price');
   }
-  
+
+  (specOnly ? facetsBox : searchEl).scrollIntoView({behavior: 'smooth', block: 'center'});
+  (specOnly ? cashEl : searchEl).focus();
   toast('📢 رد ع الطلب — سعّروا عرضكم', 'ok');
 }
 
-
+// Shared links must never carry ?seller=... (it opens that seller's dashboard).
 function cleanUrl() {
-  return location.origin + location.pathname;
+  var c = currentCat();
+  return location.origin + location.pathname + (c && c.slug ? '#' + c.slug : '');
 }
-  
+function marketName() {
+  var c = currentCat();
+  return c ? c.name : '';
+}
+
 function shareHunt(modelLabel, targetPrice) {
-var t = 'اللي عندهم ' + modelLabel + ' — مطلوب بحد أقصى ' + targetPrice + ' دينار. شوفوا السوق: ' + cleanUrl();
+var t = 'اللي عندهم ' + modelLabel + ' — مطلوب بحد أقصى ' + targetPrice + ' دينار. شوفوا سوق ' + marketName() + ': ' + cleanUrl();
 return 'https://wa.me/?text=' + encodeURIComponent(t);
+}
+
+function shareHuntById(huntId) {
+  var r = feedRows['hunt_' + huntId];
+  if(!r) return;
+  window.open(shareHunt(rawHuntLabel(r), r.target_price || 0));
 }
 
 // ============ PHONE MODAL ============
@@ -774,7 +885,11 @@ toast('⚠️ لا يوجد اتصال بقاعدة البيانات', 'err');
 return;
 }
 try {
-var r = await db.from('categories').select('id,name,slug,is_active,sort_order').order('sort_order');
+var r = await db.from('categories').select('id,name,slug,is_active,sort_order,facet_schema').order('sort_order');
+if(r.error) {
+  // facet_schema column not there yet: load without it (GPU defaults apply)
+  r = await db.from('categories').select('id,name,slug,is_active,sort_order').order('sort_order');
+}
 if(r.error || !r.data || !r.data.length) {
 allCategories = FALLBACK_CATS;
 currentCategoryId = 1;
@@ -783,7 +898,7 @@ toast('⚠️ ما قدرنا نحمل الأسواق', 'err');
 return;
 }
 allCategories = r.data;
-var first = allCategories.find(function(c){return c.is_active;}) || allCategories[0];
+var first = categoryFromHash() || allCategories.find(function(c){return c.is_active;}) || allCategories[0];
 currentCategoryId = first.id;
 lastCounts = await getVoteCounts();
 renderMarketStrip();
@@ -801,15 +916,45 @@ var html = '';
 allCategories.filter(function(c){return c.is_active;}).forEach(function(c) {
 html += '<button class="market-pill'+(c.id===currentCategoryId?' active':'')+'" onclick="switchCategory('+c.id+')">'+esc(c.name)+' · مفتوح</button>';
 });
-allCategories.filter(function(c){return !c.is_active;}).sort(function(a,b){return (lastCounts[b.id]||0)-(lastCounts[a.id]||0);}).slice(0,4).forEach(function(c) {
-var cnt = lastCounts[c.id] || 0; var reached = cnt >= THRESHOLD;  if(reached) {   html += '<button class="market-pill ready" data-name="' + esc(c.name) + '">' +     '<span class="ready-text ready-text-a">اكتمل التصويت</span>' +     '<span class="ready-text ready-text-b">' + esc(c.name) + ' · قريباً</span>' +     '</button>'; } else {   html += '<button class="market-pill vote" onclick="voteForCategory('+c.id+')">'+esc(c.name)+' · '+cnt+'/'+THRESHOLD+' تصويت</button>'; }
+allCategories.filter(function(c){return !c.is_active;}).sort(function(a,b){return (lastCounts[b.id]||0)-(lastCounts[a.id]||0);}).forEach(function(c) {
+var cnt = lastCounts[c.id] || 0;
+var reached = cnt >= THRESHOLD;
+if(reached) {
+  html += '<button class="market-pill ready" data-name="' + esc(c.name) + '">' +
+    '<span class="ready-text ready-text-a">اكتمل التصويت</span>' +
+    '<span class="ready-text ready-text-b">' + esc(c.name) + ' · قريباً</span>' +
+    '</button>';
+} else {
+  html += '<button class="market-pill vote" onclick="voteForCategory('+c.id+')">'+esc(c.name)+' · '+cnt+'/'+THRESHOLD+' تصويت</button>';
+}
 });
 html += '<div class="freeform"><input id="newMarketName" placeholder="سوق جديد؟ كتابة اسم السوق…"><button class="market-pill new-market" onclick="submitFreeformVote()">+ تصويت</button></div>';
 document.getElementById('marketStrip').innerHTML = html;
 }
 
-function switchCategory(id) {
+// Opens only ACTIVE markets from #slug; unknown/closed slugs fall back to the default.
+function categoryFromHash() {
+  var slug = decodeURIComponent((location.hash || '').replace(/^#/, ''));
+  if(!slug) return null;
+  return allCategories.find(function(c) { return c.is_active && c.slug === slug; }) || null;
+}
+
+function setHash(id) {
+  var c = allCategories.find(function(x) { return x.id === id; });
+  if(!c || !c.slug) return;
+  try { history.replaceState(null, '', location.pathname + location.search + '#' + c.slug); } catch(e) {}
+}
+
+window.addEventListener('hashchange', function() {
+  var c = categoryFromHash();
+  if(c && c.id !== currentCategoryId) switchCategory(c.id, true);
+});
+
+function switchCategory(id, fromHash) {
+if(id === currentCategoryId && !fromHash) return;
 currentCategoryId = id;
+if(!fromHash) setHash(id);
+resetForms();
 renderMarketStrip();
 loadModelsForCategory(id);
 }
@@ -866,8 +1011,8 @@ if(error) { window.models = []; toast('⚠️ ما قدرنا نحمل مودي�
 window.models = data || [];
 } catch(e) { window.models = []; toast('⚠️ خطأ في تحميل الموديلات', 'err'); return; }
 if(myLoad !== loadCounter) return;
-populateFacets('hunt');
-populateFacets('price');
+renderFacets('hunt');
+renderFacets('price');
 loadFeeds();
 }
 
@@ -883,6 +1028,7 @@ var p = await db.from('public_prices')
 .order('created_at', {ascending: false})
 .limit(10);
 document.getElementById('priceFeed').innerHTML = (p.data || []).map(function(r) {
+feedRows['price_' + r.id] = r;
 var label = priceLabel(r);
 var mine = isMyPost('price', r.id);
 var cc = getCommentCount('price', r.id);
@@ -912,8 +1058,8 @@ var h = await db.from('public_hunts')
 .order('boost_count', {ascending: false})
 .limit(10);
 document.getElementById('huntFeed').innerHTML = (h.data || []).map(function(r) {
+feedRows['hunt_' + r.id] = r;
 var label = huntLabel(r);
-var modelId = r.model_id || 0;
 var mine = isMyPost('hunt', r.id);
 var cc = getCommentCount('hunt', r.id);
 var ccLabel = cc > 0 ? '💬 ' + cc : '💬';
@@ -922,8 +1068,8 @@ return '<div class="row">' +
 '<div class="row-actions">' +
 '<b>الحد الأعلى ' + esc(r.target_price) + '</b>' +
 '<button class="boost-btn" onclick="boostHunt(' + r.id + ')">🔥 ' + (r.boost_count || 0) + '</button>' +
-'<button class="reply-btn" onclick="replyToHunt(' + modelId + ', \'' + esc(label) + '\', ' + (r.target_price || 0) + ')">📢 رد</button>' +
-'<button class="share-btn" onclick="window.open(shareHunt(\'' + esc(label) + '\', ' + (r.target_price || 0) + '))">📤 شاركوا</button>' +
+'<button class="reply-btn" onclick="replyToHunt(' + r.id + ')">📢 رد</button>' +
+'<button class="share-btn" onclick="shareHuntById(' + r.id + ')">📤 شاركوا</button>' +
 '<button class="share-btn" id="comment-btn-hunt-' + r.id + '" onclick="toggleComments(\'hunt\', ' + r.id + ')">' + ccLabel + '</button>' +
 (mine ? '<button class="dead-btn" onclick="cancelHunt(' + r.id + ')">❌ احذف</button>' : '') +
 '</div>' +
@@ -989,7 +1135,7 @@ return 'https://wa.me/' + d + '?text=' + encodeURIComponent(text);
 }
 
 function shareLink() {
-var t = 'طلبوا على عنّا طلبكم — شوفوا السوق: ' + cleanUrl();
+var t = 'طلبوا على عنّا طلبكم — شوفوا سوق ' + marketName() + ': ' + cleanUrl();
 return 'https://wa.me/?text=' + encodeURIComponent(t);
 }
 
@@ -997,12 +1143,16 @@ return 'https://wa.me/?text=' + encodeURIComponent(t);
 async function savePrice() {
 if(noDb()) { toast('⚠️ لا يوجد اتصال', 'err'); return; }
 var searchVal = val('priceSearch').trim();
-var mfrFacet = val('priceMfr');
-var vramFacet = val('priceVram');
+var attrs = collectAttrs('price');
 
-if(!searchVal && !mfrFacet && !vramFacet) {
+if(!searchVal && !priceSelectedModelId && !Object.keys(attrs).length) {
 toast('ابحث عن موديل أو حدد مواصفات', 'err');
 return;
+}
+
+if(!searchVal && !priceSelectedModelId) {
+  var missing = missingRequired(attrs);
+  if(missing.length) { toast('حددوا: ' + missing.join('، '), 'err'); return; }
 }
 
 var cash = +val('cashPrice');
@@ -1016,8 +1166,7 @@ var {data: priceId, error: insertErr} = await db.rpc('create_price', {
 p_category_id: currentCategoryId,
 p_model_id: priceSelectedModelId || null,
 p_custom_model_name: (priceSelectedModelId || !searchVal) ? null : normalizeCustomInput(searchVal),
-p_manufacturer: mfrFacet || null,
-p_vram_gb: vramFacet ? parseInt(vramFacet, 10) : null,
+p_attributes: attrs,
 p_condition: val('priceCond'),
 p_cash_price: cash,
 p_trade_price: +val('tradePrice') || null,
@@ -1038,7 +1187,9 @@ if(rpcMatch && rpcMatch.length) {
     p_price_id: priceId
   });
   if(contactData && contactData.length && contactData[0].whatsapp) {
-    var label = priceSelectedModelId ? modelName(priceSelectedModelId) : normalizeCustomInput(searchVal);
+    var label = priceSelectedModelId ? rawLabelOf(getModelById(priceSelectedModelId))
+      : (searchVal ? normalizeCustomInput(searchVal)
+      : (specParts(function(k) { return attrs[k]; }, false).join(' ') || 'عنصر'));
     msg += ' <a class="btn green" href="' + waLink(contactData[0].whatsapp, 'مرحبا! عندي ' + label + ' بـ ' + cash + ' دينار. شفت طلبكم على عنّا طلبكم.') + '">💬 أبلغ الطالب</a>';
   }
 }
@@ -1057,12 +1208,16 @@ loadFeeds();
 async function castHunt() {
 if(noDb()) { toast('⚠️ لا يوجد اتصال', 'err'); return; }
 var searchVal = val('huntSearch').trim();
-var mfrFacet = val('huntMfr');
-var vramFacet = val('huntVram');
+var attrs = collectAttrs('hunt');
 
-if(!searchVal && !mfrFacet && !vramFacet) {
+if(!searchVal && !huntSelectedModelId && !Object.keys(attrs).length) {
 toast('ابحث عن موديل أو حدد مواصفات', 'err');
 return;
+}
+
+if(!searchVal && !huntSelectedModelId) {
+  var missing = missingRequired(attrs);
+  if(missing.length) { toast('حددوا: ' + missing.join('، '), 'err'); return; }
 }
 
 var budget = +val('huntPrice');
@@ -1073,8 +1228,7 @@ var {data: huntId, error: insertErr} = await db.rpc('create_hunt', {
 p_category_id: currentCategoryId,
 p_model_id: huntSelectedModelId || null,
 p_custom_model_name: (huntSelectedModelId || !searchVal) ? null : normalizeCustomInput(searchVal),
-p_manufacturer: mfrFacet || null,
-p_min_vram_gb: vramFacet ? parseInt(vramFacet, 10) : null,
+p_attributes: attrs,
 p_target_price: budget,
 p_condition: val('huntCond'),
 p_whatsapp: val('huntWa') || null,
@@ -1090,7 +1244,7 @@ var msg = '✅ طلبكم انعرض.';
 var {data: rpcMatch} = await db.rpc('match_hunt_to_prices', {p_hunt_id: huntId});
 if(rpcMatch && rpcMatch.length) {
 var best = rpcMatch[0];
-msg += ' <b>لقينا رد على طلبكم</b> ' + esc(best.model_name || best.custom_model_name) + ' بـ ' + esc(best.cash_price) + ' دينار.';
+msg += ' <b>لقينا رد على طلبكم</b> ' + esc(best.model_name || best.custom_model_name || 'عرض') + ' بـ ' + esc(best.cash_price) + ' دينار.';
 var {data: contactData} = await db.rpc('reveal_price_contact', {
   p_price_id: best.price_id,
   p_hunt_id: huntId
