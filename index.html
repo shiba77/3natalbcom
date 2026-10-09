@@ -661,8 +661,13 @@ function replyToHunt(modelId, modelLabel, targetPrice) {
   toast('📢 رد ع الطلب — سعّروا عرضكم', 'ok');
 }
 
+
+function cleanUrl() {
+  return location.origin + location.pathname;
+}
+  
 function shareHunt(modelLabel, targetPrice) {
-var t = 'اللي عندهم ' + modelLabel + ' — مطلوب بحد أقصى ' + targetPrice + ' دينار. شوفوا السوق: ' + location.href;
+var t = 'اللي عندهم ' + modelLabel + ' — مطلوب بحد أقصى ' + targetPrice + ' دينار. شوفوا السوق: ' + cleanUrl();
 return 'https://wa.me/?text=' + encodeURIComponent(t);
 }
 
@@ -984,7 +989,7 @@ return 'https://wa.me/' + d + '?text=' + encodeURIComponent(text);
 }
 
 function shareLink() {
-var t = 'طلبوا على عنّا طلبكم — شوفوا السوق: ' + location.href;
+var t = 'طلبوا على عنّا طلبكم — شوفوا السوق: ' + cleanUrl();
 return 'https://wa.me/?text=' + encodeURIComponent(t);
 }
 
