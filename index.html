@@ -147,6 +147,15 @@ footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-heigh
 }
 .ready-text-a { animation: textSwap 3s ease-in-out infinite; }
 .ready-text-b { animation: textSwapReverse 3s ease-in-out infinite; }
+.market-pill.open {
+  border-color: #ffc94d;
+  color: #ffc94d;
+  background: #1a1400;
+}
+.market-pill.open.active {
+  background: #ffc94d;
+  color: #111;
+}
 </style>
 </head>
 <body>
@@ -914,7 +923,7 @@ toast('⚠️ خطأ في تحميل الأسواق', 'err');
 function renderMarketStrip() {
 var html = '';
 allCategories.filter(function(c){return c.is_active;}).forEach(function(c) {
-html += '<button class="market-pill'+(c.id===currentCategoryId?' active':'')+'" onclick="switchCategory('+c.id+')">'+esc(c.name)+' · مفتوح</button>';
+html += '<button class="market-pill open'+(c.id===currentCategoryId?' active':'')+'" onclick="switchCategory('+c.id+')">'+esc(c.name)+' · مفتوح</button>';
 });
 allCategories.filter(function(c){return !c.is_active;}).sort(function(a,b){return (lastCounts[b.id]||0)-(lastCounts[a.id]||0);}).forEach(function(c) {
 var cnt = lastCounts[c.id] || 0;
