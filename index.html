@@ -470,6 +470,7 @@ function renderFacets(prefix) {
     return '<div><div class="facet-label">' + label + '</div>' + ctl + '</div>';
   }).join('');
   box.classList.remove('dimmed');
+  updateHealthVisibility(prefix);
 }
 
 function collectAttrs(prefix) {
@@ -622,12 +623,48 @@ function bindFacetsChange(prefix, clearModelId) {
     }
   });
 }
+function currentSchema() {
+  var c = currentCat();
+  if(c && Array.isArray(c.facet_schema) && c.facet_schema.length) return c.facet_schema;
+  if(c && c.facet_schema === undefined) return DEFAULT_GPU_SCHEMA;
+  return [];
+}
 
+function updateHealthVisibility(prefix) {
+  var condEl = document.getElementById(prefix + 'Cond');
+  if(!condEl) return;
+  var cond = condEl.value;
+  var box = document.getElementById(prefix + 'Facets');
+  if(!box) return;
+  var healthCtl = box.querySelector('[data-facet="health"]');
+  if(!healthCtl) return;
+  var wrapper = healthCtl.closest('div');
+  if(!wrapper) return;
+
+  if(cond === 'used') {
+    wrapper.style.display = '';
+    var lbl = wrapper.querySelector('.facet-label');
+    if(lbl && lbl.textContent.indexOf('*') < 0) {
+      lbl.textContent = lbl.textContent.replace('الفحص (هيلث)', 'الفحص (هيلث) *');
+    }
+  } else {
+    wrapper.style.display = 'none';
+    healthCtl.value = '';
+  }
+}
+  
 setupSearch('huntSearch', 'huntSuggestions', function(id) { huntSelectedModelId = id; }, 'hunt');
 setupSearch('priceSearch', 'priceSuggestions', function(id) { priceSelectedModelId = id; }, 'price');
 
 bindFacetsChange('hunt', function(id) { huntSelectedModelId = id; });
 bindFacetsChange('price', function(id) { priceSelectedModelId = id; });
+
+document.getElementById('huntCond').addEventListener('change', function() {
+  updateHealthVisibility('hunt');
+});
+document.getElementById('priceCond').addEventListener('change', function() {
+  updateHealthVisibility('price');
+});
 
 // ============ CANCEL ============
 async function cancelHunt(huntId) {
@@ -1164,6 +1201,12 @@ if(!searchVal && !priceSelectedModelId) {
   if(missing.length) { toast('حددوا: ' + missing.join('، '), 'err'); return; }
 }
 
+var hasHealth = currentSchema().some(function(f) { return f.key === 'health'; });
+if(hasHealth && val('priceCond') === 'used' && !attrs.health) {
+  toast('حددوا الفحص (هيلث) للـ SSD المستعمل — من 95% وفوق', 'err');
+  return;
+}
+
 var cash = +val('cashPrice');
 if(!cash) { toast('إضافة سعر الكاش', 'err'); return; }
 
@@ -1229,6 +1272,12 @@ if(!searchVal && !huntSelectedModelId) {
   if(missing.length) { toast('حددوا: ' + missing.join('، '), 'err'); return; }
 }
 
+var hasHealth = currentSchema().some(function(f) { return f.key === 'health'; });
+if(hasHealth && val('huntCond') === 'used' && !attrs.health) {
+  toast('حددوا الفحص (هيلث) للـ SSD المستعمل — من 95% وفوق', 'err');
+  return;
+}
+  
 var budget = +val('huntPrice');
 if(!budget) { toast('إضافة أقصى ميزانية', 'err'); return; }
 
