@@ -620,7 +620,15 @@ function bindFacetsChange(prefix, clearModelId) {
   var facetsContainer = document.getElementById(prefix + 'Facets');
   if(!facetsContainer) return;
 
-  function onFacetChange() {
+  function onFacetChange(e) {
+    var changedKey = e && e.target ? e.target.getAttribute('data-facet') : null;
+    var isAlwaysActive = changedKey && ALWAYS_ACTIVE_FACETS.indexOf(changedKey) >= 0;
+
+    if(isAlwaysActive) {
+      // Always-active facets (health, stick_count, form) do not touch the model
+      return;
+    }
+
     if(hasFacetSelected(prefix + 'Facets')) {
       document.getElementById(prefix + 'Search').value = '';
       clearModelId(null);
@@ -632,10 +640,15 @@ function bindFacetsChange(prefix, clearModelId) {
 
   facetsContainer.addEventListener('change', onFacetChange);
   facetsContainer.addEventListener('input', function(e) {
-    if(e.target.tagName === 'INPUT') onFacetChange();
+    if(e.target.tagName === 'INPUT') onFacetChange(e);
   });
 
-  facetsContainer.addEventListener('focusin', function() {
+  facetsContainer.addEventListener('focusin', function(e) {
+    var target = e.target;
+    var key = target && target.getAttribute ? target.getAttribute('data-facet') : null;
+    var isAlwaysActive = key && ALWAYS_ACTIVE_FACETS.indexOf(key) >= 0;
+    if(isAlwaysActive) return;
+
     if(facetsContainer.classList.contains('dimmed')) {
       document.getElementById(prefix + 'Search').value = '';
       clearModelId(null);
@@ -643,6 +656,7 @@ function bindFacetsChange(prefix, clearModelId) {
     }
   });
 }
+  
 function currentSchema() {
   var c = currentCat();
   if(c && Array.isArray(c.facet_schema) && c.facet_schema.length) return c.facet_schema;
