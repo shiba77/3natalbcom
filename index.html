@@ -432,19 +432,60 @@ function labelOf(m) { return esc(rawLabelOf(m)); }
 function modelName(id) { return labelOf(getModelById(id)); }
 
 function rawPriceLabel(r) {
-  if(r.models) return rawLabelOf(r.models);
-  if(r.custom_model_name) return r.custom_model_name;
-  var p = specParts(function(k) { return rowAttr(r, k); }, false);
-  return p.length ? p.join(' ') : 'عنصر';
+  var base = '';
+  if(r.models) {
+    base = rawLabelOf(r.models);
+  } else if(r.custom_model_name) {
+    base = r.custom_model_name;
+  }
+
+  var parts = [];
+  var mf = rowAttr(r, 'manufacturer');
+  if(mf) parts.push(mf);
+
+  currentSchema().forEach(function(f) {
+    if(f.key === 'manufacturer') return;
+    var v = rowAttr(r, f.key);
+    if(v == null || v === '') return;
+    parts.push(v + (f.unit || ''));
+  });
+
+  var extra = parts.join(' ');
+
+  if(base && extra) return base + ' ' + extra;
+  if(base) return base;
+  if(extra) return extra;
+  return 'عنصر';
 }
 function priceLabel(r) { return esc(rawPriceLabel(r)); }
 
 function rawHuntLabel(h) {
-  if(h.model_id) return rawLabelOf(getModelById(h.model_id));
-  if(h.custom_model_name) return h.custom_model_name;
-  var p = specParts(function(k) { return rowAttr(h, k); }, true);
-  return p.length ? p.join(' ') : 'طلب';
+  var base = '';
+  if(h.model_id) {
+    base = rawLabelOf(getModelById(h.model_id));
+  } else if(h.custom_model_name) {
+    base = h.custom_model_name;
+  }
+
+  var parts = [];
+  var mf = rowAttr(h, 'manufacturer');
+  if(mf) parts.push(mf);
+
+  currentSchema().forEach(function(f) {
+    if(f.key === 'manufacturer') return;
+    var v = rowAttr(h, f.key);
+    if(v == null || v === '') return;
+    parts.push(v + (f.unit || '') + ((f.match === 'min') ? '+' : ''));
+  });
+
+  var extra = parts.join(' ');
+
+  if(base && extra) return base + ' ' + extra;
+  if(base) return base;
+  if(extra) return extra;
+  return 'طلب';
 }
+  
 function huntLabel(h) { return esc(rawHuntLabel(h)); }
 
 function renderFacets(prefix) {
