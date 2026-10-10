@@ -156,6 +156,7 @@ footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-heigh
   background: #ffc94d;
   color: #111;
 }
+.facet-row > div.dimmed { opacity: 0.4; pointer-events: none; }
 </style>
 </head>
 <body>
@@ -272,7 +273,8 @@ var DEFAULT_GPU_SCHEMA = [
   {key:'manufacturer', label:'المصنّع', type:'select', match:'exact'},
   {key:'vram_gb', label:'الذاكرة', type:'number', unit:'GB', match:'min'}
 ];
-
+var ALWAYS_ACTIVE_FACETS = ['stick_count', 'health', 'form', 'form_factor'];
+  
 // ============ OWNERSHIP HELPERS ============
 function myPosts() {
   try {
@@ -535,12 +537,30 @@ function dimSearch(prefix) {
 
 function dimFacets(prefix) {
   document.getElementById(prefix + 'SearchWrapper').classList.remove('dimmed');
-  document.getElementById(prefix + 'Facets').classList.add('dimmed');
+  var box = document.getElementById(prefix + 'Facets');
+  if(!box) return;
+  box.classList.remove('dimmed');
+  box.querySelectorAll('[data-facet]').forEach(function(ctl) {
+    var key = ctl.getAttribute('data-facet');
+    var wrapper = ctl.closest('div');
+    if(!wrapper) return;
+    if(ALWAYS_ACTIVE_FACETS.indexOf(key) >= 0) {
+      wrapper.classList.remove('dimmed');
+    } else {
+      wrapper.classList.add('dimmed');
+    }
+  });
 }
 
 function undimAll(prefix) {
   document.getElementById(prefix + 'SearchWrapper').classList.remove('dimmed');
-  document.getElementById(prefix + 'Facets').classList.remove('dimmed');
+  var box = document.getElementById(prefix + 'Facets');
+  if(!box) return;
+  box.classList.remove('dimmed');
+  box.querySelectorAll('[data-facet]').forEach(function(ctl) {
+    var wrapper = ctl.closest('div');
+    if(wrapper) wrapper.classList.remove('dimmed');
+  });
 }
 
 function setupSearch(inputId, suggestionsId, setModelId, prefix) {
