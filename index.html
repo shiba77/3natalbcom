@@ -906,7 +906,6 @@ function marketName() {
 }
 
 function shareHunt(modelLabel, targetPrice) {
-  logEvent('share_hunt', 'hunt', null, {label: modelLabel, price: targetPrice});
   var t = 'اللي عندهم ' + modelLabel + ' — مطلوب بحد أقصى ' + targetPrice + ' دينار. شوفوا سوق ' + marketName() + ': ' + cleanUrl();
   return 'https://wa.me/?text=' + encodeURIComponent(t);
 }
