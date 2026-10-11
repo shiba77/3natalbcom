@@ -920,10 +920,11 @@ function shareHuntById(huntId) {
   
 // ============ PHONE MODAL ============
 function askForNumber(priceId) {
-currentPriceId = priceId;
-document.getElementById('phoneModal').style.display = 'flex';
-document.getElementById('phoneInput').value = '';
-document.getElementById('phoneInput').focus();
+  currentPriceId = priceId;
+  logEvent('phone_modal_open', 'price', priceId, {});
+  document.getElementById('phoneModal').style.display = 'flex';
+  document.getElementById('phoneInput').value = '';
+  document.getElementById('phoneInput').focus();
 }
 
 function closePhoneModal() {
@@ -948,7 +949,8 @@ console.error('Lead error:', res.error);
 toast('⚠️ في مشكلة: ' + res.error.message, 'err');
 }
 } else {
-toast('✅ رقمكم وصل للبائع', 'ok');
+  logEvent('phone_submitted', 'price', currentPriceId, {});
+  toast('✅ رقمكم وصل للبائع', 'ok');
 }
 closePhoneModal();
 });
