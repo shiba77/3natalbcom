@@ -307,6 +307,19 @@ function myToken() {
   }
 }
 
+function logEvent(eventType, targetType, targetId, metadata) {
+  try {
+    if(!db) return;
+    db.from('engagement_events').insert({
+      event_type: eventType,
+      target_type: targetType || null,
+      target_id: targetId || null,
+      user_token: myToken(),
+      metadata: metadata || {}
+    }).then(function() {});
+  } catch(e) {}
+}
+
 function toast(m, k) {
 var el = document.getElementById('statusLine');
 el.className = k || 'ok';
@@ -893,16 +906,18 @@ function marketName() {
 }
 
 function shareHunt(modelLabel, targetPrice) {
-var t = 'اللي عندهم ' + modelLabel + ' — مطلوب بحد أقصى ' + targetPrice + ' دينار. شوفوا سوق ' + marketName() + ': ' + cleanUrl();
-return 'https://wa.me/?text=' + encodeURIComponent(t);
+  logEvent('share_hunt', 'hunt', null, {label: modelLabel, price: targetPrice});
+  var t = 'اللي عندهم ' + modelLabel + ' — مطلوب بحد أقصى ' + targetPrice + ' دينار. شوفوا سوق ' + marketName() + ': ' + cleanUrl();
+  return 'https://wa.me/?text=' + encodeURIComponent(t);
 }
-
+  
 function shareHuntById(huntId) {
   var r = feedRows['hunt_' + huntId];
   if(!r) return;
+  logEvent('share_hunt', 'hunt', huntId, {label: rawHuntLabel(r)});
   window.open(shareHunt(rawHuntLabel(r), r.target_price || 0));
 }
-
+  
 // ============ PHONE MODAL ============
 function askForNumber(priceId) {
 currentPriceId = priceId;
@@ -1256,8 +1271,9 @@ return 'https://wa.me/' + d + '?text=' + encodeURIComponent(text);
 }
 
 function shareLink() {
-var t = 'طلبوا على عنّا طلبكم — شوفوا سوق ' + marketName() + ': ' + cleanUrl();
-return 'https://wa.me/?text=' + encodeURIComponent(t);
+  logEvent('share_market', null, null, {market: marketName()});
+  var t = 'طلبوا على عنّا طلبكم — شوفوا سوق ' + marketName() + ': ' + cleanUrl();
+  return 'https://wa.me/?text=' + encodeURIComponent(t);
 }
 
 // ============ CREATE PRICE ============
@@ -1317,7 +1333,7 @@ if(rpcMatch && rpcMatch.length) {
     var label = priceSelectedModelId ? rawLabelOf(getModelById(priceSelectedModelId))
       : (searchVal ? normalizeCustomInput(searchVal)
       : (specParts(function(k) { return attrs[k]; }, false).join(' ') || 'عنصر'));
-    msg += ' <a class="btn green" href="' + waLink(contactData[0].whatsapp, 'مرحبا! عندي ' + label + ' بـ ' + cash + ' دينار. شفت طلبكم على عنّا طلبكم.') + '">💬 أبلغ الطالب</a>';
+    var contactUrl = waLink(contactData[0].whatsapp, 'مرحبا! عندي ' + label + ' بـ ' + cash + ' دينار. شفت طلبكم على عنّا طلبكم.'); msg += ' <a class="btn green" href="' + contactUrl + '" onclick="logEvent(\'contact_buyer\',\'price\',' + priceId + ',{})">💬 أبلغ الطالب</a>';
   }
 }
 
@@ -1383,7 +1399,7 @@ var {data: contactData} = await db.rpc('reveal_price_contact', {
   p_hunt_id: huntId
 });
 if(contactData && contactData.length && contactData[0].whatsapp) {
-msg += ' <a class="btn green" href="' + waLink(contactData[0].whatsapp, 'مرحبا! شفت طلبكم على عنّا طلبكم (' + code + '). لسا موجود؟') + '">💬 تواصلوا مع البائع (' + code + ')</a>';
+var sellerUrl = waLink(contactData[0].whatsapp, 'مرحبا! شفت طلبكم على عنّا طلبكم (' + code + '). لسا موجود؟'); msg += ' <a class="btn green" href="' + sellerUrl + '" onclick="logEvent(\'contact_seller\',\'hunt\',' + huntId + ',{})">💬 تواصلوا مع البائع (' + code + ')</a>';
 } else {
 msg += ' لايوجد رقم للتواصل، تابعوا العروض من هنا.';
 }
