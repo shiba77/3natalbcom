@@ -51,12 +51,14 @@ select,input{width:100%;padding:10px;border-radius:8px;border:1px solid #444;bac
 .feed-section{margin-top:22px;margin-bottom:24px}
 .feed-section h2{font-size:17px;color:#ffc94d;margin-bottom:10px}
 .row{display:flex;justify-content:space-between;align-items:center;font-size:14px;padding:8px 0;border-bottom:1px solid #2a2a2a;flex-wrap:wrap;gap:8px}
+.row.mine{border-inline-start:3px solid #d4a8ff;padding-inline-start:8px}
 .row-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 @media (max-width: 640px) {
   .row-actions{flex-basis:100%;justify-content:flex-end;margin-top:4px}
 }
 .tag{font-size:11px;padding:2px 8px;border-radius:20px;background:#2a2000;color:#ffc94d;margin-inline-start:6px}
 .boost-btn{background:#2a2000;color:#ffc94d;border:1px solid #ffc94d;border-radius:20px;padding:4px 12px;font-size:12px;cursor:pointer}
+.boost-btn.done{background:#1d4d2b;color:#7dffa8;border-color:#2a6a3a;cursor:default}
 .dead-btn{background:#2a0000;color:#ff6b6b;border:1px solid #6b2a2a;border-radius:20px;padding:4px 8px;font-size:11px;cursor:pointer}
 .reply-btn{background:#1d4d2b;color:#7dffa8;border:1px solid #2a6a3a;border-radius:20px;padding:4px 12px;font-size:12px;cursor:pointer}
 .share-btn{background:#1a2a4a;color:#8ab4ff;border:1px solid #2a3a6a;border-radius:20px;padding:4px 10px;font-size:11px;cursor:pointer}
@@ -64,8 +66,8 @@ select,input{width:100%;padding:10px;border-radius:8px;border:1px solid #444;bac
 .dashboard{background:#0d1d0d;border:1px solid #2a6a3a;border-radius:10px;padding:14px;margin-bottom:10px}
 .dashboard h2{color:#7dffa8;font-size:16px;margin-bottom:10px}
 .lead-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #1a3a1a;font-size:13px}
-.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:100;display:none;align-items:center;justify-content:center}
-.modal-box{background:#1b1b1b;border:1px solid #444;border-radius:12px;padding:20px;width:90%;max-width:350px}
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:100;display:none;align-items:center;justify-content:center;padding:16px}
+.modal-box{background:#1b1b1b;border:1px solid #444;border-radius:12px;padding:20px;width:90%;max-width:350px;max-height:90vh;overflow-y:auto}
 .modal-box h3{color:#ffc94d;margin-bottom:12px;font-size:18px}
 .modal-box p{font-size:13px;color:#aaa;margin-bottom:12px;line-height:1.7}
 footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-height:1.9}
@@ -86,77 +88,75 @@ footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-heigh
   gap: 4px;
   transition: all .15s;
 }
-.add-btn:hover {
-  border-color: #ffc94d;
-  color: #ffc94d;
-}
-.add-btn:active {
-  transform: scale(0.95);
-}
-.add-btn-plus {
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1;
-}
-.add-btn-label {
-  font-size: 11px;
-  color: #888;
-}
-.add-btn:hover .add-btn-label {
-  color: #ffc94d;
-}
+.add-btn:hover { border-color: #ffc94d; color: #ffc94d; }
+.add-btn:active { transform: scale(0.95); }
+.add-btn-plus { font-size: 14px; font-weight: 700; line-height: 1; }
+.add-btn-label { font-size: 11px; color: #888; }
+.add-btn:hover .add-btn-label { color: #ffc94d; }
+
 @keyframes readyPulse {
-  0%, 100% {
-    background: #1d4d2b;
-    color: #7dffa8;
-    border-color: #2a6a3a;
-    box-shadow: 0 0 0 0 rgba(125,255,168,0);
-  }
-  50% {
-    background: #ffc94d;
-    color: #111;
-    border-color: #ffc94d;
-    box-shadow: 0 0 12px 2px rgba(255,201,77,0.35);
-  }
+  0%, 100% { background: #1d4d2b; color: #7dffa8; border-color: #2a6a3a; box-shadow: 0 0 0 0 rgba(125,255,168,0); }
+  50% { background: #ffc94d; color: #111; border-color: #ffc94d; box-shadow: 0 0 12px 2px rgba(255,201,77,0.35); }
 }
-@keyframes textSwap {
-  0%, 45% { opacity: 1; }
-  50%, 95% { opacity: 0; }
-  100% { opacity: 1; }
-}
-@keyframes textSwapReverse {
-  0%, 45% { opacity: 0; }
-  50%, 95% { opacity: 1; }
-  100% { opacity: 0; }
-}
-.market-pill.ready {
-  animation: readyPulse 3s ease-in-out infinite;
-  cursor: default;
-  font-weight: 700;
-  position: relative;
-  min-width: 140px;
-}
+@keyframes textSwap { 0%, 45% { opacity: 1; } 50%, 95% { opacity: 0; } 100% { opacity: 1; } }
+@keyframes textSwapReverse { 0%, 45% { opacity: 0; } 50%, 95% { opacity: 1; } 100% { opacity: 0; } }
+.market-pill.ready { animation: readyPulse 3s ease-in-out infinite; cursor: default; font-weight: 700; position: relative; min-width: 140px; }
 .market-pill.ready:hover { transform: none; }
-.ready-text {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 9px 14px;
-}
+.ready-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 9px 14px; }
 .ready-text-a { animation: textSwap 3s ease-in-out infinite; }
 .ready-text-b { animation: textSwapReverse 3s ease-in-out infinite; }
-.market-pill.open {
-  border-color: #ffc94d;
-  color: #ffc94d;
-  background: #1a1400;
-}
-.market-pill.open.active {
-  background: #ffc94d;
-  color: #111;
-}
+.market-pill.open { border-color: #ffc94d; color: #ffc94d; background: #1a1400; }
+.market-pill.open.active { background: #ffc94d; color: #111; }
 .facet-row > div.dimmed { opacity: 0.4; pointer-events: none; }
+
+/* ===== account (phone + PIN) ===== */
+.auth-bar{text-align:center;margin-top:10px;font-size:13px;color:#888}
+.auth-link{background:none;border:none;color:#ffc94d;font-size:13px;cursor:pointer;padding:2px 6px;border-bottom:1px dashed #ffc94d}
+.auth-box input{width:100%;padding:12px;margin-bottom:10px;border-radius:8px;border:1px solid #444;background:#222;color:#eee;font-size:16px;text-align:center}
+.auth-box input.pin{letter-spacing:10px;font-size:20px}
+.auth-tabs{display:flex;gap:6px;margin-bottom:12px}
+.auth-tabs button{flex:1;padding:8px;border-radius:20px;border:1px solid #444;background:#222;color:#ccc;font-size:13px;cursor:pointer}
+.auth-tabs button.on{background:#ffc94d;color:#111;border-color:#ffc94d}
+.auth-err{color:#ff8a8a;font-size:13px;min-height:18px;margin-bottom:6px;text-align:center}
+.recovery{background:#0d1d0d;border:1px dashed #2a6a3a;border-radius:10px;padding:14px;text-align:center;margin:10px 0}
+.recovery b{display:block;font-size:24px;letter-spacing:3px;color:#7dffa8;margin:8px 0;direction:ltr}
+.acct-list a{display:block;color:#8ab4ff;font-size:13px;padding:6px 0;border-bottom:1px solid #2a2a2a;text-decoration:none}
+
+/* ===== trade intent ===== */
+.trade-box{margin-top:10px;padding:10px;border:1px dashed #6a2a8a;border-radius:10px;background:#160d1d}
+.trade-toggle{display:flex;align-items:center;gap:8px;font-size:14px;color:#d4a8ff;margin:0;cursor:pointer}
+.trade-toggle input,.trade-dir input{width:auto;padding:0;margin:0}
+.trade-help-btn{width:22px;height:22px;border-radius:50%;border:1px solid #6a2a8a;background:#160d1d;color:#d4a8ff;font-size:12px;cursor:pointer;padding:0}
+.trade-help{font-size:12px;color:#aaa;line-height:1.8;margin-top:6px}
+.trade-dir{display:flex;flex-wrap:wrap;gap:16px;margin-top:8px;font-size:14px}
+.trade-dir label{display:flex;align-items:center;gap:6px;margin:0;color:#eee;cursor:pointer}
+.trade-nudge{margin-top:8px;padding:8px 10px;border-radius:8px;background:#1a1400;border:1px solid #4a3a00;color:#ffd980;font-size:12px;line-height:1.8}
+.trade-nudge-btn{background:none;border:1px solid #ffc94d;color:#ffc94d;border-radius:16px;padding:2px 10px;font-size:11px;cursor:pointer;margin-inline-start:6px}
+
+/* ===== feed filters ===== */
+.feed-filters{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.filter-chip{background:#1b1b1b;border:1px solid #333;color:#aaa;border-radius:20px;padding:5px 12px;font-size:12px;cursor:pointer;font-family:inherit}
+.filter-chip.on{background:#ffc94d;color:#111;border-color:#ffc94d;font-weight:700}
+.filter-chip.mine{border-color:#6a2a8a;color:#d4a8ff}
+.filter-chip.mine.on{background:#6a2a8a;color:#fff;border-color:#6a2a8a}
+
+/* ===== trade offers ===== */
+.trade-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.offers-badge{background:#2a1a4a;color:#d4a8ff;border:1px solid #6a2a8a;border-radius:20px;padding:3px 10px;font-size:11px;cursor:pointer;font-family:inherit}
+.offer-btn{background:#4a1a6a;color:#d4a8ff;border:1px solid #8a3aaa;border-radius:20px;padding:4px 12px;font-size:12px;cursor:pointer;font-weight:700;font-family:inherit}
+.offer-row{padding:10px 8px;border-bottom:1px solid #2a2a2a;font-size:13px;line-height:1.7}
+.offer-row:last-child{border-bottom:none}
+.offer-meta{color:#888;font-size:11px;margin-top:2px}
+.offer-actions{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.offer-accept{background:#1d4d2b;color:#7dffa8;border:1px solid #2a6a3a;border-radius:16px;padding:4px 12px;font-size:12px;cursor:pointer;font-family:inherit}
+.offer-reject{background:#4d1d1d;color:#ffa8a8;border:1px solid #6b2a2a;border-radius:16px;padding:4px 12px;font-size:12px;cursor:pointer;font-family:inherit}
+.offer-withdraw{background:#222;color:#ccc;border:1px solid #444;border-radius:16px;padding:4px 12px;font-size:12px;cursor:pointer;font-family:inherit}
+.offer-status{font-size:11px;padding:2px 8px;border-radius:12px;margin-inline-start:4px}
+.offer-status.OPEN{background:#1a2a4a;color:#8ab4ff}
+.offer-status.ACCEPTED{background:#1d4d2b;color:#7dffa8}
+.offer-status.REJECTED{background:#4d1d1d;color:#ffa8a8}
+.offer-status.WITHDRAWN{background:#2a2a2a;color:#888}
+.copied{color:#7dffa8!important}
 </style>
 </head>
 <body>
@@ -168,6 +168,7 @@ footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-heigh
 <div style="text-align:center;margin-top:10px;">
 <a href="how-it-works.html" style="color:#7dffa8;font-size:13px;text-decoration:none;border-bottom:1px dashed #7dffa8;padding-bottom:2px;">كيف يشتغل؟ →</a>
 </div>
+<div class="auth-bar" id="authBar"></div>
 </div>
 
 <div id="statusLine"></div>
@@ -177,14 +178,21 @@ footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-heigh
 <div id="dashboardContent"></div>
 </div>
 
+<div id="offersDashboard" class="dashboard" style="display:none;background:#1d0d1d;border-color:#6a2a8a;">
+<h2 style="color:#d4a8ff;">📩 عروض البدل على منشوراتكم</h2>
+<div id="offersDashboardContent"></div>
+</div>
+
 <div class="market-strip" id="marketStrip"></div>
 
 <div class="feed-section">
   <h2>🟢 العروض <button class="add-btn" onclick="scrollToForm('price')"><span class="add-btn-plus">＋</span><span class="add-btn-label">إضافة عرض</span></button></h2>
+  <div class="feed-filters" id="priceFilters"></div>
   <div id="priceFeed"></div>
 </div>
 <div class="feed-section">
   <h2>🔥 الطلبات <button class="add-btn" onclick="scrollToForm('hunt')"><span class="add-btn-plus">＋</span><span class="add-btn-label">إضافة طلب</span></button></h2>
+  <div class="feed-filters" id="huntFilters"></div>
   <div id="huntFeed"></div>
 </div>
 <div class="card" id="huntFormCard">
@@ -199,6 +207,24 @@ footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-heigh
 <div class="facet-row" id="huntFacets"></div>
 <label>أقصى ميزانية (دينار)</label><input id="huntPrice" type="number" placeholder="210">
 <label>واتساب ضروري للتواصل</label><input id="huntWa" type="tel" placeholder="079xxxxxxx">
+<div class="trade-box" id="huntTradeBox" style="display:none">
+<div style="display:flex;align-items:center;gap:8px"><label class="trade-toggle"><input type="checkbox" id="huntTradeOn" onchange="toggleTrade('hunt')"> 🔄 هل تقبل البدل؟</label><button type="button" class="trade-help-btn" onclick="toggleTradeHelp('hunt')">؟</button></div>
+<div class="trade-nudge" id="huntTradeNudge" style="display:none">💡 لتتابعوا عروض البدل على منشوراتكم من أي جهاز، سجّلوا حساب بسيط.<button type="button" class="trade-nudge-btn" onclick="openAuth('register')">تسجيل سريع</button></div>
+<div class="trade-help" id="huntTradeHelp" style="display:none">بتقدروا تبدلوا بموديل ثاني: اختاروه أو اكتبوا مواصفاته.<br>الفرقية هي المبلغ اللي بيندفع فوق البدل، وحددوا مين بيدفعه.</div>
+<div id="huntTradeFields" style="display:none">
+<label>اختاروا اللي عندكم للبدل</label>
+<div class="search-wrapper"><input id="huntTradeSearch" type="text" placeholder="ابحث عن الموديل اللي عندكم…" autocomplete="off"><div class="suggestions" id="huntTradeSug"></div></div>
+<label>أو اكتبوا المواصفات</label>
+<input id="huntTradeNotes" type="text" maxlength="100" placeholder="مثال: 8GB DDR4">
+<label>الفرقية (اختياري)</label>
+<input id="huntTradeAmt" type="number" min="0" max="100000" placeholder="220">
+<div class="trade-dir" id="huntTradeDir">
+<label><input type="radio" name="huntTradeDirR" value="in"> بتدفعلي</label>
+<label><input type="radio" name="huntTradeDirR" value="out"> بدفعلك</label>
+<label><input type="radio" name="huntTradeDirR" value="even" checked> راس براس</label>
+</div>
+</div>
+</div>
 <button class="btn primary" onclick="castHunt()">📢 ارسال</button>
 <div style="text-align:center;font-size:11px;color:#666;margin-top:8px;">ينتهي الطلب تلقائياً بعد 7 أيام</div>
 <div class="msg" id="huntMsg"></div>
@@ -217,6 +243,24 @@ footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-heigh
 <label>سعر الكاش (دينار)</label><input id="cashPrice" type="number" placeholder="210">
 <label>سعر البدل (اختياري)</label><input id="tradePrice" type="number" placeholder="220">
 <label>واتساب ضروري للتواصل</label><input id="priceWa" type="tel" placeholder="079xxxxxxx">
+<div class="trade-box" id="priceTradeBox" style="display:none">
+<div style="display:flex;align-items:center;gap:8px"><label class="trade-toggle"><input type="checkbox" id="priceTradeOn" onchange="toggleTrade('price')"> 🔄 هل تقبل البدل؟</label><button type="button" class="trade-help-btn" onclick="toggleTradeHelp('price')">؟</button></div>
+<div class="trade-nudge" id="priceTradeNudge" style="display:none">💡 لتتابعوا عروض البدل على منشوراتكم من أي جهاز، سجّلوا حساب بسيط.<button type="button" class="trade-nudge-btn" onclick="openAuth('register')">تسجيل سريع</button></div>
+<div class="trade-help" id="priceTradeHelp" style="display:none">بتقدروا تبدلوا بموديل ثاني: اختاروه أو اكتبوا مواصفاته.<br>الفرقية هي المبلغ اللي بيندفع فوق البدل، وحددوا مين بيدفعه.</div>
+<div id="priceTradeFields" style="display:none">
+<label>اختاروا البدل المطلوب</label>
+<div class="search-wrapper"><input id="priceTradeSearch" type="text" placeholder="ابحث عن الموديل اللي بدكم إياه…" autocomplete="off"><div class="suggestions" id="priceTradeSug"></div></div>
+<label>أو اكتبوا المواصفات</label>
+<input id="priceTradeNotes" type="text" maxlength="100" placeholder="مثال: 16GB أو أعلى">
+<label>الفرقية (اختياري)</label>
+<input id="priceTradeAmt" type="number" min="0" max="100000" placeholder="220">
+<div class="trade-dir" id="priceTradeDir">
+<label><input type="radio" name="priceTradeDirR" value="in"> بتدفعلي</label>
+<label><input type="radio" name="priceTradeDirR" value="out"> بدفعلك</label>
+<label><input type="radio" name="priceTradeDirR" value="even" checked> راس براس</label>
+</div>
+</div>
+</div>
 <button class="btn primary" onclick="savePrice()">📸 ارسال</button>
 <div style="text-align:center;font-size:11px;color:#666;margin-top:8px;">ينتهي العرض تلقائياً بعد 30 يوم</div>
 <div class="msg" id="priceMsg"></div>
@@ -229,6 +273,77 @@ footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-heigh
 <input id="phoneInput" type="tel" placeholder="079xxxxxxx">
 <button class="btn primary" onclick="submitPhoneNumber()">✅ ارسال</button>
 <button class="btn share" onclick="closePhoneModal()">❌ إلغاء</button>
+</div>
+</div>
+
+<div class="modal-overlay" id="offerModal">
+<div class="modal-box">
+<h3>🔄 قدّم عرض بدل</h3>
+<p id="offerTargetLabel" style="color:#d4a8ff;"></p>
+<label>اللي عندك للبدل</label>
+<div class="search-wrapper"><input id="offerSearch" type="text" placeholder="ابحث عن الموديل…" autocomplete="off"><div class="suggestions" id="offerSug"></div></div>
+<label>أو اكتبوا المواصفات</label>
+<input id="offerNotes" type="text" maxlength="100" placeholder="مثال: 8GB DDR4">
+<label>الفرقية (اختياري)</label>
+<input id="offerAmt" type="number" min="0" max="100000" placeholder="220">
+<div class="trade-dir">
+<label><input type="radio" name="offerDirR" value="in"> بتدفعلي</label>
+<label><input type="radio" name="offerDirR" value="out"> بدفعلك</label>
+<label><input type="radio" name="offerDirR" value="even" checked> راس براس</label>
+</div>
+<label>واتساب للتواصل (اختياري)</label>
+<input id="offerPhone" type="tel" placeholder="079xxxxxxx">
+<div class="auth-err" id="offerErr"></div>
+<button class="btn primary" onclick="submitOffer()">📤 إرسال العرض</button>
+<button class="btn share" onclick="closeOfferModal()">❌ إلغاء</button>
+</div>
+</div>
+
+<div class="modal-overlay" id="offersListModal">
+<div class="modal-box" style="max-width:500px;">
+<h3>📩 عروض البدل</h3>
+<p id="offersListLabel" style="color:#d4a8ff;"></p>
+<div id="offersListBody"></div>
+<button class="btn share" onclick="closeOffersList()">إغلاق</button>
+</div>
+</div>
+
+<div class="modal-overlay" id="authModal">
+<div class="modal-box auth-box">
+<div id="authForm">
+<h3 id="authTitle">👤 دخول</h3>
+<div class="auth-tabs"><button id="tabLogin" onclick="openAuth('login')">دخول</button><button id="tabRegister" onclick="openAuth('register')">حساب جديد</button></div>
+<p id="authHint"></p>
+<input id="authPhone" type="tel" placeholder="رقم الهاتف 079xxxxxxx" autocomplete="off">
+<input id="authCode" type="text" placeholder="كود الاسترجاع XXXXX-XXXXX" autocomplete="off" style="display:none;direction:ltr">
+<input id="authPin" class="pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="PIN ٤ أرقام" autocomplete="off">
+<div class="auth-err" id="authErr"></div>
+<button class="btn primary" id="authSubmit" onclick="submitAuth()">دخول</button>
+<button class="auth-link" id="authForgot" onclick="openAuth('recover')" style="margin-top:10px">نسيتوا الـ PIN؟</button>
+<button class="btn share" onclick="closeAuth()">إغلاق</button>
+</div>
+<div id="authDone" style="display:none">
+<h3>✅ جاهز</h3>
+<p>احفظوا كود الاسترجاع. إذا نسيتوا الـ PIN هو الطريقة الوحيدة لاسترجاع حسابكم، وما رح يظهر مرة ثانية.</p>
+<div class="recovery">كود الاسترجاع<b id="recoveryCode"></b></div>
+<button class="btn share" onclick="copyRecovery()">📋 نسخ الكود</button>
+<button class="btn primary" onclick="closeAuth()">حفظته ✅</button>
+</div>
+</div>
+</div>
+
+<div class="modal-overlay" id="acctModal">
+<div class="modal-box auth-box">
+<h3>👤 حسابي</h3>
+<div id="acctSellers" class="acct-list"></div>
+<button class="btn share" onclick="showMyOffers()">📩 عروض البدل على منشوراتي</button>
+<p style="margin-top:12px">تغيير الـ PIN</p>
+<input id="acctOldPin" class="pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="PIN الحالي" autocomplete="off">
+<input id="acctNewPin" class="pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="PIN الجديد" autocomplete="off">
+<div class="auth-err" id="acctErr"></div>
+<button class="btn primary" onclick="changePin()">تغيير</button>
+<button class="btn share" onclick="logout()">🚪 تسجيل خروج</button>
+<button class="btn share" onclick="closeAccount()">إغلاق</button>
 </div>
 </div>
 
@@ -262,19 +377,26 @@ var currentPriceId = null;
 var loadCounter = 0;
 var commentCounts = {};
 var feedRows = {};
+var feedData = {hunt: [], price: []};
+var feedFilters = {hunt: 'all', price: 'all'};
+var tradeOfferCounts = {hunt: {}, price: {}};
+var offerTargetType = null;
+var offerTargetId = null;
+var offerModelId = null;
+var offersListType = null;
+var offersListId = null;
 var FALLBACK_CATS = [
 {id:1, name:'كروت الشاشة', is_active:true},
 {id:2, name:'رامات', is_active:false},
 {id:3, name:'SSD', is_active:false}
 ];
 
-// Used only when the categories table has no facet_schema column yet.
 var DEFAULT_GPU_SCHEMA = [
   {key:'manufacturer', label:'المصنّع', type:'select', match:'exact'},
   {key:'vram_gb', label:'الذاكرة', type:'number', unit:'GB', match:'min'}
 ];
 var ALWAYS_ACTIVE_FACETS = ['stick_count', 'health', 'form', 'form_factor', 'capacity_gb', 'interface', 'ram_type'];
-  
+
 // ============ OWNERSHIP HELPERS ============
 function myPosts() {
   try {
@@ -320,6 +442,10 @@ function logEvent(eventType, targetType, targetId, metadata) {
   } catch(e) {}
 }
 
+function isBoosted(type, id) {
+  try { return localStorage.getItem('boosted_' + type + '_' + id) === '1'; } catch(e) { return false; }
+}
+
 function toast(m, k) {
 var el = document.getElementById('statusLine');
 el.className = k || 'ok';
@@ -330,7 +456,6 @@ setTimeout(function() { el.style.display = 'none'; }, 4000);
 
 function noDb() { return !db; }
 function val(id) { return document.getElementById(id).value; }
-function isAny(v) { return !v || v === 'غير محدد'; }
 
 function timeAgo(dateStr) {
   if(!dateStr) return '';
@@ -356,7 +481,7 @@ function arabicTime(n, singular, dual, plural) {
   if(n >= 3 && n <= 10) return n + ' ' + plural;
   return n + ' ' + singular;
 }
-  
+
 function esc(s) {
 return String(s == null ? '' : s).replace(/[&<>"']/g, function(c) {
 return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
@@ -391,8 +516,6 @@ function currentSchema() {
   return [];
 }
 
-// Reads a facet value from a model/hunt/price row. Prefers attributes,
-// falls back to the legacy GPU columns so old rows still display.
 function rowAttr(r, key) {
   if(!r) return null;
   if(r.attributes && r.attributes[key] != null) return r.attributes[key];
@@ -442,7 +565,6 @@ function rawLabelOf(m) {
 }
 
 function labelOf(m) { return esc(rawLabelOf(m)); }
-function modelName(id) { return labelOf(getModelById(id)); }
 
 function rawPriceLabel(r) {
   var base = '';
@@ -498,7 +620,7 @@ function rawHuntLabel(h) {
   if(extra) return extra;
   return 'طلب';
 }
-  
+
 function huntLabel(h) { return esc(rawHuntLabel(h)); }
 
 function renderFacets(prefix) {
@@ -552,6 +674,7 @@ function resetForms() {
     document.getElementById(p + 'Search').value = '';
     document.getElementById(p + 'Suggestions').style.display = 'none';
     undimAll(p);
+    resetTrade(p);
   });
 }
 
@@ -669,7 +792,6 @@ suggestions.style.display = 'none';
 });
 }
 
-// Delegated listeners: they keep working when the facet controls are re-rendered.
 function bindFacetsChange(prefix, clearModelId) {
   var facetsContainer = document.getElementById(prefix + 'Facets');
   if(!facetsContainer) return;
@@ -679,7 +801,6 @@ function bindFacetsChange(prefix, clearModelId) {
     var isAlwaysActive = changedKey && ALWAYS_ACTIVE_FACETS.indexOf(changedKey) >= 0;
 
     if(isAlwaysActive) {
-      // Always-active facets (health, stick_count, form) do not touch the model
       return;
     }
 
@@ -710,13 +831,6 @@ function bindFacetsChange(prefix, clearModelId) {
     }
   });
 }
-  
-function currentSchema() {
-  var c = currentCat();
-  if(c && Array.isArray(c.facet_schema) && c.facet_schema.length) return c.facet_schema;
-  if(c && c.facet_schema === undefined) return DEFAULT_GPU_SCHEMA;
-  return [];
-}
 
 function updateHealthVisibility(prefix) {
   var condEl = document.getElementById(prefix + 'Cond');
@@ -740,7 +854,7 @@ function updateHealthVisibility(prefix) {
     healthCtl.value = '';
   }
 }
-  
+
 setupSearch('huntSearch', 'huntSuggestions', function(id) { huntSelectedModelId = id; }, 'hunt');
 setupSearch('priceSearch', 'priceSuggestions', function(id) { priceSelectedModelId = id; }, 'price');
 
@@ -793,19 +907,19 @@ async function toggleComments(type, id) {
 async function loadComments(type, id) {
   var container = document.getElementById('comments-' + type + '-' + id);
   if(!container) return;
-  
+
   var {data, error} = await db.from('comments')
     .select('*')
     .eq('target_type', type)
     .eq('target_id', id)
     .order('created_at', {ascending: true})
     .limit(30);
-  
+
   if(error) {
     container.innerHTML = '<div style="color:#ff6b6b;font-size:12px;">خطأ في تحميل التعليقات</div>';
     return;
   }
-  
+
   var html = '';
   (data || []).forEach(function(c) {
     html += '<div style="padding:6px 0;border-bottom:1px solid #1a1a1a;font-size:13px;">' +
@@ -813,12 +927,12 @@ async function loadComments(type, id) {
       esc(c.body) + '</div>';
   });
   if(!html) html = '<div style="color:#666;font-size:12px;">لا يوجد تعليقات. كن الأول.</div>';
-  
+
   html += '<div style="display:flex;gap:6px;margin-top:8px;">' +
     '<input id="comment-input-' + type + '-' + id + '" type="text" maxlength="200" placeholder="اكتب تعليق…" style="flex:1;padding:8px;font-size:13px;background:#222;border:1px solid #444;border-radius:6px;color:#eee;">' +
     '<button onclick="postComment(\'' + type + '\',' + id + ')" style="padding:8px 12px;background:#ffc94d;color:#111;border:none;border-radius:6px;font-weight:700;cursor:pointer;font-size:13px;">ارسال</button>' +
     '</div>';
-  
+
   container.innerHTML = html;
 }
 
@@ -828,10 +942,10 @@ async function postComment(type, id) {
   var body = input.value.trim();
   if(!body) { toast('اكتب تعليق', 'err'); return; }
   if(body.length > 200) { toast('التعليق طويل كتير', 'err'); return; }
-  
+
   var nickname = null;
   try { nickname = localStorage.getItem('3natalb_nickname') || null; } catch(e) {}
-  
+
   var {error} = await db.from('comments').insert({
     target_type: type,
     target_id: id,
@@ -839,22 +953,20 @@ async function postComment(type, id) {
     nickname: nickname,
     body: body
   });
-  
+
   if(error) { toast('⚠️ ' + error.message, 'err'); return; }
   input.value = '';
-  
+
   commentCounts[type + '_' + id] = (commentCounts[type + '_' + id] || 0) + 1;
   var counterBtn = document.getElementById('comment-btn-' + type + '-' + id);
   if(counterBtn) {
     counterBtn.innerHTML = '💬 ' + commentCounts[type + '_' + id];
   }
-  
+
   await loadComments(type, id);
 }
 
 // ============ REPLY / SHARE ============
-// Reply copies the request into the offer form: the model if it has one,
-// otherwise the request's specs (so the offer can match a spec-only request).
 function replyToHunt(huntId) {
   var r = feedRows['hunt_' + huntId];
   if(!r) return;
@@ -895,7 +1007,6 @@ function replyToHunt(huntId) {
   toast('📢 رد ع الطلب — سعّروا عرضكم', 'ok');
 }
 
-// Shared links must never carry ?seller=... (it opens that seller's dashboard).
 function cleanUrl() {
   var c = currentCat();
   return location.origin + location.pathname + (c && c.slug ? '#' + c.slug : '');
@@ -905,18 +1016,18 @@ function marketName() {
   return c ? c.name : '';
 }
 
-function shareHunt(modelLabel, targetPrice) {
-  var t = 'اللي عندهم ' + modelLabel + ' — مطلوب بحد أقصى ' + targetPrice + ' دينار. شوفوا سوق ' + marketName() + ': ' + cleanUrl();
+function shareHunt(modelLabel, targetPrice, tradeText) {
+  var t = 'اللي عندهم ' + modelLabel + ' — مطلوب بحد أقصى ' + targetPrice + ' دينار.' + (tradeText ? ' ' + tradeText + '.' : '') + ' شوفوا سوق ' + marketName() + ': ' + cleanUrl();
   return 'https://wa.me/?text=' + encodeURIComponent(t);
 }
-  
+
 function shareHuntById(huntId) {
   var r = feedRows['hunt_' + huntId];
   if(!r) return;
   logEvent('share_hunt', 'hunt', huntId, {label: rawHuntLabel(r)});
-  window.open(shareHunt(rawHuntLabel(r), r.target_price || 0));
+  window.open(shareHunt(rawHuntLabel(r), r.target_price || 0, tradeSummary(r, 'hunt')));
 }
-  
+
 // ============ PHONE MODAL ============
 function askForNumber(priceId) {
   currentPriceId = priceId;
@@ -965,6 +1076,16 @@ loadSellerDashboard(token);
 }
 }
 
+function copyPhone(btn) {
+  var phone = btn.getAttribute('data-phone') || '';
+  try {
+    navigator.clipboard.writeText(phone);
+    btn.textContent = '✓';
+    btn.classList.add('copied');
+    setTimeout(function() { btn.textContent = '📋'; btn.classList.remove('copied'); }, 1500);
+  } catch(e) { toast('📞 ' + phone, 'ok'); }
+}
+
 async function loadSellerDashboard(token) {
 try {
 var {data: offers, error} = await db.rpc('get_seller_offers', {p_seller_token: token});
@@ -988,7 +1109,8 @@ p_seller_token: token
 if(leads && leads.length) {
 html += '<div style="padding-right:12px;">';
 leads.forEach(function(l) {
-html += '<div class="lead-row">📞 <b>' + esc(l.buyer_phone) + '</b> <span style="color:#888;font-size:11px;">' + new Date(l.created_at).toLocaleString('ar') + '</span></div>';
+html += '<div class="lead-row"><span>📞 <b>' + esc(l.buyer_phone) + '</b> <span style="color:#888;font-size:11px;">' + new Date(l.created_at).toLocaleString('ar') + '</span></span>' +
+'<button class="share-btn" data-phone="' + esc(l.buyer_phone) + '" onclick="copyPhone(this)">📋</button></div>';
 });
 html += '</div>';
 } else {
@@ -1024,7 +1146,6 @@ return;
 try {
 var r = await db.from('categories').select('id,name,slug,is_active,sort_order,facet_schema').order('sort_order');
 if(r.error) {
-  // facet_schema column not there yet: load without it (GPU defaults apply)
   r = await db.from('categories').select('id,name,slug,is_active,sort_order').order('sort_order');
 }
 if(r.error || !r.data || !r.data.length) {
@@ -1069,7 +1190,6 @@ html += '<div class="freeform"><input id="newMarketName" placeholder="سوق ج�
 document.getElementById('marketStrip').innerHTML = html;
 }
 
-// Opens only ACTIVE markets from #slug; unknown/closed slugs fall back to the default.
 function categoryFromHash() {
   var slug = decodeURIComponent((location.hash || '').replace(/^#/, ''));
   if(!slug) return null;
@@ -1091,6 +1211,8 @@ function switchCategory(id, fromHash) {
 if(id === currentCategoryId && !fromHash) return;
 currentCategoryId = id;
 if(!fromHash) setHash(id);
+feedFilters = {hunt: 'all', price: 'all'};
+feedData = {hunt: [], price: []};
 resetForms();
 renderMarketStrip();
 loadModelsForCategory(id);
@@ -1154,37 +1276,35 @@ loadFeeds();
 }
 
 // ============ FEEDS ============
+async function loadOfferCounts() {
+  tradeOfferCounts = {hunt: {}, price: {}};
+  if(noDb()) return;
+  try {
+    var results = await Promise.all([
+      db.rpc('get_target_offer_counts', {p_category_id: currentCategoryId, p_kind: 'hunt'}),
+      db.rpc('get_target_offer_counts', {p_category_id: currentCategoryId, p_kind: 'price'})
+    ]);
+    (results[0].data || []).forEach(function(x) { tradeOfferCounts.hunt[x.target_id] = x.cnt; });
+    (results[1].data || []).forEach(function(x) { tradeOfferCounts.price[x.target_id] = x.cnt; });
+  } catch(e) {}
+}
+
 async function loadFeeds() {
+feedRows = {};
 await loadCommentCounts();
+await loadOfferCounts();
 
 try {
 var p = await db.from('public_prices')
 .select('*, models(*)')
 .eq('status', 'ACTIVE')
 .eq('category_id', currentCategoryId)
+.order('boost_count', {ascending: false})
 .order('created_at', {ascending: false})
-.limit(10);
-document.getElementById('priceFeed').innerHTML = (p.data || []).map(function(r) {
-feedRows['price_' + r.id] = r;
-var label = priceLabel(r);
-var mine = isMyPost('price', r.id);
-var cc = getCommentCount('price', r.id);
-var ccLabel = cc > 0 ? '💬 ' + cc : '💬';
-return '<div class="row">' +
-'<span>' + label + ' <span class="tag">' + (condLabel[r.condition] || esc(r.condition)) + '</span> <span style="color:#666;font-size:11px;">' + timeAgo(r.created_at) + '</span></span>' +
-'<div class="row-actions">' +
-'<b>' + esc(r.cash_price) + ' دينار</b>' +
-'<button class="boost-btn" onclick="boostPrice(' + r.id + ')">🔥 ' + (r.boost_count || 0) + '</button>' +
-'<button class="number-btn" onclick="askForNumber(' + r.id + ')">📞 رقمي</button>' +
-'<button class="share-btn" id="comment-btn-price-' + r.id + '" onclick="toggleComments(\'price\', ' + r.id + ')">' + ccLabel + '</button>' +
-(mine ? '<button class="dead-btn" onclick="cancelPrice(' + r.id + ')">❌ احذف</button>' : '') +
-'<button class="dead-btn" onclick="reportDead(' + r.id + ')">⚰️</button>' +
-'</div>' +
-'<div id="comments-price-' + r.id + '" style="display:none;width:100%;margin-top:8px;padding:8px;background:#161616;border-radius:6px;"></div>' +
-'</div>';
-}).join('') || '<div class="row">لا يوجد عروض, كن الأول.</div>';
+.limit(20);
+feedData.price = p.data || [];
 } catch(e) {
-document.getElementById('priceFeed').innerHTML = '<div class="row">لا يوجد عروض, كن الأول.</div>';
+feedData.price = [];
 }
 
 try {
@@ -1193,29 +1313,102 @@ var h = await db.from('public_hunts')
 .eq('status', 'OPEN')
 .eq('category_id', currentCategoryId)
 .order('boost_count', {ascending: false})
-.limit(10);
-document.getElementById('huntFeed').innerHTML = (h.data || []).map(function(r) {
-feedRows['hunt_' + r.id] = r;
-var label = huntLabel(r);
-var mine = isMyPost('hunt', r.id);
-var cc = getCommentCount('hunt', r.id);
-var ccLabel = cc > 0 ? '💬 ' + cc : '💬';
-return '<div class="row">' +
-'<span>' + label + ' <span class="tag">' + (condLabel[r.condition] || esc(r.condition)) + '</span> <span style="color:#666;font-size:11px;">' + timeAgo(r.created_at) + '</span></span>' +
-'<div class="row-actions">' +
-'<b>الحد الأعلى ' + esc(r.target_price) + '</b>' +
-'<button class="boost-btn" onclick="boostHunt(' + r.id + ')">🔥 ' + (r.boost_count || 0) + '</button>' +
-'<button class="reply-btn" onclick="replyToHunt(' + r.id + ')">📢 رد</button>' +
-'<button class="share-btn" onclick="shareHuntById(' + r.id + ')">📤 شاركوا</button>' +
-'<button class="share-btn" id="comment-btn-hunt-' + r.id + '" onclick="toggleComments(\'hunt\', ' + r.id + ')">' + ccLabel + '</button>' +
-(mine ? '<button class="dead-btn" onclick="cancelHunt(' + r.id + ')">❌ احذف</button>' : '') +
-'</div>' +
-'<div id="comments-hunt-' + r.id + '" style="display:none;width:100%;margin-top:8px;padding:8px;background:#161616;border-radius:6px;"></div>' +
-'</div>';
-}).join('') || '<div class="row">لا يوجد طلبات. كن الأول .</div>';
+.limit(20);
+feedData.hunt = h.data || [];
 } catch(e) {
-document.getElementById('huntFeed').innerHTML = '<div class="row">لا يوجد طلبات, كن الأول</div>';
+feedData.hunt = [];
 }
+
+renderFilters('price');
+renderFilters('hunt');
+renderFeed('price');
+renderFeed('hunt');
+}
+
+function renderFilters(kind) {
+  var el = document.getElementById(kind + 'Filters');
+  if(!el) return;
+  var f = feedFilters[kind];
+  var mineCount = (feedData[kind] || []).filter(function(r) { return isMyPost(kind, r.id); }).length;
+  var chips = [
+    {k: 'all', label: 'الكل'},
+    {k: 'trade', label: '🔄 بدل'},
+    {k: 'boosted', label: '🔥 مدعوم'}
+  ];
+  var html = chips.map(function(c) {
+    return '<button class="filter-chip' + (f === c.k ? ' on' : '') + '" onclick="setFilter(\'' + kind + '\',\'' + c.k + '\')">' + c.label + '</button>';
+  }).join('');
+  if(mineCount > 0) {
+    html += '<button class="filter-chip mine' + (f === 'mine' ? ' on' : '') + '" onclick="setFilter(\'' + kind + '\',\'mine\')">⭐ منشوراتي (' + mineCount + ')</button>';
+  }
+  el.innerHTML = html;
+}
+
+function setFilter(kind, f) {
+  feedFilters[kind] = f;
+  renderFilters(kind);
+  renderFeed(kind);
+}
+
+function applyFilter(rows, kind) {
+  var f = feedFilters[kind];
+  if(f === 'trade') return rows.filter(function(r) { return r.trade_intent && r.trade_intent.accepted; });
+  if(f === 'boosted') return rows.filter(function(r) { return (r.boost_count || 0) > 0; });
+  if(f === 'mine') return rows.filter(function(r) { return isMyPost(kind, r.id); });
+  return rows;
+}
+
+function renderFeed(kind) {
+  var container = document.getElementById(kind + 'Feed');
+  if(!container) return;
+  var rows = applyFilter(feedData[kind] || [], kind);
+  if(!rows.length) {
+    var empty = feedFilters[kind] === 'all'
+      ? (kind === 'hunt' ? 'لا يوجد طلبات. كن الأول.' : 'لا يوجد عروض. كن الأول.')
+      : 'ما في نتائج بهذا الفلتر.';
+    container.innerHTML = '<div class="row">' + empty + '</div>';
+    return;
+  }
+  container.innerHTML = rows.map(function(r) { return renderRow(r, kind); }).join('');
+}
+
+function renderRow(r, kind) {
+  feedRows[kind + '_' + r.id] = r;
+  var label = kind === 'hunt' ? huntLabel(r) : priceLabel(r);
+  var mine = isMyPost(kind, r.id);
+  var cc = getCommentCount(kind, r.id);
+  var ccLabel = cc > 0 ? '💬 ' + cc : '💬';
+  var boosted = isBoosted(kind, r.id);
+  var boostCls = boosted ? ' done' : '';
+  var actionBtns;
+
+  if(kind === 'price') {
+    actionBtns =
+      '<button class="boost-btn' + boostCls + '" onclick="boostPrice(' + r.id + ')">🔥 ' + (r.boost_count || 0) + '</button>' +
+      '<button class="number-btn" onclick="askForNumber(' + r.id + ')">📞 رقمي</button>' +
+      '<button class="share-btn" id="comment-btn-price-' + r.id + '" onclick="toggleComments(\'price\', ' + r.id + ')">' + ccLabel + '</button>' +
+      (mine ? '<button class="dead-btn" onclick="cancelPrice(' + r.id + ')">❌ احذف</button>' : '') +
+      '<button class="dead-btn" onclick="reportDead(' + r.id + ')">⚰️</button>';
+  } else {
+    actionBtns =
+      '<button class="boost-btn' + boostCls + '" onclick="boostHunt(' + r.id + ')">🔥 ' + (r.boost_count || 0) + '</button>' +
+      '<button class="reply-btn" onclick="replyToHunt(' + r.id + ')">📢 رد</button>' +
+      '<button class="share-btn" onclick="shareHuntById(' + r.id + ')">📤 شاركوا</button>' +
+      '<button class="share-btn" id="comment-btn-hunt-' + r.id + '" onclick="toggleComments(\'hunt\', ' + r.id + ')">' + ccLabel + '</button>' +
+      (mine ? '<button class="dead-btn" onclick="cancelHunt(' + r.id + ')">❌ احذف</button>' : '');
+  }
+
+  var priceBit = kind === 'hunt'
+    ? '<b>الحد الأعلى ' + esc(r.target_price) + '</b>'
+    : '<b>' + esc(r.cash_price) + ' دينار</b>';
+
+  return '<div class="row' + (mine ? ' mine' : '') + '">' +
+    '<span>' + label + ' <span class="tag">' + (condLabel[r.condition] || esc(r.condition)) + '</span> <span style="color:#666;font-size:11px;">' + timeAgo(r.created_at) + '</span></span>' +
+    '<div class="row-actions">' + priceBit + actionBtns + '</div>' +
+    tradeLine(r, kind) +
+    tradeActions(r, kind) +
+    '<div id="comments-' + kind + '-' + r.id + '" style="display:none;width:100%;margin-top:8px;padding:8px;background:#161616;border-radius:6px;"></div>' +
+    '</div>';
 }
 
 // ============ BOOSTS / REPORTS ============
@@ -1303,10 +1496,13 @@ var cash = +val('cashPrice');
 if(!cash) { toast('إضافة سعر الكاش', 'err'); return; }
 
 
+var tradePrice_ = collectTrade('price');
+if(tradePrice_ === null) return;
+
 var sellerTok = 'S_' + Math.random().toString(36).slice(2,10) + Date.now().toString(36);
 
 try {
-var {data: priceId, error: insertErr} = await db.rpc('create_price', {
+var {data: priceId, error: insertErr} = await db.rpc('create_price', Object.assign({
 p_category_id: currentCategoryId,
 p_model_id: priceSelectedModelId || null,
 p_custom_model_name: (priceSelectedModelId || !searchVal) ? null : normalizeCustomInput(searchVal),
@@ -1317,10 +1513,11 @@ p_trade_price: +val('tradePrice') || null,
 p_whatsapp: val('priceWa') || null,
 p_seller_token: sellerTok,
 p_user_token: myToken()
-});
+}, tradeParam(tradePrice_)));
 if(insertErr) { toast('⚠️ ' + insertErr.message, 'err'); return; }
 
 saveMyPost('price', priceId);
+resetTrade('price');
 
 var msg = '✅ عرضكم نزل.';
 var {data: rpcMatch} = await db.rpc('match_price_to_hunts', {p_price_id: priceId});
@@ -1343,6 +1540,7 @@ var waMsg = 'رابط إدارة عرضكم على عنّا طلبكم:%0A' + da
 msg += ' <a class="btn green" href="https://wa.me/?text=' + encodeURIComponent(waMsg) + '">📩 احفظوا رابط إدارة العرض</a>';
 msg += ' <a class="btn share" href="' + shareLink() + '">📤 شاركوا</a>';
 msg += ' <button class="btn share" style="background:#4d1d1d;color:#ffa8a8;border-color:#6b2a2a;" onclick="cancelPrice(' + priceId + ')">❌ احذف العرض</button>';
+msg += accountNudge();
 document.getElementById('priceMsg').innerHTML = msg;
 loadFeeds();
 } catch(e) { toast('⚠️ في مشكلة تقنية', 'err'); }
@@ -1369,12 +1567,15 @@ if(hasHealth && val('huntCond') === 'used' && !attrs.health) {
   toast('حددوا الفحص (هيلث) للـ SSD المستعمل — من 95% وفوق', 'err');
   return;
 }
-  
+
 var budget = +val('huntPrice');
 if(!budget) { toast('إضافة أقصى ميزانية', 'err'); return; }
 
+var tradeHunt_ = collectTrade('hunt');
+if(tradeHunt_ === null) return;
+
 try {
-var {data: huntId, error: insertErr} = await db.rpc('create_hunt', {
+var {data: huntId, error: insertErr} = await db.rpc('create_hunt', Object.assign({
 p_category_id: currentCategoryId,
 p_model_id: huntSelectedModelId || null,
 p_custom_model_name: (huntSelectedModelId || !searchVal) ? null : normalizeCustomInput(searchVal),
@@ -1383,10 +1584,11 @@ p_target_price: budget,
 p_condition: val('huntCond'),
 p_whatsapp: val('huntWa') || null,
 p_user_token: myToken()
-});
+}, tradeParam(tradeHunt_)));
 if(insertErr) { toast('⚠️ ' + insertErr.message, 'err'); return; }
 
 saveMyPost('hunt', huntId);
+resetTrade('hunt');
 
 var code = 'CM-' + Math.floor(1000 + Math.random() * 9000);
 var msg = '✅ طلبكم انعرض.';
@@ -1407,6 +1609,7 @@ msg += ' لايوجد رقم للتواصل، تابعوا العروض من ه�
 }
 msg += ' <a class="btn share" href="' + shareLink() + '">📤 شارك</a>';
 msg += ' <button class="btn share" style="background:#4d1d1d;color:#ffa8a8;border-color:#6b2a2a;" onclick="cancelHunt(' + huntId + ')">❌ احذف الطلب</button>';
+msg += accountNudge();
 document.getElementById('huntMsg').innerHTML = msg;
 loadFeeds();
 } catch(e) { toast('⚠️ في مشكلة تقنية', 'err'); }
@@ -1422,7 +1625,537 @@ function scrollToForm(type) {
   el.style.boxShadow = '0 0 0 2px #ffc94d';
   setTimeout(function() { el.style.boxShadow = 'none'; }, 1200);
 }
-  
+
+// ============ ACCOUNT (phone + PIN) ============
+var authMode = 'login';
+
+function lsGet(k) { try { return localStorage.getItem(k); } catch(e) { return null; } }
+function lsSet(k, v) { try { localStorage.setItem(k, v); } catch(e) {} }
+function lsDel(k) { try { localStorage.removeItem(k); } catch(e) {} }
+function isLoggedIn() { return lsGet('cm_acct') === '1'; }
+
+function renderAuthBar() {
+  var b = document.getElementById('authBar');
+  if(!b) return;
+  b.innerHTML = isLoggedIn()
+    ? '<button class="auth-link" onclick="openAccount()">👤 حسابي</button> · <button class="auth-link" onclick="logout()">خروج</button>'
+    : '<button class="auth-link" onclick="openAuth(\'login\')">👤 دخول / احفظوا طلباتكم</button>';
+}
+
+function accountNudge() {
+  if(isLoggedIn()) return '';
+  return ' <button class="btn share" style="width:auto;display:inline-block;padding:8px 12px;margin-top:6px;font-size:13px" onclick="openAuth(\'register\')">💾 احفظوا طلباتكم من أي جهاز</button>';
+}
+
+function openAuth(mode) {
+  authMode = mode;
+  document.getElementById('authForm').style.display = '';
+  document.getElementById('authDone').style.display = 'none';
+  document.getElementById('authModal').style.display = 'flex';
+  var rec = mode === 'recover';
+  document.getElementById('authTitle').textContent = rec ? '🔑 استرجاع الحساب' : (mode === 'register' ? '👤 حساب جديد' : '👤 دخول');
+  document.getElementById('tabLogin').className = mode === 'login' ? 'on' : '';
+  document.getElementById('tabRegister').className = mode === 'register' ? 'on' : '';
+  document.getElementById('authCode').style.display = rec ? '' : 'none';
+  document.getElementById('authForgot').style.display = mode === 'login' ? '' : 'none';
+  document.getElementById('authPin').placeholder = rec ? 'PIN جديد ٤ أرقام' : 'PIN ٤ أرقام';
+  document.getElementById('authSubmit').textContent = rec ? 'استرجاع' : (mode === 'register' ? 'إنشاء الحساب' : 'دخول');
+  document.getElementById('authHint').textContent = mode === 'register'
+    ? 'رقم هاتفكم + PIN من ٤ أرقام، وبتوصلوا لطلباتكم وعروضكم من أي جهاز.'
+    : (rec ? 'اكتبوا رقمكم وكود الاسترجاع اللي حصلتوا عليه وقت التسجيل.' : 'ادخلوا برقمكم والـ PIN.');
+  document.getElementById('authErr').textContent = '';
+  document.getElementById('authPin').value = '';
+  document.getElementById('authCode').value = '';
+}
+
+function closeAuth() { document.getElementById('authModal').style.display = 'none'; }
+
+function authErrText(r) {
+  var e = r && r.error;
+  if(e === 'locked') return 'محاولات كثيرة. جربوا بعد ' + Math.max(1, Math.ceil((r.retry_after_s || 60) / 60)) + ' دقيقة.';
+  if(e === 'phone_taken') return 'هالرقم مسجّل. سجلوا دخول.';
+  if(e === 'rate_limited') return 'محاولات كثيرة. جربوا بعد شوي.';
+  if(e === 'invalid_input') return 'اكتبوا رقم صحيح و PIN من ٤ أرقام.';
+  return 'الرقم أو الـ PIN غلط.';
+}
+
+function applyAccount(r) {
+  lsSet('cm_token', r.user_token);
+  var posts = [];
+  (r.hunts || []).forEach(function(id) { posts.push({type: 'hunt', id: id}); });
+  (r.prices || []).forEach(function(p) { posts.push({type: 'price', id: p.id}); });
+  lsSet('my_posts', JSON.stringify(posts));
+  lsSet('my_sellers', JSON.stringify((r.prices || []).filter(function(p) { return p.seller_token; })));
+  lsSet('cm_acct', '1');
+  renderAuthBar();
+  updateTradeNudge('hunt');
+  updateTradeNudge('price');
+  loadFeeds();
+}
+
+async function submitAuth() {
+  if(noDb()) { toast('⚠️ لا يوجد اتصال', 'err'); return; }
+  var phone = val('authPhone').trim(), pin = val('authPin').trim(), err = document.getElementById('authErr');
+  if(phone.replace(/\D/g, '').length < 9 || !/^\d{4}$/.test(pin)) { err.textContent = authErrText({error: 'invalid_input'}); return; }
+  err.textContent = '';
+  var res;
+  try {
+    if(authMode === 'register') res = await db.rpc('auth_register', {p_phone: phone, p_pin: pin, p_current_token: myToken()});
+    else if(authMode === 'recover') res = await db.rpc('auth_recover', {p_phone: phone, p_code: val('authCode').trim(), p_new_pin: pin});
+    else res = await db.rpc('auth_login', {p_phone: phone, p_pin: pin, p_current_token: myToken()});
+  } catch(e) { err.textContent = 'في مشكلة بالاتصال.'; return; }
+  var r = res && res.data;
+  if(res.error || !r || !r.ok) { err.textContent = authErrText(r); return; }
+  applyAccount(r);
+  if(r.recovery_code) {
+    document.getElementById('recoveryCode').textContent = r.recovery_code;
+    document.getElementById('authForm').style.display = 'none';
+    document.getElementById('authDone').style.display = '';
+  } else {
+    closeAuth();
+    toast('✅ تم الدخول', 'ok');
+  }
+  document.getElementById('authPhone').value = '';
+  document.getElementById('authPin').value = '';
+}
+
+function copyRecovery() {
+  var c = document.getElementById('recoveryCode').textContent;
+  try { navigator.clipboard.writeText(c); toast('📋 تم النسخ', 'ok'); } catch(e) {}
+}
+
+function openAccount() {
+  var sellers = [];
+  try { sellers = JSON.parse(lsGet('my_sellers') || '[]'); } catch(e) {}
+  document.getElementById('acctSellers').innerHTML = sellers.length
+    ? '<p>لوحات عروضي</p>' + sellers.map(function(p) {
+        return '<a href="' + location.pathname + '?seller=' + encodeURIComponent(p.seller_token) + '">📋 لوحة العرض #' + esc(p.id) + '</a>';
+      }).join('')
+    : '';
+  document.getElementById('acctErr').textContent = '';
+  document.getElementById('acctOldPin').value = '';
+  document.getElementById('acctNewPin').value = '';
+  document.getElementById('acctModal').style.display = 'flex';
+}
+
+function closeAccount() { document.getElementById('acctModal').style.display = 'none'; }
+
+async function changePin() {
+  var o = val('acctOldPin').trim(), n = val('acctNewPin').trim(), err = document.getElementById('acctErr');
+  if(!/^\d{4}$/.test(o) || !/^\d{4}$/.test(n)) { err.textContent = 'PIN من ٤ أرقام.'; return; }
+  var res = await db.rpc('auth_change_pin', {p_user_token: myToken(), p_old_pin: o, p_new_pin: n});
+  var r = res && res.data;
+  if(res.error || !r || !r.ok) { err.textContent = authErrText(r); return; }
+  closeAccount();
+  toast('✅ تم تغيير الـ PIN', 'ok');
+}
+
+function logout() {
+  if(!confirm('تسجيل خروج؟ طلباتكم وعروضكم بتضل محفوظة، وبتشوفوها لما تدخلوا مرة ثانية.')) return;
+  lsSet('cm_token', 'u_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10));
+  lsSet('my_posts', '[]');
+  lsDel('my_sellers');
+  lsDel('cm_acct');
+  closeAccount();
+  renderAuthBar();
+  loadFeeds();
+  toast('تم تسجيل الخروج', 'ok');
+}
+
+function showMyOffers() {
+  closeAccount();
+  document.getElementById('offersDashboard').style.display = 'block';
+  loadOffersDashboard(myToken());
+  document.getElementById('offersDashboard').scrollIntoView({behavior: 'smooth', block: 'start'});
+}
+
+renderAuthBar();
+
+// ============ TRADE INTENT ============
+var TRADE_ENABLED = true;
+var tradeModelId = {hunt: null, price: null};
+
+function initTradeUI() {
+  if(!TRADE_ENABLED) return;
+  ['hunt', 'price'].forEach(function(p) {
+    document.getElementById(p + 'TradeBox').style.display = '';
+    setupTradeSearch(p);
+  });
+}
+
+function toggleTrade(p) {
+  var on = document.getElementById(p + 'TradeOn').checked;
+  document.getElementById(p + 'TradeFields').style.display = on ? '' : 'none';
+  if(on) logEvent('trade_toggled_on', 'form', null, {prefix: p});
+  updateTradeNudge(p);
+}
+
+function updateTradeNudge(p) {
+  var el = document.getElementById(p + 'TradeNudge');
+  if(!el) return;
+  var on = document.getElementById(p + 'TradeOn').checked;
+  var show = on && !isLoggedIn();
+  el.style.display = show ? '' : 'none';
+  if(show) logEvent('trade_nudge_shown', 'form', null, {prefix: p});
+}
+
+function toggleTradeHelp(p) {
+  var el = document.getElementById(p + 'TradeHelp');
+  el.style.display = el.style.display === 'none' ? '' : 'none';
+}
+
+function setupTradeSearch(p) {
+  var input = document.getElementById(p + 'TradeSearch');
+  var sug = document.getElementById(p + 'TradeSug');
+  input.addEventListener('input', function() {
+    tradeModelId[p] = null;
+    var q = normalizeCustomName(input.value);
+    if(q.length < 2) { sug.style.display = 'none'; return; }
+    var matches = (window.models || []).filter(function(m) {
+      return normalizeCustomName(rawLabelOf(m)).indexOf(q) >= 0;
+    }).slice(0, 8);
+    if(!matches.length) { sug.style.display = 'none'; return; }
+    sug.innerHTML = matches.map(function(m) { return '<div class="suggestion" data-id="' + m.id + '">' + labelOf(m) + '</div>'; }).join('');
+    sug.style.display = 'block';
+    sug.querySelectorAll('.suggestion').forEach(function(el) {
+      el.onclick = function() {
+        var m = matches.find(function(x) { return x.id == el.dataset.id; });
+        input.value = rawLabelOf(m);
+        tradeModelId[p] = m.id;
+        sug.style.display = 'none';
+      };
+    });
+  });
+  document.addEventListener('click', function(e) {
+    if(!sug.contains(e.target) && e.target !== input) sug.style.display = 'none';
+  });
+}
+
+function resetTrade(p) {
+  tradeModelId[p] = null;
+  var on = document.getElementById(p + 'TradeOn');
+  if(!on) return;
+  on.checked = false;
+  ['TradeSearch', 'TradeNotes', 'TradeAmt'].forEach(function(k) { document.getElementById(p + k).value = ''; });
+  document.getElementById(p + 'TradeSug').style.display = 'none';
+  document.getElementById(p + 'TradeFields').style.display = 'none';
+  var ev = document.querySelector('input[name="' + p + 'TradeDirR"][value="even"]');
+  if(ev) ev.checked = true;
+  document.getElementById(p + 'TradeHelp').style.display = 'none';
+  updateTradeNudge(p);
+}
+
+function collectTrade(p) {
+  if(!TRADE_ENABLED || !document.getElementById(p + 'TradeOn').checked) return {};
+  var amt = +document.getElementById(p + 'TradeAmt').value || 0;
+  if(amt < 0 || amt > 100000) { toast('الفرقية غير صحيحة', 'err'); return null; }
+  var dirEl = document.querySelector('input[name="' + p + 'TradeDirR"]:checked');
+  var dir = dirEl ? dirEl.value : 'even';
+  if(amt > 0 && dir === 'even') { toast('اختاروا مين بيدفع الفرق: بتدفعلي أو بدفعلك (أو امسحوا الفرقية)', 'err'); return null; }
+  if(amt === 0 && dir !== 'even') { toast('اكتبوا مبلغ الفرقية أو اختاروا راس براس', 'err'); return null; }
+  var notes = document.getElementById(p + 'TradeNotes').value.trim().slice(0, 100);
+  var t = {accepted: true};
+  if(amt > 0) t.cash_delta = dir === 'in' ? amt : -amt;
+  if(tradeModelId[p]) t.for_model_id = tradeModelId[p];
+  if(notes) t.for_notes = notes;
+  return t;
+}
+
+function tradeParam(t) { return (t && t.accepted) ? {p_trade_intent: t} : {}; }
+
+function tradeDeltaText(d) {
+  d = +d || 0;
+  if(d > 0) return 'بتدفعلي ' + d + ' فرق';
+  if(d < 0) return 'بدفعلك ' + (-d) + ' فرق';
+  return 'راس براس';
+}
+
+function tradeSummary(r, type) {
+  var t = r && r.trade_intent;
+  if(!t || !t.accepted) return '';
+  var target = [];
+  if(t.for_model_id) {
+    var m = getModelById(t.for_model_id);
+    if(m) target.push(rawLabelOf(m));
+  }
+  if(t.for_notes) target.push(t.for_notes);
+  var head = target.length
+    ? (type === 'price' ? 'للبدل بـ ' : 'عندي للبدل ') + target.join(' · ')
+    : (type === 'price' ? 'مفتوح للبدل' : 'عندي شي للبدل');
+  var hasDelta = t.cash_delta != null && +t.cash_delta !== 0;
+  return head + (hasDelta ? ' — ' + tradeDeltaText(t.cash_delta) : (target.length ? ' — راس براس' : ''));
+}
+
+function tradeLine(r, type) {
+  var txt = tradeSummary(r, type);
+  return txt ? '<div style="width:100%;font-size:12px;color:#d4a8ff;margin-top:2px;">🔄 ' + esc(txt) + '</div>' : '';
+}
+
+// ============ TRADE OFFERS ============
+function tradeActions(r, type) {
+  var t = r && r.trade_intent;
+  if(!t || !t.accepted) return '';
+  var mine = isMyPost(type, r.id);
+  var cnt = tradeOfferCounts[type][r.id] || 0;
+  var parts = [];
+  if(!mine) {
+    parts.push('<button class="offer-btn" onclick="openOfferModal(\'' + type + '\',' + r.id + ')">🔄 قدّم بدل</button>');
+  }
+  if(cnt > 0 || mine) {
+    parts.push('<button class="offers-badge" onclick="openOffersList(\'' + type + '\',' + r.id + ')">📩 ' + (mine ? 'عروض البدل ' : '') + '(' + cnt + ')</button>');
+  }
+  if(!parts.length) return '';
+  return '<div class="trade-actions">' + parts.join('') + '</div>';
+}
+
+// --- submit offer modal ---
+function openOfferModal(type, id) {
+  offerTargetType = type;
+  offerTargetId = id;
+  offerModelId = null;
+  var r = feedRows[type + '_' + id] || {};
+  var label = type === 'hunt' ? rawHuntLabel(r) : rawPriceLabel(r);
+  document.getElementById('offerTargetLabel').textContent = 'على: ' + label;
+  document.getElementById('offerSearch').value = '';
+  document.getElementById('offerNotes').value = '';
+  document.getElementById('offerAmt').value = '';
+  document.getElementById('offerPhone').value = val('huntWa') || val('priceWa') || '';
+  document.getElementById('offerSug').style.display = 'none';
+  document.getElementById('offerErr').textContent = '';
+  var ev = document.querySelector('input[name="offerDirR"][value="even"]');
+  if(ev) ev.checked = true;
+  document.getElementById('offerModal').style.display = 'flex';
+  logEvent('offer_modal_open', type, id, {});
+}
+
+function closeOfferModal() {
+  document.getElementById('offerModal').style.display = 'none';
+  offerTargetType = null;
+  offerTargetId = null;
+  offerModelId = null;
+}
+
+function setupOfferSearch() {
+  var input = document.getElementById('offerSearch');
+  var sug = document.getElementById('offerSug');
+  input.addEventListener('input', function() {
+    offerModelId = null;
+    var q = normalizeCustomName(input.value);
+    if(q.length < 2) { sug.style.display = 'none'; return; }
+    var matches = (window.models || []).filter(function(m) {
+      return normalizeCustomName(rawLabelOf(m)).indexOf(q) >= 0;
+    }).slice(0, 8);
+    if(!matches.length) { sug.style.display = 'none'; return; }
+    sug.innerHTML = matches.map(function(m) { return '<div class="suggestion" data-id="' + m.id + '">' + labelOf(m) + '</div>'; }).join('');
+    sug.style.display = 'block';
+    sug.querySelectorAll('.suggestion').forEach(function(el) {
+      el.onclick = function() {
+        var m = matches.find(function(x) { return x.id == el.dataset.id; });
+        input.value = rawLabelOf(m);
+        offerModelId = m.id;
+        sug.style.display = 'none';
+      };
+    });
+  });
+  document.addEventListener('click', function(e) {
+    if(!sug.contains(e.target) && e.target !== input) sug.style.display = 'none';
+  });
+}
+
+async function submitOffer() {
+  if(noDb()) { document.getElementById('offerErr').textContent = 'لا يوجد اتصال.'; return; }
+  var notes = document.getElementById('offerNotes').value.trim().slice(0, 100);
+  var amt = +document.getElementById('offerAmt').value || 0;
+  var dirEl = document.querySelector('input[name="offerDirR"]:checked');
+  var dir = dirEl ? dirEl.value : 'even';
+  var phone = document.getElementById('offerPhone').value.trim();
+  var err = document.getElementById('offerErr');
+
+  if(!offerModelId && !notes) { err.textContent = 'اختاروا الموديل أو اكتبوا المواصفات.'; return; }
+  if(amt < 0 || amt > 100000) { err.textContent = 'الفرقية غير صحيحة.'; return; }
+  if(amt > 0 && dir === 'even') { err.textContent = 'اختاروا مين بيدفع الفرق.'; return; }
+  if(amt === 0 && dir !== 'even') { err.textContent = 'اكتبوا مبلغ الفرقية أو اختاروا راس براس.'; return; }
+  err.textContent = '';
+
+  var delta = null;
+  if(amt > 0) delta = dir === 'in' ? amt : -amt;
+
+  try {
+    var res = await db.rpc('submit_trade_offer', {
+      p_target_type: offerTargetType,
+      p_target_id: offerTargetId,
+      p_offerer_token: myToken(),
+      p_offerer_phone: phone || null,
+      p_offered_model_id: offerModelId || null,
+      p_offered_notes: notes || null,
+      p_cash_delta: delta
+    });
+    if(res.error) { err.textContent = '⚠️ ' + res.error.message; return; }
+    logEvent('offer_submitted', offerTargetType, offerTargetId, {});
+    toast('✅ تم إرسال عرض البدل', 'ok');
+    var offerKind = offerTargetType;
+    closeOfferModal();
+    await loadOfferCounts();
+    renderFeed(offerKind === 'hunt' ? 'hunt' : 'price');
+  } catch(e) { err.textContent = 'في مشكلة تقنية.'; }
+}
+
+// --- offers list modal ---
+function openOffersList(type, id) {
+  offersListType = type;
+  offersListId = id;
+  var r = feedRows[type + '_' + id] || {};
+  var label = type === 'hunt' ? rawHuntLabel(r) : rawPriceLabel(r);
+  document.getElementById('offersListLabel').textContent = 'على: ' + label;
+  document.getElementById('offersListBody').innerHTML = '<div style="color:#888;font-size:12px;">جاري التحميل…</div>';
+  document.getElementById('offersListModal').style.display = 'flex';
+  logEvent('offers_list_open', type, id, {});
+  loadOffersList(type, id);
+}
+
+function closeOffersList() {
+  document.getElementById('offersListModal').style.display = 'none';
+  offersListType = null;
+  offersListId = null;
+}
+
+async function loadOffersList(type, id) {
+  var body = document.getElementById('offersListBody');
+  if(!body) return;
+  try {
+    var res = await db.rpc('get_target_offers', {
+      p_target_type: type,
+      p_target_id: id,
+      p_viewer_token: myToken()
+    });
+    if(res.error) { body.innerHTML = '<div style="color:#ff6b6b;font-size:12px;">خطأ: ' + esc(res.error.message) + '</div>'; return; }
+    var offers = res.data || [];
+    if(!offers.length) {
+      body.innerHTML = '<div style="color:#888;font-size:13px;padding:12px 0;">لا عروض بدل بعد.</div>';
+      return;
+    }
+    body.innerHTML = offers.map(function(o) { return renderOfferRow(o, type); }).join('');
+  } catch(e) { body.innerHTML = '<div style="color:#ff6b6b;font-size:12px;">خطأ في التحميل.</div>'; }
+}
+
+function renderOfferRow(o, type) {
+  var itemParts = [];
+  if(o.offered_model_id) {
+    var m = getModelById(o.offered_model_id);
+    if(m) itemParts.push(rawLabelOf(m));
+  }
+  if(o.offered_notes) itemParts.push(o.offered_notes);
+  var item = itemParts.length ? itemParts.join(' · ') : 'بدون تفاصيل';
+  var delta = '';
+  if(o.cash_delta != null && +o.cash_delta !== 0) {
+    delta = '<div class="offer-meta">الفرقية: ' + tradeDeltaText(o.cash_delta) + ' (من ناحية مقدّم العرض)</div>';
+  } else {
+    delta = '<div class="offer-meta">راس براس</div>';
+  }
+  var statusChip = '<span class="offer-status ' + o.status + '">' + offerStatusLabel(o.status) + '</span>';
+  var actions = '';
+  if(o.status === 'OPEN') {
+    if(o.is_mine) {
+      actions = '<div class="offer-actions"><button class="offer-withdraw" onclick="withdrawOffer(' + o.id + ')">↩️ سحب عرضي</button></div>';
+    } else if(o.offerer_phone) {
+      actions = '<div class="offer-actions">' +
+        '<button class="offer-accept" onclick="acceptOffer(' + o.id + ')">✅ اقبل</button>' +
+        '<button class="offer-reject" onclick="rejectOffer(' + o.id + ')">❌ ارفض</button>' +
+        '<span style="color:#888;font-size:12px;">📞 <b style="color:#7dffa8;">' + esc(o.offerer_phone) + '</b></span>' +
+        '</div>';
+    }
+  } else if(o.offerer_phone && o.status === 'ACCEPTED') {
+    actions = '<div class="offer-actions"><span style="color:#888;font-size:12px;">📞 <b style="color:#7dffa8;">' + esc(o.offerer_phone) + '</b></span>' +
+      '<button class="share-btn" data-phone="' + esc(o.offerer_phone) + '" onclick="copyPhone(this)">📋</button></div>';
+  }
+  return '<div class="offer-row">' +
+    '<div><b style="color:#d4a8ff;">🔄 ' + esc(item) + '</b> ' + statusChip + '</div>' +
+    delta +
+    '<div class="offer-meta">' + timeAgo(o.created_at) + '</div>' +
+    actions +
+    '</div>';
+}
+
+function offerStatusLabel(s) {
+  if(s === 'OPEN') return 'مفتوح';
+  if(s === 'ACCEPTED') return 'مقبول';
+  if(s === 'REJECTED') return 'مرفوض';
+  if(s === 'WITHDRAWN') return 'مسحوب';
+  return s;
+}
+
+async function acceptOffer(id) {
+  if(!confirm('قبول هذا العرض؟ بيتم رفض باقي العروض على نفس المنشور.')) return;
+  try {
+    var res = await db.rpc('accept_trade_offer', {p_offer_id: id, p_owner_token: myToken()});
+    if(res.error) { toast('⚠️ ' + res.error.message, 'err'); return; }
+    logEvent('offer_accepted', offersListType, offersListId, {});
+    toast('✅ تم قبول العرض', 'ok');
+    await loadOffersList(offersListType, offersListId);
+    await loadOfferCounts();
+    renderFeed(offersListType);
+  } catch(e) { toast('⚠️ في مشكلة', 'err'); }
+}
+
+async function rejectOffer(id) {
+  if(!confirm('رفض هذا العرض؟')) return;
+  try {
+    var res = await db.rpc('reject_trade_offer', {p_offer_id: id, p_owner_token: myToken()});
+    if(res.error) { toast('⚠️ ' + res.error.message, 'err'); return; }
+    logEvent('offer_rejected', offersListType, offersListId, {});
+    toast('تم الرفض', 'ok');
+    await loadOffersList(offersListType, offersListId);
+    await loadOfferCounts();
+    renderFeed(offersListType);
+  } catch(e) { toast('⚠️ في مشكلة', 'err'); }
+}
+
+async function withdrawOffer(id) {
+  if(!confirm('سحب عرضك؟')) return;
+  try {
+    var res = await db.rpc('withdraw_trade_offer', {p_offer_id: id, p_offerer_token: myToken()});
+    if(res.error) { toast('⚠️ ' + res.error.message, 'err'); return; }
+    logEvent('offer_withdrawn', offersListType, offersListId, {});
+    toast('تم السحب', 'ok');
+    await loadOffersList(offersListType, offersListId);
+    await loadOfferCounts();
+    renderFeed(offersListType);
+  } catch(e) { toast('⚠️ في مشكلة', 'err'); }
+}
+
+async function loadOffersDashboard(token) {
+  var box = document.getElementById('offersDashboardContent');
+  if(!box) return;
+  box.innerHTML = '<div class="lead-row" style="color:#888;">جاري التحميل…</div>';
+  try {
+    var res = await db.rpc('get_offers_for_owner', {p_owner_token: token});
+    if(res.error) { box.innerHTML = '<div class="lead-row" style="color:#ff8a8a;">خطأ: ' + esc(res.error.message) + '</div>'; return; }
+    var offers = res.data || [];
+    if(!offers.length) { box.innerHTML = '<div class="lead-row" style="color:#888;">لا عروض بدل على منشوراتكم بعد.</div>'; return; }
+    box.innerHTML = offers.map(function(o) {
+      var itemParts = [];
+      if(o.offered_model_id) {
+        var m = getModelById(o.offered_model_id);
+        if(m) itemParts.push(rawLabelOf(m));
+      }
+      if(o.offered_notes) itemParts.push(o.offered_notes);
+      var item = itemParts.length ? itemParts.join(' · ') : 'بدون تفاصيل';
+      var delta = (o.cash_delta != null && +o.cash_delta !== 0) ? tradeDeltaText(o.cash_delta) : 'راس براس';
+      var phoneRow = o.offerer_phone && o.status !== 'REJECTED' && o.status !== 'WITHDRAWN'
+        ? ' · 📞 <b style="color:#7dffa8;">' + esc(o.offerer_phone) + '</b>'
+        : '';
+      return '<div class="lead-row" style="flex-direction:column;align-items:flex-start;gap:4px;">' +
+        '<div><b style="color:#d4a8ff;">' + esc(o.target_label) + '</b> <span class="offer-status ' + o.status + '">' + offerStatusLabel(o.status) + '</span></div>' +
+        '<div style="font-size:12px;color:#bbb;">🔄 ' + esc(item) + ' — ' + esc(delta) + phoneRow + '</div>' +
+        '<div style="font-size:11px;color:#666;">' + timeAgo(o.created_at) + '</div>' +
+        '</div>';
+    }).join('');
+  } catch(e) { box.innerHTML = '<div class="lead-row" style="color:#ff8a8a;">خطأ في التحميل.</div>'; }
+}
+
+setupOfferSearch();
+initTradeUI();
+
 loadCategories();
 checkSellerDashboard();
 </script>
