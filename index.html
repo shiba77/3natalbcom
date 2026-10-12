@@ -228,7 +228,7 @@ footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-heigh
 </div>
 </div>
 <button class="btn primary" onclick="castHunt()">📢 ارسال</button>
-<div style="text-align:center;font-size:11px;color:#666;margin-top:8px;">ينتهي الطلب تلقائياً بعد 7 أيام</div>
+<div style="text-align:center;font-size:11px;color:#666;margin-top:8px;">ينتهي الطلب تلقائياً بعد 14 يوم</div>
 <div class="msg" id="huntMsg"></div>
 </div>
 
@@ -1400,11 +1400,14 @@ function renderRow(r, kind) {
       (mine ? '<button class="dead-btn" onclick="cancelHunt(' + r.id + ')">❌ احذف</button>' : '');
   }
 
-  var priceBit = kind === 'hunt'
+    var priceBit = kind === 'hunt'
     ? '<b>الحد الأعلى ' + esc(r.target_price) + '</b>'
     : '<b>' + esc(r.cash_price) + ' دينار</b>';
 
-  return '<div class="row' + (mine ? ' mine' : '') + '">' +
+  var expired = r.expires_at && new Date(r.expires_at) < new Date();
+  var cls = 'row' + (mine ? ' mine' : '') + (expired ? ' expired' : '');
+
+  return '<div class="' + cls + '">' +
     '<span>' + label + ' <span class="tag">' + (condLabel[r.condition] || esc(r.condition)) + '</span> <span style="color:#666;font-size:11px;">' + timeAgo(r.created_at) + '</span></span>' +
     '<div class="row-actions">' + priceBit + actionBtns + '</div>' +
     tradeLine(r, kind) +
