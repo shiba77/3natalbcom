@@ -2484,8 +2484,8 @@ wake();
     if(choice) route(choice); else logEvent('wizard_choice',null,null,{choice:'browse'});
   }
   function onKey(e){ if(e.key==='Escape') close(null); }
-  function open(){
-    if(ov || !eligible()) return;
+  function open(force){
+    if(ov || (!force && !eligible())) return;
     shown=true;
     logEvent('wizard_shown',null,null,{});
     ov=document.createElement('div'); ov.className='wz-ov'; ov.setAttribute('role','dialog'); ov.setAttribute('aria-modal','true'); ov.setAttribute('aria-label','أهلا فيك');
@@ -2498,7 +2498,7 @@ wake();
       '<button class="wz-b wz-y" type="button" data-c="price" aria-expanded="false"><i>🚚</i><div><b>عندي قطعة بدي أبيعها</b><span>انشر عرضك بسعر الكاش</span></div></button>'+
       '<button class="wz-b wz-p" type="button" data-c="trade" aria-expanded="false"><i>🔄</i><div><b>بدي أبدّل</b><span>قطعة بقطعة، والفرقية إذا في</span></div></button>'+
       '<button class="wz-b wz-n" type="button" data-c=""><i>👀</i><div><b>بس بتفرّج</b><span>شوف الطلبات والعروض</span></div></button>'+
-      '<div class="wz-f"><button type="button" data-login>عندي حساب؟ دخول</button><a href="how-it-works.html">كيف يشتغل الموقع؟ ←</a></div>'+
+      '<div class="wz-f">'+(isLoggedIn()?'<span></span>':'<button type="button" data-login>عندي حساب؟ دخول</button>')+'<a href="how-it-works.html">كيف يشتغل الموقع؟ ←</a></div>'+
       '</div>';
     document.body.appendChild(ov);
     ov.addEventListener('click',function(e){
@@ -2510,7 +2510,7 @@ wake();
     document.addEventListener('keydown',onKey);
     var first=ov.querySelector('.wz-g'); if(first) try{first.focus({preventScroll:true});}catch(e){}
   }
-  window.showWelcome=function(){ shown=false; try{localStorage.removeItem(KEY);}catch(e){} open(); };
+  window.showWelcome=function(){ closePanels(); if(ov){ return; } shown=false; open(true); };
   setTimeout(open, 900);
 })();
 </script>
