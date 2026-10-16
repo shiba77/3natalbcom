@@ -39,6 +39,7 @@ select,input{width:100%;padding:10px;border-radius:8px;border:1px solid #444;bac
 .or-divider span{position:relative;background:#1b1b1b;padding:0 12px;color:#888;font-size:12px}
 .facet-row{display:flex;flex-wrap:wrap;gap:8px;transition:opacity 0.2s}
 .facet-row.dimmed{opacity:0.4}
+.facet-row.has-model .req{display:none}
 .facet-row.dimmed:hover{opacity:0.7}
 .facet-row > div{flex:1 1 130px;min-width:0}
 .facet-label{font-size:11px;color:#888;margin-bottom:4px}
@@ -736,7 +737,7 @@ function renderFacets(prefix) {
   var forHunt = prefix === 'hunt';
   box.innerHTML = schema.map(function(f) {
     var opts = facetOptions(f);
-    var label = esc(f.label) + (f.required ? ' *' : '');
+    var label = esc(f.label) + (f.required ? ' <span class="req">*</span>' : '');
     var ctl;
     if(opts.length) {
       ctl = '<select class="facet-ctl" data-facet="' + esc(f.key) + '"><option value="">غير محدد</option>' +
@@ -819,6 +820,7 @@ function dimFacets(prefix) {
   var box = document.getElementById(prefix + 'Facets');
   if(!box) return;
   box.classList.remove('dimmed');
+  box.classList.add('has-model');
   box.querySelectorAll('[data-facet]').forEach(function(ctl) {
     var key = ctl.getAttribute('data-facet');
     var wrapper = ctl.closest('div');
@@ -836,6 +838,7 @@ function undimAll(prefix) {
   var box = document.getElementById(prefix + 'Facets');
   if(!box) return;
   box.classList.remove('dimmed');
+  box.classList.remove('has-model');
   box.querySelectorAll('[data-facet]').forEach(function(ctl) {
     var wrapper = ctl.closest('div');
     if(wrapper) wrapper.classList.remove('dimmed');
