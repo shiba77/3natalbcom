@@ -13,7 +13,7 @@ body{background:#111;color:#eee;font-family:system-ui,sans-serif;padding:20px;ma
 .tagline{font-size:15px;color:#ddd;margin-top:6px;font-weight:700}
 .tagline .live-red{color:#ff4444}
 .hero-sub{font-size:13px;color:#888;margin-top:10px;line-height:1.9}
-#statusLine{display:none;margin:10px 0;padding:10px;border-radius:8px;font-size:13px;text-align:center}
+#statusLine{display:none;position:fixed;left:50%;bottom:18px;transform:translateX(-50%);width:min(92vw,520px);box-sizing:border-box;z-index:99999;margin:0;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.6;text-align:center;box-shadow:0 8px 28px rgba(0,0,0,.55)}
 #statusLine.err{display:block;background:#4d1d1d;color:#ffa8a8}
 #statusLine.ok{display:block;background:#1d4d2b;color:#7dffa8}
 .market-strip{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
@@ -109,7 +109,14 @@ footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-heigh
 .market-pill.open { border-color: #ffc94d; color: #ffc94d; background: #1a1400; }
 .market-pill.open.active { background: #ffc94d; color: #111; }
 .facet-row > div.dimmed { opacity: 0.4; pointer-events: none; }
-.facet-row > div.locked { opacity: 0.9; pointer-events: none; }
+.facet-row > div.locked { opacity: 0.9; cursor: not-allowed; }
+.facet-row > div.locked select, .facet-row > div.locked input { pointer-events: none; }
+.wa-notice { margin: 8px 0 4px; padding: 12px; border-radius: 12px; background: rgba(255,201,77,.08); border: 1px solid rgba(255,201,77,.45); }
+.wa-notice .wa-msg { font-size: 13px; line-height: 1.7; color: #f3e3b3; }
+.wa-notice .wa-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; align-items: center; }
+.wa-notice button { font: inherit; font-size: 13px; cursor: pointer; border-radius: 10px; padding: 8px 14px; }
+.wa-notice .wa-add { background: #ffc94d; color: #2a1c00; border: 0; font-weight: 700; }
+.wa-notice .wa-skip { background: transparent; color: #cfe0ff; border: 1px solid rgba(150,190,255,.45); }
 .facet-row > div.locked .facet-label::after { content: " 🔒 من الموديل"; color: #4dffa0; font-size: 10px; }
 .facet-row > div.locked select { border-color: rgba(77,255,160,.45); }
 
@@ -312,7 +319,7 @@ select:focus,input:focus,button:focus-visible,a:focus-visible{outline:2px solid 
 <select id="huntCond"><option value="any">غير محدد</option><option value="used">مستعمل</option><option value="new">جديد</option></select>
 <div class="facet-row" id="huntFacets"></div>
 <label>أقصى ميزانية (دينار)</label><input id="huntPrice" type="number" placeholder="210">
-<label>واتساب ضروري للتواصل</label><input id="huntWa" type="tel" placeholder="079xxxxxxx">
+<label>واتساب ضروري للتواصل</label><input id="huntWa" type="tel" placeholder="079xxxxxxx"><div class="wa-notice" id="huntWaNotice" style="display:none" aria-live="polite"></div>
 <div class="trade-box" id="huntTradeBox" style="display:none">
 <div style="display:flex;align-items:center;gap:8px"><label class="trade-toggle"><input type="checkbox" id="huntTradeOn" onchange="toggleTrade('hunt')"> 🔄 هل تقبل البدل؟</label><button type="button" class="trade-help-btn" onclick="toggleTradeHelp('hunt')">؟</button></div>
 <div class="trade-nudge" id="huntTradeNudge" style="display:none">💡 لتتابعوا عروض البدل على منشوراتكم من أي جهاز، سجّلوا حساب بسيط.<button type="button" class="trade-nudge-btn" onclick="openAuth('register')">تسجيل سريع</button></div>
@@ -348,7 +355,7 @@ select:focus,input:focus,button:focus-visible,a:focus-visible{outline:2px solid 
 <div class="facet-row" id="priceFacets"></div>
 <label>سعر الكاش (دينار)</label><input id="cashPrice" type="number" placeholder="210">
 <label>سعر البدل (اختياري)</label><input id="tradePrice" type="number" placeholder="220">
-<label>واتساب ضروري للتواصل</label><input id="priceWa" type="tel" placeholder="079xxxxxxx">
+<label>واتساب ضروري للتواصل</label><input id="priceWa" type="tel" placeholder="079xxxxxxx"><div class="wa-notice" id="priceWaNotice" style="display:none" aria-live="polite"></div>
 <div class="trade-box" id="priceTradeBox" style="display:none">
 <div style="display:flex;align-items:center;gap:8px"><label class="trade-toggle"><input type="checkbox" id="priceTradeOn" onchange="toggleTrade('price')"> 🔄 هل تقبل البدل؟</label><button type="button" class="trade-help-btn" onclick="toggleTradeHelp('price')">؟</button></div>
 <div class="trade-nudge" id="priceTradeNudge" style="display:none">💡 لتتابعوا عروض البدل على منشوراتكم من أي جهاز، سجّلوا حساب بسيط.<button type="button" class="trade-nudge-btn" onclick="openAuth('register')">تسجيل سريع</button></div>
@@ -602,29 +609,59 @@ var el = document.getElementById('statusLine');
 el.className = k || 'ok';
 el.textContent = m;
 el.style.display = 'block';
-setTimeout(function() { el.style.display = 'none'; }, 4000);
+clearTimeout(window.__toastT); window.__toastT = setTimeout(function() { el.style.display = 'none'; }, Math.max(4000, m.length * 70));
 }
 
 function noDb() { return !db; }
 
-// Contact number: a post nobody can answer is wasted. Empty = one warning, second tap continues.
-// A number that is started but incomplete is never accepted.
-var waWarnedAt = 0;
-function waCheck(inputId) {
-  var el = document.getElementById(inputId);
+// Contact number: a post nobody can answer is wasted. Left empty, a calm note explains what that means
+// and offers "استمرار بدون رقم". A number that is started but incomplete is never accepted.
+var waSkip = {price: false, hunt: false};
+function waNoticeEl(prefix) { return document.getElementById(prefix + 'WaNotice'); }
+function hideWaNotice(prefix) { var n = waNoticeEl(prefix); if(n) { n.style.display = 'none'; n.innerHTML = ''; } }
+function showWaNotice(prefix) {
+  var n = waNoticeEl(prefix);
+  if(!n) return;
+  n.innerHTML =
+    '<div class="wa-msg">📵 بدون رقم واتساب، ما حدا رح يقدر يتواصل معكم مباشرة. وإذا انعرض اللي بدكم أو انطلب اللي عندكم، لازم ترجعوا للموقع وتشوفوه بأنفسكم.</div>' +
+    '<div class="wa-actions">' +
+    '<button type="button" class="wa-add" onclick="waAdd(\'' + prefix + '\')">✏️ أضيف رقمي</button>' +
+    '<button type="button" class="wa-skip" onclick="waContinue(\'' + prefix + '\')">استمرار بدون رقم</button>' +
+    '</div>';
+  n.style.display = 'block';
+  try { n.scrollIntoView({block: 'center', behavior: 'smooth'}); } catch(e) {}
+  logEvent('wa_notice_shown', null, null, {form: prefix});
+}
+function waAdd(prefix) {
+  hideWaNotice(prefix);
+  var el = document.getElementById(prefix + 'Wa');
+  if(el) el.focus();
+}
+function waContinue(prefix) {
+  waSkip[prefix] = true;
+  hideWaNotice(prefix);
+  logEvent('wa_skipped', null, null, {form: prefix});
+  if(prefix === 'price') savePrice(); else castHunt();
+}
+function waCheck(prefix) {
+  var el = document.getElementById(prefix + 'Wa');
   var digits = ((el && el.value) || '').replace(/\D/g, '');
-  if(digits.length >= 9) { waWarnedAt = 0; return true; }
+  if(digits.length >= 9) { waSkip[prefix] = false; hideWaNotice(prefix); return true; }
   if(digits.length > 0) {
     toast('⚠️ رقم الواتساب غير مكتمل. اكتبوه كامل (مثلاً 079xxxxxxx).', 'err');
     if(el) el.focus();
     return false;
   }
-  if(waWarnedAt && Date.now() - waWarnedAt < 60000) { waWarnedAt = 0; return true; }
-  waWarnedAt = Date.now();
-  toast('⚠️ بدون رقم واتساب ما حدا رح يقدر يتواصل معكم. اكتبوا رقمكم، أو اضغطوا إرسال مرة ثانية للمتابعة بدونه.', 'err');
-  if(el) el.focus();
+  if(waSkip[prefix]) { waSkip[prefix] = false; hideWaNotice(prefix); return true; }
+  showWaNotice(prefix);
   return false;
 }
+['price', 'hunt'].forEach(function(prefix) {
+  document.addEventListener('input', function(e) {
+    if(e.target && e.target.id === prefix + 'Wa') { waSkip[prefix] = false; hideWaNotice(prefix); }
+  });
+});
+
 function val(id) { return document.getElementById(id).value; }
 
 function timeAgo(dateStr) {
@@ -850,6 +887,7 @@ function resetForms() {
   huntSelectedModelId = null;
   priceSelectedModelId = null;
   ['hunt', 'price'].forEach(function(p) {
+    waSkip[p] = false; hideWaNotice(p);
     document.getElementById(p + 'Search').value = '';
     document.getElementById(p + 'Suggestions').style.display = 'none';
     undimAll(p);
@@ -930,6 +968,16 @@ function applyModelSpecs(prefix) {
     if(w) { w.classList.remove('dimmed'); w.classList.add('locked'); }
   });
 }
+
+// Tapping a locked field explains why it is locked (a disabled control stays silent on its own).
+document.addEventListener('click', function(e) {
+  var w = e.target.closest && e.target.closest('.facet-row > div.locked');
+  if(!w) return;
+  var lbl = w.querySelector('.facet-label');
+  var name = lbl ? lbl.textContent.replace(/🔒.*/, '').trim() : 'هاي المواصفة';
+  toast(name + ' مقفلة لأنها جزء من الموديل اللي اخترتوه، فما بتتغير. إذا بدكم مواصفة مختلفة امسحوا الموديل من خانة البحث وحددوا المواصفات يدوياً.', 'err');
+  logEvent('lock_tap', 'facet', null, {facet: (w.querySelector('[data-facet]') || {}).getAttribute ? w.querySelector('[data-facet]').getAttribute('data-facet') : null});
+});
 
 function releaseLocks(box) {
   box.querySelectorAll('[data-locked]').forEach(function(ctl) {
@@ -1729,7 +1777,7 @@ if(hasHealth && val('priceCond') === 'used' && !attrs.health) {
 
 var cash = +val('cashPrice');
 if(!cash) { toast('إضافة سعر الكاش', 'err'); return; }
-if(!waCheck('priceWa')) return;
+if(!waCheck('price')) return;
 
 
 var tradePrice_ = collectTrade('price');
@@ -1809,7 +1857,7 @@ if(hasHealth && val('huntCond') === 'used' && !attrs.health) {
 
 var budget = +val('huntPrice');
 if(!budget) { toast('إضافة أقصى ميزانية', 'err'); return; }
-if(!waCheck('huntWa')) return;
+if(!waCheck('hunt')) return;
 
 var tradeHunt_ = collectTrade('hunt');
 if(tradeHunt_ === null) return;
