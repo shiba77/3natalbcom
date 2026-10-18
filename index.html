@@ -109,6 +109,9 @@ footer{margin:30px 0 10px;text-align:center;color:#666;font-size:12px;line-heigh
 .market-pill.open { border-color: #ffc94d; color: #ffc94d; background: #1a1400; }
 .market-pill.open.active { background: #ffc94d; color: #111; }
 .facet-row > div.dimmed { opacity: 0.4; pointer-events: none; }
+.facet-row > div.locked { opacity: 0.9; pointer-events: none; }
+.facet-row > div.locked .facet-label::after { content: " 🔒 من الموديل"; color: #4dffa0; font-size: 10px; }
+.facet-row > div.locked select { border-color: rgba(77,255,160,.45); }
 
 /* ===== account (phone + PIN) ===== */
 .auth-bar{text-align:center;margin-top:10px;font-size:13px;color:#888}
@@ -457,7 +460,8 @@ select:focus,input:focus,button:focus-visible,a:focus-visible{outline:2px solid 
 window.addEventListener('error', function(e) {
 var el = document.getElementById('statusLine');
 el.className = 'err';
-el.textContent = '⚠️ خطأ: ' + (e.message || 'غير معروف');
+try { console.error(e.message); } catch(_) {}
+el.textContent = '⚠️ صار خطأ غير متوقع. حدّثوا الصفحة وجرّبوا مرة ثانية.';
 el.style.display = 'block';
 });
 
@@ -498,6 +502,7 @@ var DEFAULT_GPU_SCHEMA = [
   {key:'manufacturer', label:'المصنّع', type:'select', match:'exact'},
   {key:'vram_gb', label:'الذاكرة', type:'number', unit:'GB', match:'min'}
 ];
+var LOCK_FROM_MODEL = ['ram_type', 'form_factor', 'form', 'interface'];
 var ALWAYS_ACTIVE_FACETS = ['stick_count', 'health', 'form', 'form_factor', 'capacity_gb', 'interface', 'ram_type'];
 
 // ============ OWNERSHIP HELPERS ============
@@ -549,6 +554,49 @@ function isBoosted(type, id) {
   try { return localStorage.getItem('boosted_' + type + '_' + id) === '1'; } catch(e) { return false; }
 }
 
+// ============ ARABIC ERROR MESSAGES ============
+// Every message that comes back from the database is translated here, so users never see English.
+function errFieldLabel(key) {
+  try {
+    var f = currentSchema().filter(function(x) { return x.key === key; })[0];
+    if(f) return f.label;
+  } catch(_) {}
+  return key;
+}
+function errAr(err) {
+  var raw = '';
+  if(err) raw = String(err.message || err.error_description || err.error || err);
+  try { console.error('DB error:', raw, err && err.code); } catch(_) {}
+  var m;
+  if((m = raw.match(/Missing required field:\s*(\S+)/))) return 'لازم تحددوا: ' + errFieldLabel(m[1]) + ' (أو اختاروا الموديل من القائمة).';
+  if((m = raw.match(/Invalid value for\s+(\S+)/))) return 'القيمة اللي اخترتوها لـ ' + errFieldLabel(m[1]) + ' مش صحيحة. اختاروا من القائمة.';
+  if((m = raw.match(/Field\s+(\S+)\s+must be a number/))) return errFieldLabel(m[1]) + ' لازم يكون رقم.';
+  if((m = raw.match(/Field\s+(\S+)\s+out of range/))) return 'القيمة اللي كتبتوها لـ ' + errFieldLabel(m[1]) + ' خارج المسموح.';
+  var map = [
+    [/Invalid budget/i, 'الميزانية غير صحيحة. اكتبوا رقم أكبر من صفر وأقل من 100000.'],
+    [/Invalid trade price/i, 'سعر البدل غير صحيح. اكتبوا رقم أكبر من صفر وأقل من 100000.'],
+    [/Invalid price/i, 'السعر غير صحيح. اكتبوا رقم أكبر من صفر وأقل من 100000.'],
+    [/Invalid condition/i, 'اختاروا الحالة (جديد أو مستعمل).'],
+    [/Model does not belong to category/i, 'هذا الموديل مش من هالسوق. امسحوا الموديل واختاروه من جديد.'],
+    [/Must specify model or specs/i, 'اختاروا موديل من القائمة أو حددوا المواصفات.'],
+    [/cash_delta out of range/i, 'فرق السعر خارج المسموح.'],
+    [/offered model not in same market/i, 'الموديل المعروض لازم يكون من نفس السوق.'],
+    [/target does not accept trades/i, 'صاحب هالمنشور ما بيقبل البدل.'],
+    [/target not found or inactive/i, 'المنشور مش موجود أو انتهى.'],
+    [/cannot offer on own post/i, 'ما بتقدروا تعرضوا على منشوركم.'],
+    [/offer not found/i, 'العرض مش موجود.'],
+    [/offer not open/i, 'هذا العرض مش مفتوح لسا.'],
+    [/not owner|not yours|bad token/i, 'ما عندكم صلاحية لهالعملية.'],
+    [/bad target_type/i, 'نوع المنشور غير صحيح.'],
+    [/duplicate key|23505/i, 'هذا الإجراء انعمل من قبل.'],
+    [/Failed to fetch|NetworkError|network|timeout|load failed/i, 'ما في اتصال. تأكدوا من الإنترنت وجرّبوا مرة ثانية.'],
+    [/JWT|permission denied|not authorized|row-level security/i, 'ما عندكم صلاحية لهالعملية.'],
+    [/rate.?limit|too many/i, 'محاولات كثيرة. جرّبوا بعد شوي.']
+  ];
+  for(var i = 0; i < map.length; i++) { if(map[i][0].test(raw) || (err && err.code && map[i][0].test(String(err.code)))) return map[i][1]; }
+  return 'صار خطأ غير متوقع. جرّبوا مرة ثانية.';
+}
+
 function toast(m, k) {
 var el = document.getElementById('statusLine');
 el.className = k || 'ok';
@@ -558,6 +606,25 @@ setTimeout(function() { el.style.display = 'none'; }, 4000);
 }
 
 function noDb() { return !db; }
+
+// Contact number: a post nobody can answer is wasted. Empty = one warning, second tap continues.
+// A number that is started but incomplete is never accepted.
+var waWarnedAt = 0;
+function waCheck(inputId) {
+  var el = document.getElementById(inputId);
+  var digits = ((el && el.value) || '').replace(/\D/g, '');
+  if(digits.length >= 9) { waWarnedAt = 0; return true; }
+  if(digits.length > 0) {
+    toast('⚠️ رقم الواتساب غير مكتمل. اكتبوه كامل (مثلاً 079xxxxxxx).', 'err');
+    if(el) el.focus();
+    return false;
+  }
+  if(waWarnedAt && Date.now() - waWarnedAt < 60000) { waWarnedAt = 0; return true; }
+  waWarnedAt = Date.now();
+  toast('⚠️ بدون رقم واتساب ما حدا رح يقدر يتواصل معكم. اكتبوا رقمكم، أو اضغطوا إرسال مرة ثانية للمتابعة بدونه.', 'err');
+  if(el) el.focus();
+  return false;
+}
 function val(id) { return document.getElementById(id).value; }
 
 function timeAgo(dateStr) {
@@ -660,7 +727,11 @@ function rawLabelOf(m) {
   currentSchema().forEach(function(f) {
     if(f.key === 'manufacturer') return;
     var v = rowAttr(m, f.key);
-    if(v != null && v !== '') parts.push(v + (f.unit || ''));
+    if(v != null && v !== '') {
+      var piece = v + (f.unit || '');
+      var seen = parts.some(function(x) { return String(x).toLowerCase() === String(piece).toLowerCase(); });
+      if(!seen) parts.push(piece);
+    }
   });
   var vt = (m.attributes && m.attributes.vram_type) || m.vram_type;
   if(vt) parts.push(vt);
@@ -668,6 +739,11 @@ function rawLabelOf(m) {
 }
 
 function labelOf(m) { return esc(rawLabelOf(m)); }
+
+function dropSeen(base, parts) {
+  var have = String(base || '').toLowerCase().split(/\s+/);
+  return parts.filter(function(x) { return have.indexOf(String(x).toLowerCase()) < 0; });
+}
 
 function rawPriceLabel(r) {
   var base = '';
@@ -688,7 +764,7 @@ function rawPriceLabel(r) {
     parts.push(v + (f.unit || ''));
   });
 
-  var extra = parts.join(' ');
+  var extra = dropSeen(base, parts).join(' ');
 
   if(base && extra) return base + ' ' + extra;
   if(base) return base;
@@ -716,7 +792,7 @@ function rawHuntLabel(h) {
     parts.push(v + (f.unit || '') + ((f.match === 'min') ? '+' : ''));
   });
 
-  var extra = parts.join(' ');
+  var extra = dropSeen(base, parts).join(' ');
 
   if(base && extra) return base + ' ' + extra;
   if(base) return base;
@@ -831,12 +907,59 @@ function dimFacets(prefix) {
       wrapper.classList.add('dimmed');
     }
   });
+  applyModelSpecs(prefix);
+}
+
+function selectedModelId(prefix) { return prefix === 'hunt' ? huntSelectedModelId : priceSelectedModelId; }
+
+// A chosen model decides the specs that are part of the model itself (RAM type, size...).
+// They are filled from the model and locked, so a post can never contradict its model.
+function applyModelSpecs(prefix) {
+  var box = document.getElementById(prefix + 'Facets');
+  var m = getModelById(selectedModelId(prefix));
+  if(!box || !m) return;
+  LOCK_FROM_MODEL.forEach(function(key) {
+    var ctl = box.querySelector('[data-facet="' + key + '"]');
+    var mv = rowAttr(m, key);
+    if(!ctl || mv == null || mv === '') return;
+    if(ctl.tagName === 'SELECT' && !Array.prototype.some.call(ctl.options, function(o) { return o.value == mv; })) return;
+    ctl.value = mv;
+    ctl.disabled = true;
+    ctl.setAttribute('data-locked', '1');
+    var w = ctl.closest('div');
+    if(w) { w.classList.remove('dimmed'); w.classList.add('locked'); }
+  });
+}
+
+function releaseLocks(box) {
+  box.querySelectorAll('[data-locked]').forEach(function(ctl) {
+    ctl.disabled = false;
+    ctl.removeAttribute('data-locked');
+    ctl.value = '';
+    var w = ctl.closest('div');
+    if(w) w.classList.remove('locked');
+  });
+}
+
+// Returns an Arabic message if a spec contradicts the chosen model, otherwise ''.
+function modelConflict(prefix, attrs) {
+  var m = getModelById(selectedModelId(prefix));
+  if(!m) return '';
+  for(var i = 0; i < LOCK_FROM_MODEL.length; i++) {
+    var key = LOCK_FROM_MODEL[i];
+    var mv = rowAttr(m, key), av = attrs[key];
+    if(mv != null && mv !== '' && av != null && av !== '' && String(mv) !== String(av)) {
+      return errFieldLabel(key) + ' اللي اخترتوه (' + av + ') مش نفس مواصفة الموديل (' + mv + '). المواصفة بتيجي من الموديل نفسه. إذا بدكم مواصفة مختلفة امسحوا الموديل وحددوا المواصفات يدوياً.';
+    }
+  }
+  return '';
 }
 
 function undimAll(prefix) {
   document.getElementById(prefix + 'SearchWrapper').classList.remove('dimmed');
   var box = document.getElementById(prefix + 'Facets');
   if(!box) return;
+  releaseLocks(box);
   box.classList.remove('dimmed');
   box.classList.remove('has-model');
   box.querySelectorAll('[data-facet]').forEach(function(ctl) {
@@ -850,6 +973,7 @@ var input = document.getElementById(inputId);
 var suggestions = document.getElementById(suggestionsId);
 
 input.addEventListener('input', function() {
+setModelId(null);
 clearFacets(prefix + 'Facets');
 undimAll(prefix);
 
@@ -978,7 +1102,7 @@ async function cancelHunt(huntId) {
   if(!confirm('تأكيد الحذف')) return;
   try {
     var {error} = await db.rpc('cancel_hunt', {p_hunt_id: huntId, p_user_token: myToken()});
-    if(error) { toast('⚠️ ' + error.message, 'err'); return; }
+    if(error) { toast('⚠️ ' + errAr(error), 'err'); return; }
     toast('✅ تم حذف الطلب', 'ok');
     document.getElementById('huntMsg').innerHTML = '';
     loadFeeds();
@@ -989,7 +1113,7 @@ async function cancelPrice(priceId) {
   if(!confirm('تأكيد الحذف')) return;
   try {
     var {error} = await db.rpc('cancel_price', {p_price_id: priceId, p_user_token: myToken()});
-    if(error) { toast('⚠️ ' + error.message, 'err'); return; }
+    if(error) { toast('⚠️ ' + errAr(error), 'err'); return; }
     toast('✅ تم حذف العرض', 'ok');
     document.getElementById('priceMsg').innerHTML = '';
     loadFeeds();
@@ -1059,7 +1183,7 @@ async function postComment(type, id) {
     body: body
   });
 
-  if(error) { toast('⚠️ ' + error.message, 'err'); return; }
+  if(error) { toast('⚠️ ' + errAr(error), 'err'); return; }
   input.value = '';
 
   commentCounts[type + '_' + id] = (commentCounts[type + '_' + id] || 0) + 1;
@@ -1161,7 +1285,7 @@ if(res.error.code === '23505') {
 toast('⚡ رقمكم موجود مسبقاً', 'ok');
 } else {
 console.error('Lead error:', res.error);
-toast('⚠️ في مشكلة: ' + res.error.message, 'err');
+toast('⚠️ ' + errAr(res.error), 'err');
 }
 } else {
   logEvent('phone_submitted', 'price', currentPriceId, {});
@@ -1195,7 +1319,7 @@ async function loadSellerDashboard(token) {
 try {
 var {data: offers, error} = await db.rpc('get_seller_offers', {p_seller_token: token});
 if(error) {
-document.getElementById('dashboardContent').innerHTML = '<div class="lead-row">خطأ: ' + esc(error.message) + '</div>';
+document.getElementById('dashboardContent').innerHTML = '<div class="lead-row">خطأ: ' + esc(errAr(error)) + '</div>';
 return;
 }
 if(!offers || !offers.length) {
@@ -1321,6 +1445,7 @@ feedData = {hunt: [], price: []};
 resetForms();
 renderMarketStrip();
 loadModelsForCategory(id);
+logEvent('market_view', 'category', id, {market: marketName()});
 }
 
 async function voteForCategory(id) {
@@ -1355,7 +1480,7 @@ var token = myToken();
 try {
 var {error} = await db.rpc('suggest_market', {p_name: name, p_token: token});
 if(error) {
-toast('⚠️ في مشكلة: ' + error.message, 'err');
+toast('⚠️ ' + errAr(error), 'err');
 return;
 }
 document.getElementById('newMarketName').value = '';
@@ -1573,7 +1698,6 @@ return 'https://wa.me/' + d + '?text=' + encodeURIComponent(text);
 }
 
 function shareLink() {
-  logEvent('share_market', null, null, {market: marketName()});
   var t = 'طلبوا على عنّا طلبكم — شوفوا سوق ' + marketName() + ': ' + cleanUrl();
   return 'https://wa.me/?text=' + encodeURIComponent(t);
 }
@@ -1589,6 +1713,9 @@ toast('ابحث عن موديل أو حدد مواصفات', 'err');
 return;
 }
 
+var clash = modelConflict('price', attrs);
+if(clash) { toast('⚠️ ' + clash, 'err'); return; }
+
 if(!searchVal && !priceSelectedModelId) {
   var missing = missingRequired(attrs);
   if(missing.length) { toast('حددوا: ' + missing.join('، '), 'err'); return; }
@@ -1602,6 +1729,7 @@ if(hasHealth && val('priceCond') === 'used' && !attrs.health) {
 
 var cash = +val('cashPrice');
 if(!cash) { toast('إضافة سعر الكاش', 'err'); return; }
+if(!waCheck('priceWa')) return;
 
 
 var tradePrice_ = collectTrade('price');
@@ -1622,7 +1750,7 @@ p_whatsapp: val('priceWa') || null,
 p_seller_token: sellerTok,
 p_user_token: myToken()
 }, tradeParam(tradePrice_)));
-if(insertErr) { toast('⚠️ ' + insertErr.message, 'err'); return; }
+if(insertErr) { toast('⚠️ ' + errAr(insertErr), 'err'); return; }
 
 saveMyPost('price', priceId);
 resetTrade('price');
@@ -1646,7 +1774,7 @@ if(rpcMatch && rpcMatch.length) {
 var dashboardUrl = 'https://3natalb.com?seller=' + sellerTok;
 var waMsg = 'رابط إدارة عرضكم على عنّا طلبكم:%0A' + dashboardUrl;
 msg += ' <a class="btn green" href="https://wa.me/?text=' + encodeURIComponent(waMsg) + '">📩 احفظوا رابط إدارة العرض</a>';
-msg += ' <a class="btn share" href="' + shareLink() + '">📤 شاركوا</a>';
+msg += ' <a class="btn share" onclick="logEvent(\'share_market\', null, null, {market: marketName()})" href="' + shareLink() + '">📤 شاركوا</a>';
 msg += ' <button class="btn share" style="background:#4d1d1d;color:#ffa8a8;border-color:#6b2a2a;" onclick="cancelPrice(' + priceId + ')">❌ احذف العرض</button>';
 msg += accountNudge();
 document.getElementById('priceMsg').innerHTML = msg;
@@ -1665,6 +1793,9 @@ toast('ابحث عن موديل أو حدد مواصفات', 'err');
 return;
 }
 
+var clash = modelConflict('hunt', attrs);
+if(clash) { toast('⚠️ ' + clash, 'err'); return; }
+
 if(!searchVal && !huntSelectedModelId) {
   var missing = missingRequired(attrs);
   if(missing.length) { toast('حددوا: ' + missing.join('، '), 'err'); return; }
@@ -1678,6 +1809,7 @@ if(hasHealth && val('huntCond') === 'used' && !attrs.health) {
 
 var budget = +val('huntPrice');
 if(!budget) { toast('إضافة أقصى ميزانية', 'err'); return; }
+if(!waCheck('huntWa')) return;
 
 var tradeHunt_ = collectTrade('hunt');
 if(tradeHunt_ === null) return;
@@ -1693,7 +1825,7 @@ p_condition: val('huntCond'),
 p_whatsapp: val('huntWa') || null,
 p_user_token: myToken()
 }, tradeParam(tradeHunt_)));
-if(insertErr) { toast('⚠️ ' + insertErr.message, 'err'); return; }
+if(insertErr) { toast('⚠️ ' + errAr(insertErr), 'err'); return; }
 
 saveMyPost('hunt', huntId);
 resetTrade('hunt');
@@ -1715,7 +1847,7 @@ var sellerUrl = waLink(contactData[0].whatsapp, 'مرحبا! شفت طلبكم �
 msg += ' لايوجد رقم للتواصل، تابعوا العروض من هنا.';
 }
 }
-msg += ' <a class="btn share" href="' + shareLink() + '">📤 شارك</a>';
+msg += ' <a class="btn share" onclick="logEvent(\'share_market\', null, null, {market: marketName()})" href="' + shareLink() + '">📤 شارك</a>';
 msg += ' <button class="btn share" style="background:#4d1d1d;color:#ffa8a8;border-color:#6b2a2a;" onclick="cancelHunt(' + huntId + ')">❌ احذف الطلب</button>';
 msg += accountNudge();
 document.getElementById('huntMsg').innerHTML = msg;
@@ -2098,7 +2230,7 @@ async function submitOffer() {
       p_offered_notes: notes || null,
       p_cash_delta: delta
     });
-    if(res.error) { err.textContent = '⚠️ ' + res.error.message; return; }
+    if(res.error) { err.textContent = '⚠️ ' + errAr(res.error); return; }
     logEvent('offer_submitted', offerTargetType, offerTargetId, {});
     toast('✅ تم إرسال عرض البدل', 'ok');
     var offerKind = offerTargetType;
@@ -2136,7 +2268,7 @@ async function loadOffersList(type, id) {
       p_target_id: id,
       p_viewer_token: myToken()
     });
-    if(res.error) { body.innerHTML = '<div style="color:#ff6b6b;font-size:12px;">خطأ: ' + esc(res.error.message) + '</div>'; return; }
+    if(res.error) { body.innerHTML = '<div style="color:#ff6b6b;font-size:12px;">خطأ: ' + esc(errAr(res.error)) + '</div>'; return; }
     var offers = res.data || [];
     if(!offers.length) {
       body.innerHTML = '<div style="color:#888;font-size:13px;padding:12px 0;">لا عروض بدل بعد.</div>';
@@ -2196,7 +2328,7 @@ async function acceptOffer(id) {
   if(!confirm('قبول هذا العرض؟ بيتم رفض باقي العروض على نفس المنشور.')) return;
   try {
     var res = await db.rpc('accept_trade_offer', {p_offer_id: id, p_owner_token: myToken()});
-    if(res.error) { toast('⚠️ ' + res.error.message, 'err'); return; }
+    if(res.error) { toast('⚠️ ' + errAr(res.error), 'err'); return; }
     logEvent('offer_accepted', offersListType, offersListId, {});
     toast('✅ تم قبول العرض', 'ok');
     await loadOffersList(offersListType, offersListId);
@@ -2209,7 +2341,7 @@ async function rejectOffer(id) {
   if(!confirm('رفض هذا العرض؟')) return;
   try {
     var res = await db.rpc('reject_trade_offer', {p_offer_id: id, p_owner_token: myToken()});
-    if(res.error) { toast('⚠️ ' + res.error.message, 'err'); return; }
+    if(res.error) { toast('⚠️ ' + errAr(res.error), 'err'); return; }
     logEvent('offer_rejected', offersListType, offersListId, {});
     toast('تم الرفض', 'ok');
     await loadOffersList(offersListType, offersListId);
@@ -2222,7 +2354,7 @@ async function withdrawOffer(id) {
   if(!confirm('سحب عرضك؟')) return;
   try {
     var res = await db.rpc('withdraw_trade_offer', {p_offer_id: id, p_offerer_token: myToken()});
-    if(res.error) { toast('⚠️ ' + res.error.message, 'err'); return; }
+    if(res.error) { toast('⚠️ ' + errAr(res.error), 'err'); return; }
     logEvent('offer_withdrawn', offersListType, offersListId, {});
     toast('تم السحب', 'ok');
     await loadOffersList(offersListType, offersListId);
@@ -2237,7 +2369,7 @@ async function loadOffersDashboard(token) {
   box.innerHTML = '<div class="lead-row" style="color:#888;">جاري التحميل…</div>';
   try {
     var res = await db.rpc('get_offers_for_owner', {p_owner_token: token});
-    if(res.error) { box.innerHTML = '<div class="lead-row" style="color:#ff8a8a;">خطأ: ' + esc(res.error.message) + '</div>'; return; }
+    if(res.error) { box.innerHTML = '<div class="lead-row" style="color:#ff8a8a;">خطأ: ' + esc(errAr(res.error)) + '</div>'; return; }
     var offers = res.data || [];
     if(!offers.length) { box.innerHTML = '<div class="lead-row" style="color:#888;">لا عروض بدل على منشوراتكم بعد.</div>'; return; }
     box.innerHTML = offers.map(function(o) {
